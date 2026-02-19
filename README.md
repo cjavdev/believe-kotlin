@@ -457,6 +457,25 @@ val client: BelieveClient = BelieveOkHttpClient.builder()
     .build()
 ```
 
+### Connection pooling
+
+To customize the underlying OkHttp connection pool, configure the client using the `maxIdleConnections` and `keepAliveDuration` methods:
+
+```kotlin
+import com.believe.api.client.BelieveClient
+import com.believe.api.client.okhttp.BelieveOkHttpClient
+import java.time.Duration
+
+val client: BelieveClient = BelieveOkHttpClient.builder()
+    .fromEnv()
+    // If `maxIdleConnections` is set, then `keepAliveDuration` must be set, and vice versa.
+    .maxIdleConnections(10)
+    .keepAliveDuration(Duration.ofMinutes(2))
+    .build()
+```
+
+If both options are unset, OkHttp's default connection pool settings are used.
+
 ### HTTPS
 
 > [!NOTE]
