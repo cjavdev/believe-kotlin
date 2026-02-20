@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 internal class EpisodeServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun create() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -51,7 +51,7 @@ internal class EpisodeServiceAsyncTest {
         episode.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun retrieve() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -62,7 +62,7 @@ internal class EpisodeServiceAsyncTest {
         episode.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun update() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -93,7 +93,7 @@ internal class EpisodeServiceAsyncTest {
         episode.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun list() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -104,7 +104,7 @@ internal class EpisodeServiceAsyncTest {
         page.response().validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun delete() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -113,7 +113,7 @@ internal class EpisodeServiceAsyncTest {
         episodeServiceAsync.delete("episode_id")
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun getWisdom() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -124,7 +124,7 @@ internal class EpisodeServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun listBySeason() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()

@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 internal class TeamMemberServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun create() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -35,7 +35,7 @@ internal class TeamMemberServiceAsyncTest {
         teamMember.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun retrieve() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -46,7 +46,7 @@ internal class TeamMemberServiceAsyncTest {
         teamMember.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun update() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -73,7 +73,7 @@ internal class TeamMemberServiceAsyncTest {
         teamMember.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun list() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -84,7 +84,7 @@ internal class TeamMemberServiceAsyncTest {
         page.response().validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun delete() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -93,7 +93,7 @@ internal class TeamMemberServiceAsyncTest {
         teamMemberServiceAsync.delete("member_id")
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun listCoaches() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -104,7 +104,7 @@ internal class TeamMemberServiceAsyncTest {
         page.response().validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun listPlayers() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -115,7 +115,7 @@ internal class TeamMemberServiceAsyncTest {
         page.response().validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun listStaff() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()

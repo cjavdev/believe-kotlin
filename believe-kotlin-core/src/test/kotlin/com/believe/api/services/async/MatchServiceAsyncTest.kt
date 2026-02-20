@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test
 
 internal class MatchServiceAsyncTest {
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun create() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -56,7 +56,7 @@ internal class MatchServiceAsyncTest {
         match.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun retrieve() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -67,7 +67,7 @@ internal class MatchServiceAsyncTest {
         match.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun update() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -105,7 +105,7 @@ internal class MatchServiceAsyncTest {
         match.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun list() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -116,7 +116,7 @@ internal class MatchServiceAsyncTest {
         page.response().validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun delete() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -125,7 +125,7 @@ internal class MatchServiceAsyncTest {
         matchServiceAsync.delete("match_id")
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun getLesson() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -136,7 +136,7 @@ internal class MatchServiceAsyncTest {
         response.validate()
     }
 
-    @Disabled("Prism tests are disabled")
+    @Disabled("Mock server tests are disabled")
     @Test
     suspend fun getTurningPoints() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
@@ -147,7 +147,7 @@ internal class MatchServiceAsyncTest {
         response.forEach { it.validate() }
     }
 
-    @Disabled("Prism doesn't support callbacks yet")
+    @Disabled("Mock server doesn't support callbacks yet")
     @Test
     suspend fun streamLive() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
