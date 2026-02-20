@@ -2,7 +2,6 @@
 
 package com.believe.api.services.async
 
-import com.believe.api.TestServerExtension
 import com.believe.api.client.okhttp.BelieveOkHttpClientAsync
 import com.believe.api.models.characters.CharacterCreateParams
 import com.believe.api.models.characters.CharacterRole
@@ -12,19 +11,13 @@ import com.believe.api.models.characters.GrowthArc
 import java.time.LocalDate
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class CharacterServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun create() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val characterServiceAsync = client.characters()
 
         val character =
@@ -71,11 +64,7 @@ internal class CharacterServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun retrieve() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val characterServiceAsync = client.characters()
 
         val character = characterServiceAsync.retrieve("character_id")
@@ -86,11 +75,7 @@ internal class CharacterServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun update() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val characterServiceAsync = client.characters()
 
         val character =
@@ -135,11 +120,7 @@ internal class CharacterServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun list() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val characterServiceAsync = client.characters()
 
         val page = characterServiceAsync.list()
@@ -150,11 +131,7 @@ internal class CharacterServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun delete() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val characterServiceAsync = client.characters()
 
         characterServiceAsync.delete("character_id")
@@ -163,11 +140,7 @@ internal class CharacterServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun getQuotes() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val characterServiceAsync = client.characters()
 
         characterServiceAsync.getQuotes("character_id")

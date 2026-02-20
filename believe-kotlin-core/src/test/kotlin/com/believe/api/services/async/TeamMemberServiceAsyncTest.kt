@@ -2,26 +2,19 @@
 
 package com.believe.api.services.async
 
-import com.believe.api.TestServerExtension
 import com.believe.api.client.okhttp.BelieveOkHttpClientAsync
 import com.believe.api.models.teammembers.Position
 import com.believe.api.models.teammembers.TeamMemberCreateParams
 import com.believe.api.models.teammembers.TeamMemberUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(TestServerExtension::class)
 internal class TeamMemberServiceAsyncTest {
 
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun create() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val teamMemberServiceAsync = client.teamMembers()
 
         val teamMember =
@@ -45,11 +38,7 @@ internal class TeamMemberServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun retrieve() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val teamMemberServiceAsync = client.teamMembers()
 
         val teamMember = teamMemberServiceAsync.retrieve("member_id")
@@ -60,11 +49,7 @@ internal class TeamMemberServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun update() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val teamMemberServiceAsync = client.teamMembers()
 
         val teamMember =
@@ -91,11 +76,7 @@ internal class TeamMemberServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun list() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val teamMemberServiceAsync = client.teamMembers()
 
         val page = teamMemberServiceAsync.list()
@@ -106,11 +87,7 @@ internal class TeamMemberServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun delete() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val teamMemberServiceAsync = client.teamMembers()
 
         teamMemberServiceAsync.delete("member_id")
@@ -119,11 +96,7 @@ internal class TeamMemberServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun listCoaches() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val teamMemberServiceAsync = client.teamMembers()
 
         val page = teamMemberServiceAsync.listCoaches()
@@ -134,11 +107,7 @@ internal class TeamMemberServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun listPlayers() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val teamMemberServiceAsync = client.teamMembers()
 
         val page = teamMemberServiceAsync.listPlayers()
@@ -149,11 +118,7 @@ internal class TeamMemberServiceAsyncTest {
     @Disabled("Prism tests are disabled")
     @Test
     suspend fun listStaff() {
-        val client =
-            BelieveOkHttpClientAsync.builder()
-                .baseUrl(TestServerExtension.BASE_URL)
-                .apiKey("My API Key")
-                .build()
+        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
         val teamMemberServiceAsync = client.teamMembers()
 
         val page = teamMemberServiceAsync.listStaff()
