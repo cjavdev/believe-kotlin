@@ -67,7 +67,7 @@ This can happen if you are either:
 
 Double-check that you are depending on compatible Jackson versions.
 
-See https://www.github.com/stainless-sdks/believe-kotlin#jackson for more information.
+See https://www.github.com/cjavdev/believe-kotlin#jackson for more information.
         """
             .trimIndent()
     }

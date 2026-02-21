@@ -17,6 +17,7 @@ import com.believe.api.core.http.json
 import com.believe.api.core.http.parseable
 import com.believe.api.core.prepareAsync
 import com.believe.api.models.webhooks.RegisteredWebhook
+import com.believe.api.models.webhooks.UnwrapWebhookEvent
 import com.believe.api.models.webhooks.WebhookCreateParams
 import com.believe.api.models.webhooks.WebhookCreateResponse
 import com.believe.api.models.webhooks.WebhookDeleteParams
@@ -25,6 +26,7 @@ import com.believe.api.models.webhooks.WebhookListParams
 import com.believe.api.models.webhooks.WebhookRetrieveParams
 import com.believe.api.models.webhooks.WebhookTriggerEventParams
 import com.believe.api.models.webhooks.WebhookTriggerEventResponse
+import com.believe.api.services.blocking.WebhookServiceImpl
 
 class WebhookServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     WebhookServiceAsync {
@@ -72,6 +74,9 @@ class WebhookServiceAsyncImpl internal constructor(private val clientOptions: Cl
     ): WebhookTriggerEventResponse =
         // post /webhooks/trigger
         withRawResponse().triggerEvent(params, requestOptions).parse()
+
+    override fun unwrap(body: String): UnwrapWebhookEvent =
+        WebhookServiceImpl(clientOptions).unwrap(body)
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         WebhookServiceAsync.WithRawResponse {
