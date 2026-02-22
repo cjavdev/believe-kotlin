@@ -11,8 +11,6 @@ import com.believe.api.models.episodes.EpisodeCreateParams
 import com.believe.api.models.episodes.EpisodeDeleteParams
 import com.believe.api.models.episodes.EpisodeGetWisdomParams
 import com.believe.api.models.episodes.EpisodeGetWisdomResponse
-import com.believe.api.models.episodes.EpisodeListBySeasonPageAsync
-import com.believe.api.models.episodes.EpisodeListBySeasonParams
 import com.believe.api.models.episodes.EpisodeListPageAsync
 import com.believe.api.models.episodes.EpisodeListParams
 import com.believe.api.models.episodes.EpisodeRetrieveParams
@@ -120,27 +118,6 @@ interface EpisodeServiceAsync {
         requestOptions: RequestOptions,
     ): EpisodeGetWisdomResponse =
         getWisdom(episodeId, EpisodeGetWisdomParams.none(), requestOptions)
-
-    /** Get a paginated list of episodes from a specific season. */
-    suspend fun listBySeason(
-        seasonNumber: Long,
-        params: EpisodeListBySeasonParams = EpisodeListBySeasonParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): EpisodeListBySeasonPageAsync =
-        listBySeason(params.toBuilder().seasonNumber(seasonNumber).build(), requestOptions)
-
-    /** @see listBySeason */
-    suspend fun listBySeason(
-        params: EpisodeListBySeasonParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): EpisodeListBySeasonPageAsync
-
-    /** @see listBySeason */
-    suspend fun listBySeason(
-        seasonNumber: Long,
-        requestOptions: RequestOptions,
-    ): EpisodeListBySeasonPageAsync =
-        listBySeason(seasonNumber, EpisodeListBySeasonParams.none(), requestOptions)
 
     /**
      * A view of [EpisodeServiceAsync] that provides access to raw HTTP responses for each method.
@@ -283,32 +260,5 @@ interface EpisodeServiceAsync {
             requestOptions: RequestOptions,
         ): HttpResponseFor<EpisodeGetWisdomResponse> =
             getWisdom(episodeId, EpisodeGetWisdomParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `get /episodes/seasons/{season_number}`, but is otherwise
-         * the same as [EpisodeServiceAsync.listBySeason].
-         */
-        @MustBeClosed
-        suspend fun listBySeason(
-            seasonNumber: Long,
-            params: EpisodeListBySeasonParams = EpisodeListBySeasonParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<EpisodeListBySeasonPageAsync> =
-            listBySeason(params.toBuilder().seasonNumber(seasonNumber).build(), requestOptions)
-
-        /** @see listBySeason */
-        @MustBeClosed
-        suspend fun listBySeason(
-            params: EpisodeListBySeasonParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<EpisodeListBySeasonPageAsync>
-
-        /** @see listBySeason */
-        @MustBeClosed
-        suspend fun listBySeason(
-            seasonNumber: Long,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<EpisodeListBySeasonPageAsync> =
-            listBySeason(seasonNumber, EpisodeListBySeasonParams.none(), requestOptions)
     }
 }
