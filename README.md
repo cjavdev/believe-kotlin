@@ -2,8 +2,8 @@
 
 <!-- x-release-please-start-version -->
 
-[![Maven Central](https://img.shields.io/maven-central/v/com.believe.api/believe-kotlin)](https://central.sonatype.com/artifact/com.believe.api/believe-kotlin/0.2.0)
-[![javadoc](https://javadoc.io/badge2/com.believe.api/believe-kotlin/0.2.0/javadoc.svg)](https://javadoc.io/doc/com.believe.api/believe-kotlin/0.2.0)
+[![Maven Central](https://img.shields.io/maven-central/v/com.believe.api/believe-kotlin)](https://central.sonatype.com/artifact/com.believe.api/believe-kotlin/0.2.1)
+[![javadoc](https://javadoc.io/badge2/com.believe.api/believe-kotlin/0.2.1/javadoc.svg)](https://javadoc.io/doc/com.believe.api/believe-kotlin/0.2.1)
 
 <!-- x-release-please-end -->
 
@@ -22,7 +22,7 @@ Use the Believe MCP Server to enable AI assistants to interact with this API, al
 
 <!-- x-release-please-start-version -->
 
-KDocs are available on [javadoc.io](https://javadoc.io/doc/com.believe.api/believe-kotlin/0.2.0).
+KDocs are available on [javadoc.io](https://javadoc.io/doc/com.believe.api/believe-kotlin/0.2.1).
 
 <!-- x-release-please-end -->
 
@@ -33,7 +33,7 @@ KDocs are available on [javadoc.io](https://javadoc.io/doc/com.believe.api/belie
 ### Gradle
 
 ```kotlin
-implementation("com.believe.api:believe-kotlin:0.2.0")
+implementation("com.believe.api:believe-kotlin:0.2.1")
 ```
 
 ### Maven
@@ -42,7 +42,7 @@ implementation("com.believe.api:believe-kotlin:0.2.0")
 <dependency>
   <groupId>com.believe.api</groupId>
   <artifactId>believe-kotlin</artifactId>
-  <version>0.2.0</version>
+  <version>0.2.1</version>
 </dependency>
 ```
 

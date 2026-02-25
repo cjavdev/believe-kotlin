@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.1 (2026-02-25)
+
+Full Changelog: [v0.2.0...v0.2.1](https://github.com/cjavdev/believe-kotlin/compare/v0.2.0...v0.2.1)
+
+### Chores
+
+* drop apache dependency ([cd8d386](https://github.com/cjavdev/believe-kotlin/commit/cd8d386c74c4528324cddb02df019e38e792c6df))
+* **internal:** expand imports ([dbcd8e7](https://github.com/cjavdev/believe-kotlin/commit/dbcd8e74f9046c67ab0369ee4e0c50571404447e))
+* make `Properties` more resilient to `null` ([d585700](https://github.com/cjavdev/believe-kotlin/commit/d585700e913dbfaace0637c232abb61958d0935b))
+
 ## 0.2.0 (2026-02-21)
 
 Full Changelog: [v0.1.0...v0.2.0](https://github.com/cjavdev/believe-kotlin/compare/v0.1.0...v0.2.0)
