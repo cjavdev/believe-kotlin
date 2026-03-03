@@ -17,6 +17,7 @@ import com.believe.api.core.prepare
 import com.believe.api.models.stream.StreamTestConnectionParams
 import com.believe.api.models.stream.StreamTestConnectionResponse
 
+/** Server-Sent Events (SSE) streaming endpoints */
 class StreamServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     StreamService {
 

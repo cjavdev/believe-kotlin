@@ -9,6 +9,7 @@ import com.believe.api.models.stream.StreamTestConnectionParams
 import com.believe.api.models.stream.StreamTestConnectionResponse
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Server-Sent Events (SSE) streaming endpoints */
 interface StreamServiceAsync {
 
     /**

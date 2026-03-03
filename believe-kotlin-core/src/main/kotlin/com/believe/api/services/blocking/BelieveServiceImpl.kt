@@ -18,6 +18,7 @@ import com.believe.api.core.prepare
 import com.believe.api.models.believe.BelieveSubmitParams
 import com.believe.api.models.believe.BelieveSubmitResponse
 
+/** Interactive endpoints for motivation and guidance */
 class BelieveServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     BelieveService {
 

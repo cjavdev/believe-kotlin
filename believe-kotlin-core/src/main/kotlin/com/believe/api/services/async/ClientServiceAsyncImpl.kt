@@ -20,6 +20,7 @@ class ClientServiceAsyncImpl internal constructor(private val clientOptions: Cli
     override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ClientServiceAsync =
         ClientServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
+    /** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
     override fun ws(): WServiceAsync = ws
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -36,6 +37,7 @@ class ClientServiceAsyncImpl internal constructor(private val clientOptions: Cli
                 clientOptions.toBuilder().apply(modifier).build()
             )
 
+        /** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
         override fun ws(): WServiceAsync.WithRawResponse = ws
     }
 }

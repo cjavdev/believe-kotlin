@@ -28,6 +28,7 @@ import com.believe.api.models.episodes.EpisodeRetrieveParams
 import com.believe.api.models.episodes.EpisodeUpdateParams
 import com.believe.api.models.episodes.PaginatedResponse
 
+/** Operations related to TV episodes */
 class EpisodeServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     EpisodeService {
 

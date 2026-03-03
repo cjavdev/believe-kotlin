@@ -18,6 +18,7 @@ import com.believe.api.core.prepare
 import com.believe.api.models.conflicts.ConflictResolveParams
 import com.believe.api.models.conflicts.ConflictResolveResponse
 
+/** Interactive endpoints for motivation and guidance */
 class ConflictServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     ConflictService {
 

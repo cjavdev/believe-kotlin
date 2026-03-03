@@ -19,6 +19,7 @@ interface CoachingServiceAsync {
      */
     fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CoachingServiceAsync
 
+    /** Interactive endpoints for motivation and guidance */
     fun principles(): PrincipleServiceAsync
 
     /**
@@ -35,6 +36,7 @@ interface CoachingServiceAsync {
             modifier: (ClientOptions.Builder) -> Unit
         ): CoachingServiceAsync.WithRawResponse
 
+        /** Interactive endpoints for motivation and guidance */
         fun principles(): PrincipleServiceAsync.WithRawResponse
     }
 }

@@ -12,6 +12,7 @@ import com.believe.api.models.coaching.principles.PrincipleListParams
 import com.believe.api.models.coaching.principles.PrincipleRetrieveParams
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Interactive endpoints for motivation and guidance */
 interface PrincipleServiceAsync {
 
     /**

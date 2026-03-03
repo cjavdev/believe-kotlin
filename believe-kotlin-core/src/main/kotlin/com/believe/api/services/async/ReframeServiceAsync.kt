@@ -9,6 +9,7 @@ import com.believe.api.models.reframe.ReframeTransformNegativeThoughtsParams
 import com.believe.api.models.reframe.ReframeTransformNegativeThoughtsResponse
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Interactive endpoints for motivation and guidance */
 interface ReframeServiceAsync {
 
     /**

@@ -9,6 +9,7 @@ import com.believe.api.models.conflicts.ConflictResolveParams
 import com.believe.api.models.conflicts.ConflictResolveResponse
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Interactive endpoints for motivation and guidance */
 interface ConflictServiceAsync {
 
     /**

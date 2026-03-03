@@ -8,6 +8,7 @@ import com.believe.api.core.http.HttpResponse
 import com.believe.api.models.client.ws.WTestParams
 import com.google.errorprone.annotations.MustBeClosed
 
+/** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
 interface WService {
 
     /**

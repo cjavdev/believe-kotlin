@@ -12,6 +12,7 @@ import com.believe.api.models.biscuits.BiscuitListParams
 import com.believe.api.models.biscuits.BiscuitRetrieveParams
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Interactive endpoints for motivation and guidance */
 interface BiscuitService {
 
     /**

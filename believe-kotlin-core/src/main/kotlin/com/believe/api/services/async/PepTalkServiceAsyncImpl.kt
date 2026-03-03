@@ -17,6 +17,7 @@ import com.believe.api.core.prepareAsync
 import com.believe.api.models.peptalk.PepTalkRetrieveParams
 import com.believe.api.models.peptalk.PepTalkRetrieveResponse
 
+/** Server-Sent Events (SSE) streaming endpoints */
 class PepTalkServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     PepTalkServiceAsync {
 

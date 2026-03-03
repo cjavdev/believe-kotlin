@@ -9,6 +9,7 @@ import com.believe.api.models.peptalk.PepTalkRetrieveParams
 import com.believe.api.models.peptalk.PepTalkRetrieveResponse
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Server-Sent Events (SSE) streaming endpoints */
 interface PepTalkService {
 
     /**

@@ -13,6 +13,7 @@ import com.believe.api.models.teams.logo.LogoDownloadResponse
 import com.believe.api.models.teams.logo.LogoUploadParams
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Operations related to football teams */
 interface LogoServiceAsync {
 
     /**

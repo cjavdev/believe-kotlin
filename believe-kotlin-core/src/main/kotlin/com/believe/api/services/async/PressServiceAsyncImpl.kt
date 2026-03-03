@@ -18,6 +18,7 @@ import com.believe.api.core.prepareAsync
 import com.believe.api.models.press.PressSimulateParams
 import com.believe.api.models.press.PressSimulateResponse
 
+/** Interactive endpoints for motivation and guidance */
 class PressServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     PressServiceAsync {
 

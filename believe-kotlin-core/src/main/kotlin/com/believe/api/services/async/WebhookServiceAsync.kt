@@ -18,6 +18,7 @@ import com.believe.api.models.webhooks.WebhookTriggerEventParams
 import com.believe.api.models.webhooks.WebhookTriggerEventResponse
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Register webhook endpoints and trigger events for testing */
 interface WebhookServiceAsync {
 
     /**

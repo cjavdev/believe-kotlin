@@ -33,6 +33,7 @@ import com.believe.api.models.teams.logo.FileUpload
 import com.believe.api.services.async.teams.LogoServiceAsync
 import com.believe.api.services.async.teams.LogoServiceAsyncImpl
 
+/** Operations related to football teams */
 class TeamServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     TeamServiceAsync {
 
@@ -47,6 +48,7 @@ class TeamServiceAsyncImpl internal constructor(private val clientOptions: Clien
     override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): TeamServiceAsync =
         TeamServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
+    /** Operations related to football teams */
     override fun logo(): LogoServiceAsync = logo
 
     override suspend fun create(params: TeamCreateParams, requestOptions: RequestOptions): Team =
@@ -114,6 +116,7 @@ class TeamServiceAsyncImpl internal constructor(private val clientOptions: Clien
                 clientOptions.toBuilder().apply(modifier).build()
             )
 
+        /** Operations related to football teams */
         override fun logo(): LogoServiceAsync.WithRawResponse = logo
 
         private val createHandler: Handler<Team> = jsonHandler<Team>(clientOptions.jsonMapper)

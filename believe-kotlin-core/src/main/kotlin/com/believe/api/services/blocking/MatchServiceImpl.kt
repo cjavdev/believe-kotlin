@@ -47,6 +47,7 @@ class MatchServiceImpl internal constructor(private val clientOptions: ClientOpt
     override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): MatchService =
         MatchServiceImpl(clientOptions.toBuilder().apply(modifier).build())
 
+    /** Server-Sent Events (SSE) streaming endpoints */
     override fun commentary(): CommentaryService = commentary
 
     override fun create(params: MatchCreateParams, requestOptions: RequestOptions): Match =
@@ -104,6 +105,7 @@ class MatchServiceImpl internal constructor(private val clientOptions: ClientOpt
         ): MatchService.WithRawResponse =
             MatchServiceImpl.WithRawResponseImpl(clientOptions.toBuilder().apply(modifier).build())
 
+        /** Server-Sent Events (SSE) streaming endpoints */
         override fun commentary(): CommentaryService.WithRawResponse = commentary
 
         private val createHandler: Handler<Match> = jsonHandler<Match>(clientOptions.jsonMapper)
