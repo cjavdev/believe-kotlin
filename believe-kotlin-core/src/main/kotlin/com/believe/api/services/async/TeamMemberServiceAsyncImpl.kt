@@ -37,6 +37,7 @@ import com.believe.api.models.teammembers.TeamMemberRetrieveResponse
 import com.believe.api.models.teammembers.TeamMemberUpdateParams
 import com.believe.api.models.teammembers.TeamMemberUpdateResponse
 
+/** Team members with union types (oneOf) - Players, Coaches, Medical Staff, Equipment Managers */
 class TeamMemberServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     TeamMemberServiceAsync {
 

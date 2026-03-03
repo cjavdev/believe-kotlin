@@ -19,6 +19,7 @@ interface CoachingService {
      */
     fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CoachingService
 
+    /** Interactive endpoints for motivation and guidance */
     fun principles(): PrincipleService
 
     /** A view of [CoachingService] that provides access to raw HTTP responses for each method. */
@@ -31,6 +32,7 @@ interface CoachingService {
          */
         fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CoachingService.WithRawResponse
 
+        /** Interactive endpoints for motivation and guidance */
         fun principles(): PrincipleService.WithRawResponse
     }
 }

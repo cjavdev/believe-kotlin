@@ -22,6 +22,7 @@ import com.believe.api.models.coaching.principles.PrincipleListPageResponse
 import com.believe.api.models.coaching.principles.PrincipleListParams
 import com.believe.api.models.coaching.principles.PrincipleRetrieveParams
 
+/** Interactive endpoints for motivation and guidance */
 class PrincipleServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     PrincipleService {
 

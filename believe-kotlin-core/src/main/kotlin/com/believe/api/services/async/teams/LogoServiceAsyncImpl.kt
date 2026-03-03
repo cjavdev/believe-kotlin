@@ -24,6 +24,7 @@ import com.believe.api.models.teams.logo.LogoDownloadParams
 import com.believe.api.models.teams.logo.LogoDownloadResponse
 import com.believe.api.models.teams.logo.LogoUploadParams
 
+/** Operations related to football teams */
 class LogoServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     LogoServiceAsync {
 

@@ -27,6 +27,7 @@ import com.believe.api.models.characters.CharacterListParams
 import com.believe.api.models.characters.CharacterRetrieveParams
 import com.believe.api.models.characters.CharacterUpdateParams
 
+/** Operations related to Ted Lasso characters */
 class CharacterServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     CharacterService {
 

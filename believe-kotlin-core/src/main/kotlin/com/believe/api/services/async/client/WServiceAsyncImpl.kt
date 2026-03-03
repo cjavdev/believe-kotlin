@@ -15,6 +15,7 @@ import com.believe.api.core.http.parseable
 import com.believe.api.core.prepareAsync
 import com.believe.api.models.client.ws.WTestParams
 
+/** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
 class WServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     WServiceAsync {
 

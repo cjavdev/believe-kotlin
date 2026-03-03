@@ -35,6 +35,7 @@ interface MatchServiceAsync {
      */
     fun withOptions(modifier: (ClientOptions.Builder) -> Unit): MatchServiceAsync
 
+    /** Server-Sent Events (SSE) streaming endpoints */
     fun commentary(): CommentaryServiceAsync
 
     /** Schedule a new match. */
@@ -197,6 +198,7 @@ interface MatchServiceAsync {
             modifier: (ClientOptions.Builder) -> Unit
         ): MatchServiceAsync.WithRawResponse
 
+        /** Server-Sent Events (SSE) streaming endpoints */
         fun commentary(): CommentaryServiceAsync.WithRawResponse
 
         /**

@@ -28,6 +28,7 @@ import com.believe.api.models.webhooks.WebhookTriggerEventParams
 import com.believe.api.models.webhooks.WebhookTriggerEventResponse
 import com.believe.api.services.blocking.WebhookServiceImpl
 
+/** Register webhook endpoints and trigger events for testing */
 class WebhookServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     WebhookServiceAsync {
 

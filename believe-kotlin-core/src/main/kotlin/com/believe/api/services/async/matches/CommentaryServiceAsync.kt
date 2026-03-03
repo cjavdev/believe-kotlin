@@ -9,6 +9,7 @@ import com.believe.api.models.matches.commentary.CommentaryStreamParams
 import com.believe.api.models.matches.commentary.CommentaryStreamResponse
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Server-Sent Events (SSE) streaming endpoints */
 interface CommentaryServiceAsync {
 
     /**

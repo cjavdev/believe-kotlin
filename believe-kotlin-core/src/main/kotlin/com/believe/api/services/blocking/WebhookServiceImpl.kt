@@ -29,6 +29,7 @@ import com.believe.api.models.webhooks.WebhookTriggerEventParams
 import com.believe.api.models.webhooks.WebhookTriggerEventResponse
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 
+/** Register webhook endpoints and trigger events for testing */
 class WebhookServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     WebhookService {
 

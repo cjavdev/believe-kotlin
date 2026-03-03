@@ -17,6 +17,7 @@ import com.believe.api.models.episodes.EpisodeRetrieveParams
 import com.believe.api.models.episodes.EpisodeUpdateParams
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Operations related to TV episodes */
 interface EpisodeServiceAsync {
 
     /**

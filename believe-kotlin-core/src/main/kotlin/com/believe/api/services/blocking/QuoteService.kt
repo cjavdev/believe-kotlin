@@ -21,6 +21,7 @@ import com.believe.api.models.quotes.QuoteTheme
 import com.believe.api.models.quotes.QuoteUpdateParams
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Memorable quotes from the show */
 interface QuoteService {
 
     /**
