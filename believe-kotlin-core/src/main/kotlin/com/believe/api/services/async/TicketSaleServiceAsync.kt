@@ -1,20 +1,18 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.believe.api.services.async.client
+package com.believe.api.services.async
 
 import com.believe.api.core.ClientOptions
 import com.believe.api.core.RequestOptions
 import com.believe.api.core.http.HttpResponse
 import com.believe.api.core.http.HttpResponseFor
-import com.believe.api.models.client.ticketsales.TicketSaleCreateParams
-import com.believe.api.models.client.ticketsales.TicketSaleCreateResponse
-import com.believe.api.models.client.ticketsales.TicketSaleDeleteParams
-import com.believe.api.models.client.ticketsales.TicketSaleListPageAsync
-import com.believe.api.models.client.ticketsales.TicketSaleListParams
-import com.believe.api.models.client.ticketsales.TicketSaleRetrieveParams
-import com.believe.api.models.client.ticketsales.TicketSaleRetrieveResponse
-import com.believe.api.models.client.ticketsales.TicketSaleUpdateParams
-import com.believe.api.models.client.ticketsales.TicketSaleUpdateResponse
+import com.believe.api.models.ticketsales.TicketSale
+import com.believe.api.models.ticketsales.TicketSaleCreateParams
+import com.believe.api.models.ticketsales.TicketSaleDeleteParams
+import com.believe.api.models.ticketsales.TicketSaleListPageAsync
+import com.believe.api.models.ticketsales.TicketSaleListParams
+import com.believe.api.models.ticketsales.TicketSaleRetrieveParams
+import com.believe.api.models.ticketsales.TicketSaleUpdateParams
 import com.google.errorprone.annotations.MustBeClosed
 
 /** Ticket sales with 300 records for practicing pagination, filtering, and financial data */
@@ -36,27 +34,23 @@ interface TicketSaleServiceAsync {
     suspend fun create(
         params: TicketSaleCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): TicketSaleCreateResponse
+    ): TicketSale
 
     /** Retrieve detailed information about a specific ticket sale. */
     suspend fun retrieve(
         ticketSaleId: String,
         params: TicketSaleRetrieveParams = TicketSaleRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): TicketSaleRetrieveResponse =
-        retrieve(params.toBuilder().ticketSaleId(ticketSaleId).build(), requestOptions)
+    ): TicketSale = retrieve(params.toBuilder().ticketSaleId(ticketSaleId).build(), requestOptions)
 
     /** @see retrieve */
     suspend fun retrieve(
         params: TicketSaleRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): TicketSaleRetrieveResponse
+    ): TicketSale
 
     /** @see retrieve */
-    suspend fun retrieve(
-        ticketSaleId: String,
-        requestOptions: RequestOptions,
-    ): TicketSaleRetrieveResponse =
+    suspend fun retrieve(ticketSaleId: String, requestOptions: RequestOptions): TicketSale =
         retrieve(ticketSaleId, TicketSaleRetrieveParams.none(), requestOptions)
 
     /** Update specific fields of an existing ticket sale. */
@@ -64,20 +58,16 @@ interface TicketSaleServiceAsync {
         ticketSaleId: String,
         params: TicketSaleUpdateParams = TicketSaleUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): TicketSaleUpdateResponse =
-        update(params.toBuilder().ticketSaleId(ticketSaleId).build(), requestOptions)
+    ): TicketSale = update(params.toBuilder().ticketSaleId(ticketSaleId).build(), requestOptions)
 
     /** @see update */
     suspend fun update(
         params: TicketSaleUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): TicketSaleUpdateResponse
+    ): TicketSale
 
     /** @see update */
-    suspend fun update(
-        ticketSaleId: String,
-        requestOptions: RequestOptions,
-    ): TicketSaleUpdateResponse =
+    suspend fun update(ticketSaleId: String, requestOptions: RequestOptions): TicketSale =
         update(ticketSaleId, TicketSaleUpdateParams.none(), requestOptions)
 
     /**
@@ -133,7 +123,7 @@ interface TicketSaleServiceAsync {
         suspend fun create(
             params: TicketSaleCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TicketSaleCreateResponse>
+        ): HttpResponseFor<TicketSale>
 
         /**
          * Returns a raw HTTP response for `get /ticket-sales/{ticket_sale_id}`, but is otherwise
@@ -144,7 +134,7 @@ interface TicketSaleServiceAsync {
             ticketSaleId: String,
             params: TicketSaleRetrieveParams = TicketSaleRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TicketSaleRetrieveResponse> =
+        ): HttpResponseFor<TicketSale> =
             retrieve(params.toBuilder().ticketSaleId(ticketSaleId).build(), requestOptions)
 
         /** @see retrieve */
@@ -152,14 +142,14 @@ interface TicketSaleServiceAsync {
         suspend fun retrieve(
             params: TicketSaleRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TicketSaleRetrieveResponse>
+        ): HttpResponseFor<TicketSale>
 
         /** @see retrieve */
         @MustBeClosed
         suspend fun retrieve(
             ticketSaleId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<TicketSaleRetrieveResponse> =
+        ): HttpResponseFor<TicketSale> =
             retrieve(ticketSaleId, TicketSaleRetrieveParams.none(), requestOptions)
 
         /**
@@ -171,7 +161,7 @@ interface TicketSaleServiceAsync {
             ticketSaleId: String,
             params: TicketSaleUpdateParams = TicketSaleUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TicketSaleUpdateResponse> =
+        ): HttpResponseFor<TicketSale> =
             update(params.toBuilder().ticketSaleId(ticketSaleId).build(), requestOptions)
 
         /** @see update */
@@ -179,14 +169,14 @@ interface TicketSaleServiceAsync {
         suspend fun update(
             params: TicketSaleUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TicketSaleUpdateResponse>
+        ): HttpResponseFor<TicketSale>
 
         /** @see update */
         @MustBeClosed
         suspend fun update(
             ticketSaleId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<TicketSaleUpdateResponse> =
+        ): HttpResponseFor<TicketSale> =
             update(ticketSaleId, TicketSaleUpdateParams.none(), requestOptions)
 
         /**

@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.believe.api.services.async.client
+package com.believe.api.services.async
 
 import com.believe.api.core.ClientOptions
 import com.believe.api.core.RequestOptions
@@ -17,16 +17,14 @@ import com.believe.api.core.http.HttpResponseFor
 import com.believe.api.core.http.json
 import com.believe.api.core.http.parseable
 import com.believe.api.core.prepareAsync
-import com.believe.api.models.client.ticketsales.TicketSaleCreateParams
-import com.believe.api.models.client.ticketsales.TicketSaleCreateResponse
-import com.believe.api.models.client.ticketsales.TicketSaleDeleteParams
-import com.believe.api.models.client.ticketsales.TicketSaleListPageAsync
-import com.believe.api.models.client.ticketsales.TicketSaleListPageResponse
-import com.believe.api.models.client.ticketsales.TicketSaleListParams
-import com.believe.api.models.client.ticketsales.TicketSaleRetrieveParams
-import com.believe.api.models.client.ticketsales.TicketSaleRetrieveResponse
-import com.believe.api.models.client.ticketsales.TicketSaleUpdateParams
-import com.believe.api.models.client.ticketsales.TicketSaleUpdateResponse
+import com.believe.api.models.ticketsales.TicketSale
+import com.believe.api.models.ticketsales.TicketSaleCreateParams
+import com.believe.api.models.ticketsales.TicketSaleDeleteParams
+import com.believe.api.models.ticketsales.TicketSaleListPageAsync
+import com.believe.api.models.ticketsales.TicketSaleListPageResponse
+import com.believe.api.models.ticketsales.TicketSaleListParams
+import com.believe.api.models.ticketsales.TicketSaleRetrieveParams
+import com.believe.api.models.ticketsales.TicketSaleUpdateParams
 
 /** Ticket sales with 300 records for practicing pagination, filtering, and financial data */
 class TicketSaleServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -44,21 +42,21 @@ class TicketSaleServiceAsyncImpl internal constructor(private val clientOptions:
     override suspend fun create(
         params: TicketSaleCreateParams,
         requestOptions: RequestOptions,
-    ): TicketSaleCreateResponse =
+    ): TicketSale =
         // post /ticket-sales
         withRawResponse().create(params, requestOptions).parse()
 
     override suspend fun retrieve(
         params: TicketSaleRetrieveParams,
         requestOptions: RequestOptions,
-    ): TicketSaleRetrieveResponse =
+    ): TicketSale =
         // get /ticket-sales/{ticket_sale_id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
     override suspend fun update(
         params: TicketSaleUpdateParams,
         requestOptions: RequestOptions,
-    ): TicketSaleUpdateResponse =
+    ): TicketSale =
         // patch /ticket-sales/{ticket_sale_id}
         withRawResponse().update(params, requestOptions).parse()
 
@@ -87,13 +85,13 @@ class TicketSaleServiceAsyncImpl internal constructor(private val clientOptions:
                 clientOptions.toBuilder().apply(modifier).build()
             )
 
-        private val createHandler: Handler<TicketSaleCreateResponse> =
-            jsonHandler<TicketSaleCreateResponse>(clientOptions.jsonMapper)
+        private val createHandler: Handler<TicketSale> =
+            jsonHandler<TicketSale>(clientOptions.jsonMapper)
 
         override suspend fun create(
             params: TicketSaleCreateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<TicketSaleCreateResponse> {
+        ): HttpResponseFor<TicketSale> {
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
@@ -115,13 +113,13 @@ class TicketSaleServiceAsyncImpl internal constructor(private val clientOptions:
             }
         }
 
-        private val retrieveHandler: Handler<TicketSaleRetrieveResponse> =
-            jsonHandler<TicketSaleRetrieveResponse>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<TicketSale> =
+            jsonHandler<TicketSale>(clientOptions.jsonMapper)
 
         override suspend fun retrieve(
             params: TicketSaleRetrieveParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<TicketSaleRetrieveResponse> {
+        ): HttpResponseFor<TicketSale> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("ticketSaleId", params.ticketSaleId())
@@ -145,13 +143,13 @@ class TicketSaleServiceAsyncImpl internal constructor(private val clientOptions:
             }
         }
 
-        private val updateHandler: Handler<TicketSaleUpdateResponse> =
-            jsonHandler<TicketSaleUpdateResponse>(clientOptions.jsonMapper)
+        private val updateHandler: Handler<TicketSale> =
+            jsonHandler<TicketSale>(clientOptions.jsonMapper)
 
         override suspend fun update(
             params: TicketSaleUpdateParams,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<TicketSaleUpdateResponse> {
+        ): HttpResponseFor<TicketSale> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
             checkRequired("ticketSaleId", params.ticketSaleId())

@@ -1,27 +1,45 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.believe.api.models.client.ticketsales
+package com.believe.api.models.ticketsales
 
-import com.believe.api.core.JsonValue
 import com.believe.api.core.Params
 import com.believe.api.core.http.Headers
 import com.believe.api.core.http.QueryParams
-import com.believe.api.core.toImmutable
 import java.util.Objects
 
-/** Remove a ticket sale from the database. */
-class TicketSaleDeleteParams
+/**
+ * Get a paginated list of all ticket sales with optional filtering. With 300 records, this endpoint
+ * is ideal for practicing pagination.
+ */
+class TicketSaleListParams
 private constructor(
-    private val ticketSaleId: String?,
+    private val couponCode: String?,
+    private val currency: String?,
+    private val limit: Long?,
+    private val matchId: String?,
+    private val purchaseMethod: PurchaseMethod?,
+    private val skip: Long?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
-    private val additionalBodyProperties: Map<String, JsonValue>,
 ) : Params {
 
-    fun ticketSaleId(): String? = ticketSaleId
+    /** Filter by coupon code (use 'none' for sales without coupons) */
+    fun couponCode(): String? = couponCode
 
-    /** Additional body properties to send with the request. */
-    fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
+    /** Filter by currency (GBP, USD, EUR) */
+    fun currency(): String? = currency
+
+    /** Maximum number of items to return (max: 100) */
+    fun limit(): Long? = limit
+
+    /** Filter by match ID */
+    fun matchId(): String? = matchId
+
+    /** Filter by purchase method */
+    fun purchaseMethod(): PurchaseMethod? = purchaseMethod
+
+    /** Number of items to skip (offset) */
+    fun skip(): Long? = skip
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -33,29 +51,68 @@ private constructor(
 
     companion object {
 
-        fun none(): TicketSaleDeleteParams = builder().build()
+        fun none(): TicketSaleListParams = builder().build()
 
-        /** Returns a mutable builder for constructing an instance of [TicketSaleDeleteParams]. */
+        /** Returns a mutable builder for constructing an instance of [TicketSaleListParams]. */
         fun builder() = Builder()
     }
 
-    /** A builder for [TicketSaleDeleteParams]. */
+    /** A builder for [TicketSaleListParams]. */
     class Builder internal constructor() {
 
-        private var ticketSaleId: String? = null
+        private var couponCode: String? = null
+        private var currency: String? = null
+        private var limit: Long? = null
+        private var matchId: String? = null
+        private var purchaseMethod: PurchaseMethod? = null
+        private var skip: Long? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
-        private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        internal fun from(ticketSaleDeleteParams: TicketSaleDeleteParams) = apply {
-            ticketSaleId = ticketSaleDeleteParams.ticketSaleId
-            additionalHeaders = ticketSaleDeleteParams.additionalHeaders.toBuilder()
-            additionalQueryParams = ticketSaleDeleteParams.additionalQueryParams.toBuilder()
-            additionalBodyProperties =
-                ticketSaleDeleteParams.additionalBodyProperties.toMutableMap()
+        internal fun from(ticketSaleListParams: TicketSaleListParams) = apply {
+            couponCode = ticketSaleListParams.couponCode
+            currency = ticketSaleListParams.currency
+            limit = ticketSaleListParams.limit
+            matchId = ticketSaleListParams.matchId
+            purchaseMethod = ticketSaleListParams.purchaseMethod
+            skip = ticketSaleListParams.skip
+            additionalHeaders = ticketSaleListParams.additionalHeaders.toBuilder()
+            additionalQueryParams = ticketSaleListParams.additionalQueryParams.toBuilder()
         }
 
-        fun ticketSaleId(ticketSaleId: String?) = apply { this.ticketSaleId = ticketSaleId }
+        /** Filter by coupon code (use 'none' for sales without coupons) */
+        fun couponCode(couponCode: String?) = apply { this.couponCode = couponCode }
+
+        /** Filter by currency (GBP, USD, EUR) */
+        fun currency(currency: String?) = apply { this.currency = currency }
+
+        /** Maximum number of items to return (max: 100) */
+        fun limit(limit: Long?) = apply { this.limit = limit }
+
+        /**
+         * Alias for [Builder.limit].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun limit(limit: Long) = limit(limit as Long?)
+
+        /** Filter by match ID */
+        fun matchId(matchId: String?) = apply { this.matchId = matchId }
+
+        /** Filter by purchase method */
+        fun purchaseMethod(purchaseMethod: PurchaseMethod?) = apply {
+            this.purchaseMethod = purchaseMethod
+        }
+
+        /** Number of items to skip (offset) */
+        fun skip(skip: Long?) = apply { this.skip = skip }
+
+        /**
+         * Alias for [Builder.skip].
+         *
+         * This unboxed primitive overload exists for backwards compatibility.
+         */
+        fun skip(skip: Long) = skip(skip as Long?)
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -155,74 +212,67 @@ private constructor(
             additionalQueryParams.removeAll(keys)
         }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            putAllAdditionalBodyProperties(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            additionalBodyProperties.put(key, value)
-        }
-
-        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
-
-        fun removeAdditionalBodyProperty(key: String) = apply {
-            additionalBodyProperties.remove(key)
-        }
-
-        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
-            keys.forEach(::removeAdditionalBodyProperty)
-        }
-
         /**
-         * Returns an immutable instance of [TicketSaleDeleteParams].
+         * Returns an immutable instance of [TicketSaleListParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): TicketSaleDeleteParams =
-            TicketSaleDeleteParams(
-                ticketSaleId,
+        fun build(): TicketSaleListParams =
+            TicketSaleListParams(
+                couponCode,
+                currency,
+                limit,
+                matchId,
+                purchaseMethod,
+                skip,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
-                additionalBodyProperties.toImmutable(),
             )
     }
 
-    fun _body(): Map<String, JsonValue>? = additionalBodyProperties.ifEmpty { null }
-
-    fun _pathParam(index: Int): String =
-        when (index) {
-            0 -> ticketSaleId ?: ""
-            else -> ""
-        }
-
     override fun _headers(): Headers = additionalHeaders
 
-    override fun _queryParams(): QueryParams = additionalQueryParams
+    override fun _queryParams(): QueryParams =
+        QueryParams.builder()
+            .apply {
+                couponCode?.let { put("coupon_code", it) }
+                currency?.let { put("currency", it) }
+                limit?.let { put("limit", it.toString()) }
+                matchId?.let { put("match_id", it) }
+                purchaseMethod?.let { put("purchase_method", it.toString()) }
+                skip?.let { put("skip", it.toString()) }
+                putAll(additionalQueryParams)
+            }
+            .build()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
         }
 
-        return other is TicketSaleDeleteParams &&
-            ticketSaleId == other.ticketSaleId &&
+        return other is TicketSaleListParams &&
+            couponCode == other.couponCode &&
+            currency == other.currency &&
+            limit == other.limit &&
+            matchId == other.matchId &&
+            purchaseMethod == other.purchaseMethod &&
+            skip == other.skip &&
             additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams &&
-            additionalBodyProperties == other.additionalBodyProperties
+            additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
         Objects.hash(
-            ticketSaleId,
+            couponCode,
+            currency,
+            limit,
+            matchId,
+            purchaseMethod,
+            skip,
             additionalHeaders,
             additionalQueryParams,
-            additionalBodyProperties,
         )
 
     override fun toString() =
-        "TicketSaleDeleteParams{ticketSaleId=$ticketSaleId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
+        "TicketSaleListParams{couponCode=$couponCode, currency=$currency, limit=$limit, matchId=$matchId, purchaseMethod=$purchaseMethod, skip=$skip, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

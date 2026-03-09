@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.believe.api.models.client.ticketsales
+package com.believe.api.models.ticketsales
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -17,7 +17,7 @@ internal class TicketSaleUpdateParamsTest {
             .currency("currency")
             .discount("discount")
             .matchId("match_id")
-            .purchaseMethod(TicketSaleUpdateParams.PurchaseMethod.ONLINE)
+            .purchaseMethod(PurchaseMethod.ONLINE)
             .quantity(1L)
             .subtotal("subtotal")
             .tax("tax")
@@ -46,7 +46,7 @@ internal class TicketSaleUpdateParamsTest {
                 .currency("currency")
                 .discount("discount")
                 .matchId("match_id")
-                .purchaseMethod(TicketSaleUpdateParams.PurchaseMethod.ONLINE)
+                .purchaseMethod(PurchaseMethod.ONLINE)
                 .quantity(1L)
                 .subtotal("subtotal")
                 .tax("tax")
@@ -62,7 +62,7 @@ internal class TicketSaleUpdateParamsTest {
         assertThat(body.currency()).isEqualTo("currency")
         assertThat(body.discount()).isEqualTo("discount")
         assertThat(body.matchId()).isEqualTo("match_id")
-        assertThat(body.purchaseMethod()).isEqualTo(TicketSaleUpdateParams.PurchaseMethod.ONLINE)
+        assertThat(body.purchaseMethod()).isEqualTo(PurchaseMethod.ONLINE)
         assertThat(body.quantity()).isEqualTo(1L)
         assertThat(body.subtotal()).isEqualTo("subtotal")
         assertThat(body.tax()).isEqualTo("tax")
