@@ -3,6 +3,7 @@
 package com.believe.api.services.blocking
 
 import com.believe.api.core.ClientOptions
+import com.believe.api.services.blocking.client.TicketSaleService
 import com.believe.api.services.blocking.client.WService
 
 interface ClientService {
@@ -22,6 +23,9 @@ interface ClientService {
     /** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
     fun ws(): WService
 
+    /** Ticket sales with 300 records for practicing pagination, filtering, and financial data */
+    fun ticketSales(): TicketSaleService
+
     /** A view of [ClientService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
@@ -34,5 +38,10 @@ interface ClientService {
 
         /** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
         fun ws(): WService.WithRawResponse
+
+        /**
+         * Ticket sales with 300 records for practicing pagination, filtering, and financial data
+         */
+        fun ticketSales(): TicketSaleService.WithRawResponse
     }
 }

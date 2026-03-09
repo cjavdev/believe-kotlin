@@ -3,6 +3,7 @@
 package com.believe.api.services.async
 
 import com.believe.api.core.ClientOptions
+import com.believe.api.services.async.client.TicketSaleServiceAsync
 import com.believe.api.services.async.client.WServiceAsync
 
 interface ClientServiceAsync {
@@ -22,6 +23,9 @@ interface ClientServiceAsync {
     /** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
     fun ws(): WServiceAsync
 
+    /** Ticket sales with 300 records for practicing pagination, filtering, and financial data */
+    fun ticketSales(): TicketSaleServiceAsync
+
     /**
      * A view of [ClientServiceAsync] that provides access to raw HTTP responses for each method.
      */
@@ -38,5 +42,10 @@ interface ClientServiceAsync {
 
         /** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
         fun ws(): WServiceAsync.WithRawResponse
+
+        /**
+         * Ticket sales with 300 records for practicing pagination, filtering, and financial data
+         */
+        fun ticketSales(): TicketSaleServiceAsync.WithRawResponse
     }
 }
