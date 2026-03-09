@@ -1,21 +1,27 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.believe.api.models.client.ticketsales
+package com.believe.api.models.ticketsales
 
+import com.believe.api.core.JsonValue
 import com.believe.api.core.Params
 import com.believe.api.core.http.Headers
 import com.believe.api.core.http.QueryParams
+import com.believe.api.core.toImmutable
 import java.util.Objects
 
-/** Retrieve detailed information about a specific ticket sale. */
-class TicketSaleRetrieveParams
+/** Remove a ticket sale from the database. */
+class TicketSaleDeleteParams
 private constructor(
     private val ticketSaleId: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
+    private val additionalBodyProperties: Map<String, JsonValue>,
 ) : Params {
 
     fun ticketSaleId(): String? = ticketSaleId
+
+    /** Additional body properties to send with the request. */
+    fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -27,23 +33,26 @@ private constructor(
 
     companion object {
 
-        fun none(): TicketSaleRetrieveParams = builder().build()
+        fun none(): TicketSaleDeleteParams = builder().build()
 
-        /** Returns a mutable builder for constructing an instance of [TicketSaleRetrieveParams]. */
+        /** Returns a mutable builder for constructing an instance of [TicketSaleDeleteParams]. */
         fun builder() = Builder()
     }
 
-    /** A builder for [TicketSaleRetrieveParams]. */
+    /** A builder for [TicketSaleDeleteParams]. */
     class Builder internal constructor() {
 
         private var ticketSaleId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
+        private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        internal fun from(ticketSaleRetrieveParams: TicketSaleRetrieveParams) = apply {
-            ticketSaleId = ticketSaleRetrieveParams.ticketSaleId
-            additionalHeaders = ticketSaleRetrieveParams.additionalHeaders.toBuilder()
-            additionalQueryParams = ticketSaleRetrieveParams.additionalQueryParams.toBuilder()
+        internal fun from(ticketSaleDeleteParams: TicketSaleDeleteParams) = apply {
+            ticketSaleId = ticketSaleDeleteParams.ticketSaleId
+            additionalHeaders = ticketSaleDeleteParams.additionalHeaders.toBuilder()
+            additionalQueryParams = ticketSaleDeleteParams.additionalQueryParams.toBuilder()
+            additionalBodyProperties =
+                ticketSaleDeleteParams.additionalBodyProperties.toMutableMap()
         }
 
         fun ticketSaleId(ticketSaleId: String?) = apply { this.ticketSaleId = ticketSaleId }
@@ -146,18 +155,43 @@ private constructor(
             additionalQueryParams.removeAll(keys)
         }
 
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
+            this.additionalBodyProperties.clear()
+            putAllAdditionalBodyProperties(additionalBodyProperties)
+        }
+
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
+            additionalBodyProperties.put(key, value)
+        }
+
+        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
+            apply {
+                this.additionalBodyProperties.putAll(additionalBodyProperties)
+            }
+
+        fun removeAdditionalBodyProperty(key: String) = apply {
+            additionalBodyProperties.remove(key)
+        }
+
+        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
+            keys.forEach(::removeAdditionalBodyProperty)
+        }
+
         /**
-         * Returns an immutable instance of [TicketSaleRetrieveParams].
+         * Returns an immutable instance of [TicketSaleDeleteParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): TicketSaleRetrieveParams =
-            TicketSaleRetrieveParams(
+        fun build(): TicketSaleDeleteParams =
+            TicketSaleDeleteParams(
                 ticketSaleId,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
+                additionalBodyProperties.toImmutable(),
             )
     }
+
+    fun _body(): Map<String, JsonValue>? = additionalBodyProperties.ifEmpty { null }
 
     fun _pathParam(index: Int): String =
         when (index) {
@@ -174,15 +208,21 @@ private constructor(
             return true
         }
 
-        return other is TicketSaleRetrieveParams &&
+        return other is TicketSaleDeleteParams &&
             ticketSaleId == other.ticketSaleId &&
             additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams
+            additionalQueryParams == other.additionalQueryParams &&
+            additionalBodyProperties == other.additionalBodyProperties
     }
 
     override fun hashCode(): Int =
-        Objects.hash(ticketSaleId, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            ticketSaleId,
+            additionalHeaders,
+            additionalQueryParams,
+            additionalBodyProperties,
+        )
 
     override fun toString() =
-        "TicketSaleRetrieveParams{ticketSaleId=$ticketSaleId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "TicketSaleDeleteParams{ticketSaleId=$ticketSaleId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
 }

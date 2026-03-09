@@ -1,11 +1,11 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.believe.api.models.client.ticketsales
+package com.believe.api.models.ticketsales
 
 import com.believe.api.core.AutoPager
 import com.believe.api.core.Page
 import com.believe.api.core.checkRequired
-import com.believe.api.services.blocking.client.TicketSaleService
+import com.believe.api.services.blocking.TicketSaleService
 import java.util.Objects
 
 /** @see TicketSaleService.list */
@@ -14,14 +14,14 @@ private constructor(
     private val service: TicketSaleService,
     private val params: TicketSaleListParams,
     private val response: TicketSaleListPageResponse,
-) : Page<TicketSaleListResponse> {
+) : Page<TicketSale> {
 
     /**
      * Delegates to [TicketSaleListPageResponse], but gracefully handles missing data.
      *
      * @see TicketSaleListPageResponse.data
      */
-    fun data(): List<TicketSaleListResponse> = response._data().getNullable("data") ?: emptyList()
+    fun data(): List<TicketSale> = response._data().getNullable("data") ?: emptyList()
 
     /**
      * Delegates to [TicketSaleListPageResponse], but gracefully handles missing data.
@@ -37,7 +37,7 @@ private constructor(
      */
     fun skip(): Long? = response._skip().getNullable("skip")
 
-    override fun items(): List<TicketSaleListResponse> = data()
+    override fun items(): List<TicketSale> = data()
 
     override fun hasNextPage(): Boolean {
         if (items().isEmpty()) {
@@ -56,7 +56,7 @@ private constructor(
 
     override fun nextPage(): TicketSaleListPage = service.list(nextPageParams())
 
-    fun autoPager(): AutoPager<TicketSaleListResponse> = AutoPager.from(this)
+    fun autoPager(): AutoPager<TicketSale> = AutoPager.from(this)
 
     /** The parameters that were used to request this page. */
     fun params(): TicketSaleListParams = params

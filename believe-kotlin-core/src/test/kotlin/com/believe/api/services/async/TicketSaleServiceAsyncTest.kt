@@ -1,10 +1,11 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.believe.api.services.async.client
+package com.believe.api.services.async
 
 import com.believe.api.client.okhttp.BelieveOkHttpClientAsync
-import com.believe.api.models.client.ticketsales.TicketSaleCreateParams
-import com.believe.api.models.client.ticketsales.TicketSaleUpdateParams
+import com.believe.api.models.ticketsales.PurchaseMethod
+import com.believe.api.models.ticketsales.TicketSaleCreateParams
+import com.believe.api.models.ticketsales.TicketSaleUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -14,7 +15,7 @@ internal class TicketSaleServiceAsyncTest {
     @Test
     suspend fun create() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val ticketSaleServiceAsync = client.client().ticketSales()
+        val ticketSaleServiceAsync = client.ticketSales()
 
         val ticketSale =
             ticketSaleServiceAsync.create(
@@ -23,7 +24,7 @@ internal class TicketSaleServiceAsyncTest {
                     .currency("GBP")
                     .discount("9.00")
                     .matchId("match-001")
-                    .purchaseMethod(TicketSaleCreateParams.PurchaseMethod.ONLINE)
+                    .purchaseMethod(PurchaseMethod.ONLINE)
                     .quantity(2L)
                     .subtotal("90.00")
                     .tax("16.20")
@@ -41,7 +42,7 @@ internal class TicketSaleServiceAsyncTest {
     @Test
     suspend fun retrieve() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val ticketSaleServiceAsync = client.client().ticketSales()
+        val ticketSaleServiceAsync = client.ticketSales()
 
         val ticketSale = ticketSaleServiceAsync.retrieve("ticket_sale_id")
 
@@ -52,7 +53,7 @@ internal class TicketSaleServiceAsyncTest {
     @Test
     suspend fun update() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val ticketSaleServiceAsync = client.client().ticketSales()
+        val ticketSaleServiceAsync = client.ticketSales()
 
         val ticketSale =
             ticketSaleServiceAsync.update(
@@ -64,7 +65,7 @@ internal class TicketSaleServiceAsyncTest {
                     .currency("currency")
                     .discount("discount")
                     .matchId("match_id")
-                    .purchaseMethod(TicketSaleUpdateParams.PurchaseMethod.ONLINE)
+                    .purchaseMethod(PurchaseMethod.ONLINE)
                     .quantity(1L)
                     .subtotal("subtotal")
                     .tax("tax")
@@ -80,7 +81,7 @@ internal class TicketSaleServiceAsyncTest {
     @Test
     suspend fun list() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val ticketSaleServiceAsync = client.client().ticketSales()
+        val ticketSaleServiceAsync = client.ticketSales()
 
         val page = ticketSaleServiceAsync.list()
 
@@ -91,7 +92,7 @@ internal class TicketSaleServiceAsyncTest {
     @Test
     suspend fun delete() {
         val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val ticketSaleServiceAsync = client.client().ticketSales()
+        val ticketSaleServiceAsync = client.ticketSales()
 
         ticketSaleServiceAsync.delete("ticket_sale_id")
     }
