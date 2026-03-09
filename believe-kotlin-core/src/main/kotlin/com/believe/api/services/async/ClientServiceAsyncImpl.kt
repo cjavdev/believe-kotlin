@@ -3,6 +3,8 @@
 package com.believe.api.services.async
 
 import com.believe.api.core.ClientOptions
+import com.believe.api.services.async.client.TicketSaleServiceAsync
+import com.believe.api.services.async.client.TicketSaleServiceAsyncImpl
 import com.believe.api.services.async.client.WServiceAsync
 import com.believe.api.services.async.client.WServiceAsyncImpl
 
@@ -15,6 +17,10 @@ class ClientServiceAsyncImpl internal constructor(private val clientOptions: Cli
 
     private val ws: WServiceAsync by lazy { WServiceAsyncImpl(clientOptions) }
 
+    private val ticketSales: TicketSaleServiceAsync by lazy {
+        TicketSaleServiceAsyncImpl(clientOptions)
+    }
+
     override fun withRawResponse(): ClientServiceAsync.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ClientServiceAsync =
@@ -23,11 +29,18 @@ class ClientServiceAsyncImpl internal constructor(private val clientOptions: Cli
     /** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
     override fun ws(): WServiceAsync = ws
 
+    /** Ticket sales with 300 records for practicing pagination, filtering, and financial data */
+    override fun ticketSales(): TicketSaleServiceAsync = ticketSales
+
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ClientServiceAsync.WithRawResponse {
 
         private val ws: WServiceAsync.WithRawResponse by lazy {
             WServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val ticketSales: TicketSaleServiceAsync.WithRawResponse by lazy {
+            TicketSaleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         override fun withOptions(
@@ -39,5 +52,10 @@ class ClientServiceAsyncImpl internal constructor(private val clientOptions: Cli
 
         /** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
         override fun ws(): WServiceAsync.WithRawResponse = ws
+
+        /**
+         * Ticket sales with 300 records for practicing pagination, filtering, and financial data
+         */
+        override fun ticketSales(): TicketSaleServiceAsync.WithRawResponse = ticketSales
     }
 }
