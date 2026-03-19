@@ -23,12 +23,16 @@ import com.believe.api.services.blocking.BiscuitService
 import com.believe.api.services.blocking.BiscuitServiceImpl
 import com.believe.api.services.blocking.CharacterService
 import com.believe.api.services.blocking.CharacterServiceImpl
+import com.believe.api.services.blocking.ClientService
+import com.believe.api.services.blocking.ClientServiceImpl
 import com.believe.api.services.blocking.CoachingService
 import com.believe.api.services.blocking.CoachingServiceImpl
 import com.believe.api.services.blocking.ConflictService
 import com.believe.api.services.blocking.ConflictServiceImpl
 import com.believe.api.services.blocking.EpisodeService
 import com.believe.api.services.blocking.EpisodeServiceImpl
+import com.believe.api.services.blocking.HealthService
+import com.believe.api.services.blocking.HealthServiceImpl
 import com.believe.api.services.blocking.MatchService
 import com.believe.api.services.blocking.MatchServiceImpl
 import com.believe.api.services.blocking.PepTalkService
@@ -47,6 +51,8 @@ import com.believe.api.services.blocking.TeamService
 import com.believe.api.services.blocking.TeamServiceImpl
 import com.believe.api.services.blocking.TicketSaleService
 import com.believe.api.services.blocking.TicketSaleServiceImpl
+import com.believe.api.services.blocking.VersionService
+import com.believe.api.services.blocking.VersionServiceImpl
 import com.believe.api.services.blocking.WebhookService
 import com.believe.api.services.blocking.WebhookServiceImpl
 
@@ -109,6 +115,12 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
         TicketSaleServiceImpl(clientOptionsWithUserAgent)
     }
 
+    private val health: HealthService by lazy { HealthServiceImpl(clientOptionsWithUserAgent) }
+
+    private val version: VersionService by lazy { VersionServiceImpl(clientOptionsWithUserAgent) }
+
+    private val client: ClientService by lazy { ClientServiceImpl(clientOptionsWithUserAgent) }
+
     override fun async(): BelieveClientAsync = async
 
     override fun withRawResponse(): BelieveClient.WithRawResponse = withRawResponse
@@ -163,6 +175,12 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
 
     /** Ticket sales with 300 records for practicing pagination, filtering, and financial data */
     override fun ticketSales(): TicketSaleService = ticketSales
+
+    override fun health(): HealthService = health
+
+    override fun version(): VersionService = version
+
+    override fun client(): ClientService = client
 
     override fun getWelcome(
         params: ClientGetWelcomeParams,
@@ -243,6 +261,18 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
             TicketSaleServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val health: HealthService.WithRawResponse by lazy {
+            HealthServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val version: VersionService.WithRawResponse by lazy {
+            VersionServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val client: ClientService.WithRawResponse by lazy {
+            ClientServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: (ClientOptions.Builder) -> Unit
         ): BelieveClient.WithRawResponse =
@@ -298,6 +328,12 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
          * Ticket sales with 300 records for practicing pagination, filtering, and financial data
          */
         override fun ticketSales(): TicketSaleService.WithRawResponse = ticketSales
+
+        override fun health(): HealthService.WithRawResponse = health
+
+        override fun version(): VersionService.WithRawResponse = version
+
+        override fun client(): ClientService.WithRawResponse = client
 
         private val getWelcomeHandler: Handler<ClientGetWelcomeResponse> =
             jsonHandler<ClientGetWelcomeResponse>(clientOptions.jsonMapper)
