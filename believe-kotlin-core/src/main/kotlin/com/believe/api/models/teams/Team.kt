@@ -104,6 +104,8 @@ private constructor(
         mutableMapOf(),
     )
 
+    fun go(): String = values().teamMotto()
+
     /**
      * Unique identifier
      *
