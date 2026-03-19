@@ -3,7 +3,20 @@
 package com.believe.api.client
 
 import com.believe.api.core.ClientOptions
+import com.believe.api.core.RequestOptions
 import com.believe.api.core.getPackageVersion
+import com.believe.api.core.handlers.errorBodyHandler
+import com.believe.api.core.handlers.errorHandler
+import com.believe.api.core.handlers.jsonHandler
+import com.believe.api.core.http.HttpMethod
+import com.believe.api.core.http.HttpRequest
+import com.believe.api.core.http.HttpResponse
+import com.believe.api.core.http.HttpResponse.Handler
+import com.believe.api.core.http.HttpResponseFor
+import com.believe.api.core.http.parseable
+import com.believe.api.core.prepare
+import com.believe.api.models.ClientGetWelcomeParams
+import com.believe.api.models.ClientGetWelcomeResponse
 import com.believe.api.services.blocking.BelieveService
 import com.believe.api.services.blocking.BelieveServiceImpl
 import com.believe.api.services.blocking.BiscuitService
@@ -32,6 +45,8 @@ import com.believe.api.services.blocking.TeamMemberService
 import com.believe.api.services.blocking.TeamMemberServiceImpl
 import com.believe.api.services.blocking.TeamService
 import com.believe.api.services.blocking.TeamServiceImpl
+import com.believe.api.services.blocking.TicketSaleService
+import com.believe.api.services.blocking.TicketSaleServiceImpl
 import com.believe.api.services.blocking.WebhookService
 import com.believe.api.services.blocking.WebhookServiceImpl
 
@@ -90,6 +105,10 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
 
     private val webhooks: WebhookService by lazy { WebhookServiceImpl(clientOptionsWithUserAgent) }
 
+    private val ticketSales: TicketSaleService by lazy {
+        TicketSaleServiceImpl(clientOptionsWithUserAgent)
+    }
+
     override fun async(): BelieveClientAsync = async
 
     override fun withRawResponse(): BelieveClient.WithRawResponse = withRawResponse
@@ -142,10 +161,23 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
     /** Register webhook endpoints and trigger events for testing */
     override fun webhooks(): WebhookService = webhooks
 
+    /** Ticket sales with 300 records for practicing pagination, filtering, and financial data */
+    override fun ticketSales(): TicketSaleService = ticketSales
+
+    override fun getWelcome(
+        params: ClientGetWelcomeParams,
+        requestOptions: RequestOptions,
+    ): ClientGetWelcomeResponse =
+        // get /
+        withRawResponse().getWelcome(params, requestOptions).parse()
+
     override fun close() = clientOptions.close()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         BelieveClient.WithRawResponse {
+
+        private val errorHandler: Handler<HttpResponse> =
+            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
         private val characters: CharacterService.WithRawResponse by lazy {
             CharacterServiceImpl.WithRawResponseImpl(clientOptions)
@@ -207,6 +239,10 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
             WebhookServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val ticketSales: TicketSaleService.WithRawResponse by lazy {
+            TicketSaleServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: (ClientOptions.Builder) -> Unit
         ): BelieveClient.WithRawResponse =
@@ -257,5 +293,37 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
 
         /** Register webhook endpoints and trigger events for testing */
         override fun webhooks(): WebhookService.WithRawResponse = webhooks
+
+        /**
+         * Ticket sales with 300 records for practicing pagination, filtering, and financial data
+         */
+        override fun ticketSales(): TicketSaleService.WithRawResponse = ticketSales
+
+        private val getWelcomeHandler: Handler<ClientGetWelcomeResponse> =
+            jsonHandler<ClientGetWelcomeResponse>(clientOptions.jsonMapper)
+
+        override fun getWelcome(
+            params: ClientGetWelcomeParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ClientGetWelcomeResponse> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { getWelcomeHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
     }
 }
