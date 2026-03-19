@@ -68,6 +68,7 @@ internal class ProGuardCompatibilityTest {
         assertThat(client.pepTalk()).isNotNull()
         assertThat(client.stream()).isNotNull()
         assertThat(client.teamMembers()).isNotNull()
+        assertThat(client.webhooks()).isNotNull()
     }
 
     @Test

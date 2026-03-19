@@ -32,6 +32,8 @@ import com.believe.api.services.blocking.TeamMemberService
 import com.believe.api.services.blocking.TeamMemberServiceImpl
 import com.believe.api.services.blocking.TeamService
 import com.believe.api.services.blocking.TeamServiceImpl
+import com.believe.api.services.blocking.WebhookService
+import com.believe.api.services.blocking.WebhookServiceImpl
 
 class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClient {
 
@@ -86,6 +88,8 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
         TeamMemberServiceImpl(clientOptionsWithUserAgent)
     }
 
+    private val webhooks: WebhookService by lazy { WebhookServiceImpl(clientOptionsWithUserAgent) }
+
     override fun async(): BelieveClientAsync = async
 
     override fun withRawResponse(): BelieveClient.WithRawResponse = withRawResponse
@@ -134,6 +138,9 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
      * Team members with union types (oneOf) - Players, Coaches, Medical Staff, Equipment Managers
      */
     override fun teamMembers(): TeamMemberService = teamMembers
+
+    /** Register webhook endpoints and trigger events for testing */
+    override fun webhooks(): WebhookService = webhooks
 
     override fun close() = clientOptions.close()
 
@@ -196,6 +203,10 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
             TeamMemberServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val webhooks: WebhookService.WithRawResponse by lazy {
+            WebhookServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: (ClientOptions.Builder) -> Unit
         ): BelieveClient.WithRawResponse =
@@ -243,5 +254,8 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
          * Managers
          */
         override fun teamMembers(): TeamMemberService.WithRawResponse = teamMembers
+
+        /** Register webhook endpoints and trigger events for testing */
+        override fun webhooks(): WebhookService.WithRawResponse = webhooks
     }
 }
