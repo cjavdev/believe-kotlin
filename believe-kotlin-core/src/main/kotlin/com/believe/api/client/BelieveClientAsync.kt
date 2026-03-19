@@ -17,6 +17,7 @@ import com.believe.api.services.async.ReframeServiceAsync
 import com.believe.api.services.async.StreamServiceAsync
 import com.believe.api.services.async.TeamMemberServiceAsync
 import com.believe.api.services.async.TeamServiceAsync
+import com.believe.api.services.async.WebhookServiceAsync
 
 /**
  * A client for interacting with the Believe REST API asynchronously. You can also switch to
@@ -96,6 +97,9 @@ interface BelieveClientAsync {
      */
     fun teamMembers(): TeamMemberServiceAsync
 
+    /** Register webhook endpoints and trigger events for testing */
+    fun webhooks(): WebhookServiceAsync
+
     /**
      * Closes this client, relinquishing any underlying resources.
      *
@@ -165,5 +169,8 @@ interface BelieveClientAsync {
          * Managers
          */
         fun teamMembers(): TeamMemberServiceAsync.WithRawResponse
+
+        /** Register webhook endpoints and trigger events for testing */
+        fun webhooks(): WebhookServiceAsync.WithRawResponse
     }
 }

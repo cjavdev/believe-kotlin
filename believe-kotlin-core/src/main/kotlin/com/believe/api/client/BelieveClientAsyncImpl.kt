@@ -32,6 +32,8 @@ import com.believe.api.services.async.TeamMemberServiceAsync
 import com.believe.api.services.async.TeamMemberServiceAsyncImpl
 import com.believe.api.services.async.TeamServiceAsync
 import com.believe.api.services.async.TeamServiceAsyncImpl
+import com.believe.api.services.async.WebhookServiceAsync
+import com.believe.api.services.async.WebhookServiceAsyncImpl
 
 class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : BelieveClientAsync {
 
@@ -104,6 +106,10 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
         TeamMemberServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val webhooks: WebhookServiceAsync by lazy {
+        WebhookServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     override fun sync(): BelieveClient = sync
 
     override fun withRawResponse(): BelieveClientAsync.WithRawResponse = withRawResponse
@@ -152,6 +158,9 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
      * Team members with union types (oneOf) - Players, Coaches, Medical Staff, Equipment Managers
      */
     override fun teamMembers(): TeamMemberServiceAsync = teamMembers
+
+    /** Register webhook endpoints and trigger events for testing */
+    override fun webhooks(): WebhookServiceAsync = webhooks
 
     override fun close() = clientOptions.close()
 
@@ -214,6 +223,10 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
             TeamMemberServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val webhooks: WebhookServiceAsync.WithRawResponse by lazy {
+            WebhookServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: (ClientOptions.Builder) -> Unit
         ): BelieveClientAsync.WithRawResponse =
@@ -263,5 +276,8 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
          * Managers
          */
         override fun teamMembers(): TeamMemberServiceAsync.WithRawResponse = teamMembers
+
+        /** Register webhook endpoints and trigger events for testing */
+        override fun webhooks(): WebhookServiceAsync.WithRawResponse = webhooks
     }
 }

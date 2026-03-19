@@ -17,6 +17,7 @@ import com.believe.api.services.blocking.ReframeService
 import com.believe.api.services.blocking.StreamService
 import com.believe.api.services.blocking.TeamMemberService
 import com.believe.api.services.blocking.TeamService
+import com.believe.api.services.blocking.WebhookService
 
 /**
  * A client for interacting with the Believe REST API synchronously. You can also switch to
@@ -96,6 +97,9 @@ interface BelieveClient {
      */
     fun teamMembers(): TeamMemberService
 
+    /** Register webhook endpoints and trigger events for testing */
+    fun webhooks(): WebhookService
+
     /**
      * Closes this client, relinquishing any underlying resources.
      *
@@ -161,5 +165,8 @@ interface BelieveClient {
          * Managers
          */
         fun teamMembers(): TeamMemberService.WithRawResponse
+
+        /** Register webhook endpoints and trigger events for testing */
+        fun webhooks(): WebhookService.WithRawResponse
     }
 }
