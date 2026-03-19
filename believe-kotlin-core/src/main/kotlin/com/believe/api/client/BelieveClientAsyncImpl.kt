@@ -23,12 +23,16 @@ import com.believe.api.services.async.BiscuitServiceAsync
 import com.believe.api.services.async.BiscuitServiceAsyncImpl
 import com.believe.api.services.async.CharacterServiceAsync
 import com.believe.api.services.async.CharacterServiceAsyncImpl
+import com.believe.api.services.async.ClientServiceAsync
+import com.believe.api.services.async.ClientServiceAsyncImpl
 import com.believe.api.services.async.CoachingServiceAsync
 import com.believe.api.services.async.CoachingServiceAsyncImpl
 import com.believe.api.services.async.ConflictServiceAsync
 import com.believe.api.services.async.ConflictServiceAsyncImpl
 import com.believe.api.services.async.EpisodeServiceAsync
 import com.believe.api.services.async.EpisodeServiceAsyncImpl
+import com.believe.api.services.async.HealthServiceAsync
+import com.believe.api.services.async.HealthServiceAsyncImpl
 import com.believe.api.services.async.MatchServiceAsync
 import com.believe.api.services.async.MatchServiceAsyncImpl
 import com.believe.api.services.async.PepTalkServiceAsync
@@ -47,6 +51,8 @@ import com.believe.api.services.async.TeamServiceAsync
 import com.believe.api.services.async.TeamServiceAsyncImpl
 import com.believe.api.services.async.TicketSaleServiceAsync
 import com.believe.api.services.async.TicketSaleServiceAsyncImpl
+import com.believe.api.services.async.VersionServiceAsync
+import com.believe.api.services.async.VersionServiceAsyncImpl
 import com.believe.api.services.async.WebhookServiceAsync
 import com.believe.api.services.async.WebhookServiceAsyncImpl
 
@@ -129,6 +135,18 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
         TicketSaleServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val health: HealthServiceAsync by lazy {
+        HealthServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
+    private val version: VersionServiceAsync by lazy {
+        VersionServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
+    private val client: ClientServiceAsync by lazy {
+        ClientServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     override fun sync(): BelieveClient = sync
 
     override fun withRawResponse(): BelieveClientAsync.WithRawResponse = withRawResponse
@@ -183,6 +201,12 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
 
     /** Ticket sales with 300 records for practicing pagination, filtering, and financial data */
     override fun ticketSales(): TicketSaleServiceAsync = ticketSales
+
+    override fun health(): HealthServiceAsync = health
+
+    override fun version(): VersionServiceAsync = version
+
+    override fun client(): ClientServiceAsync = client
 
     override suspend fun getWelcome(
         params: ClientGetWelcomeParams,
@@ -263,6 +287,18 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
             TicketSaleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val health: HealthServiceAsync.WithRawResponse by lazy {
+            HealthServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val version: VersionServiceAsync.WithRawResponse by lazy {
+            VersionServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val client: ClientServiceAsync.WithRawResponse by lazy {
+            ClientServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: (ClientOptions.Builder) -> Unit
         ): BelieveClientAsync.WithRawResponse =
@@ -320,6 +356,12 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
          * Ticket sales with 300 records for practicing pagination, filtering, and financial data
          */
         override fun ticketSales(): TicketSaleServiceAsync.WithRawResponse = ticketSales
+
+        override fun health(): HealthServiceAsync.WithRawResponse = health
+
+        override fun version(): VersionServiceAsync.WithRawResponse = version
+
+        override fun client(): ClientServiceAsync.WithRawResponse = client
 
         private val getWelcomeHandler: Handler<ClientGetWelcomeResponse> =
             jsonHandler<ClientGetWelcomeResponse>(clientOptions.jsonMapper)
