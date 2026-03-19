@@ -3,18 +3,12 @@
 package com.believe.api.client
 
 import com.believe.api.core.ClientOptions
-import com.believe.api.core.RequestOptions
-import com.believe.api.core.http.HttpResponseFor
-import com.believe.api.models.ClientGetWelcomeParams
-import com.believe.api.models.ClientGetWelcomeResponse
 import com.believe.api.services.async.BelieveServiceAsync
 import com.believe.api.services.async.BiscuitServiceAsync
 import com.believe.api.services.async.CharacterServiceAsync
-import com.believe.api.services.async.ClientServiceAsync
 import com.believe.api.services.async.CoachingServiceAsync
 import com.believe.api.services.async.ConflictServiceAsync
 import com.believe.api.services.async.EpisodeServiceAsync
-import com.believe.api.services.async.HealthServiceAsync
 import com.believe.api.services.async.MatchServiceAsync
 import com.believe.api.services.async.PepTalkServiceAsync
 import com.believe.api.services.async.PressServiceAsync
@@ -23,10 +17,6 @@ import com.believe.api.services.async.ReframeServiceAsync
 import com.believe.api.services.async.StreamServiceAsync
 import com.believe.api.services.async.TeamMemberServiceAsync
 import com.believe.api.services.async.TeamServiceAsync
-import com.believe.api.services.async.TicketSaleServiceAsync
-import com.believe.api.services.async.VersionServiceAsync
-import com.believe.api.services.async.WebhookServiceAsync
-import com.google.errorprone.annotations.MustBeClosed
 
 /**
  * A client for interacting with the Believe REST API asynchronously. You can also switch to
@@ -106,28 +96,6 @@ interface BelieveClientAsync {
      */
     fun teamMembers(): TeamMemberServiceAsync
 
-    /** Register webhook endpoints and trigger events for testing */
-    fun webhooks(): WebhookServiceAsync
-
-    /** Ticket sales with 300 records for practicing pagination, filtering, and financial data */
-    fun ticketSales(): TicketSaleServiceAsync
-
-    fun health(): HealthServiceAsync
-
-    fun version(): VersionServiceAsync
-
-    fun client(): ClientServiceAsync
-
-    /** Get a warm welcome and overview of available endpoints. */
-    suspend fun getWelcome(
-        params: ClientGetWelcomeParams = ClientGetWelcomeParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): ClientGetWelcomeResponse
-
-    /** @see getWelcome */
-    suspend fun getWelcome(requestOptions: RequestOptions): ClientGetWelcomeResponse =
-        getWelcome(ClientGetWelcomeParams.none(), requestOptions)
-
     /**
      * Closes this client, relinquishing any underlying resources.
      *
@@ -197,36 +165,5 @@ interface BelieveClientAsync {
          * Managers
          */
         fun teamMembers(): TeamMemberServiceAsync.WithRawResponse
-
-        /** Register webhook endpoints and trigger events for testing */
-        fun webhooks(): WebhookServiceAsync.WithRawResponse
-
-        /**
-         * Ticket sales with 300 records for practicing pagination, filtering, and financial data
-         */
-        fun ticketSales(): TicketSaleServiceAsync.WithRawResponse
-
-        fun health(): HealthServiceAsync.WithRawResponse
-
-        fun version(): VersionServiceAsync.WithRawResponse
-
-        fun client(): ClientServiceAsync.WithRawResponse
-
-        /**
-         * Returns a raw HTTP response for `get /`, but is otherwise the same as
-         * [BelieveClientAsync.getWelcome].
-         */
-        @MustBeClosed
-        suspend fun getWelcome(
-            params: ClientGetWelcomeParams = ClientGetWelcomeParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ClientGetWelcomeResponse>
-
-        /** @see getWelcome */
-        @MustBeClosed
-        suspend fun getWelcome(
-            requestOptions: RequestOptions
-        ): HttpResponseFor<ClientGetWelcomeResponse> =
-            getWelcome(ClientGetWelcomeParams.none(), requestOptions)
     }
 }
