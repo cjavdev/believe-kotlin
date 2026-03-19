@@ -3,36 +3,19 @@
 package com.believe.api.client
 
 import com.believe.api.core.ClientOptions
-import com.believe.api.core.RequestOptions
 import com.believe.api.core.getPackageVersion
-import com.believe.api.core.handlers.errorBodyHandler
-import com.believe.api.core.handlers.errorHandler
-import com.believe.api.core.handlers.jsonHandler
-import com.believe.api.core.http.HttpMethod
-import com.believe.api.core.http.HttpRequest
-import com.believe.api.core.http.HttpResponse
-import com.believe.api.core.http.HttpResponse.Handler
-import com.believe.api.core.http.HttpResponseFor
-import com.believe.api.core.http.parseable
-import com.believe.api.core.prepare
-import com.believe.api.models.ClientGetWelcomeParams
-import com.believe.api.models.ClientGetWelcomeResponse
 import com.believe.api.services.blocking.BelieveService
 import com.believe.api.services.blocking.BelieveServiceImpl
 import com.believe.api.services.blocking.BiscuitService
 import com.believe.api.services.blocking.BiscuitServiceImpl
 import com.believe.api.services.blocking.CharacterService
 import com.believe.api.services.blocking.CharacterServiceImpl
-import com.believe.api.services.blocking.ClientService
-import com.believe.api.services.blocking.ClientServiceImpl
 import com.believe.api.services.blocking.CoachingService
 import com.believe.api.services.blocking.CoachingServiceImpl
 import com.believe.api.services.blocking.ConflictService
 import com.believe.api.services.blocking.ConflictServiceImpl
 import com.believe.api.services.blocking.EpisodeService
 import com.believe.api.services.blocking.EpisodeServiceImpl
-import com.believe.api.services.blocking.HealthService
-import com.believe.api.services.blocking.HealthServiceImpl
 import com.believe.api.services.blocking.MatchService
 import com.believe.api.services.blocking.MatchServiceImpl
 import com.believe.api.services.blocking.PepTalkService
@@ -49,12 +32,6 @@ import com.believe.api.services.blocking.TeamMemberService
 import com.believe.api.services.blocking.TeamMemberServiceImpl
 import com.believe.api.services.blocking.TeamService
 import com.believe.api.services.blocking.TeamServiceImpl
-import com.believe.api.services.blocking.TicketSaleService
-import com.believe.api.services.blocking.TicketSaleServiceImpl
-import com.believe.api.services.blocking.VersionService
-import com.believe.api.services.blocking.VersionServiceImpl
-import com.believe.api.services.blocking.WebhookService
-import com.believe.api.services.blocking.WebhookServiceImpl
 
 class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClient {
 
@@ -109,18 +86,6 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
         TeamMemberServiceImpl(clientOptionsWithUserAgent)
     }
 
-    private val webhooks: WebhookService by lazy { WebhookServiceImpl(clientOptionsWithUserAgent) }
-
-    private val ticketSales: TicketSaleService by lazy {
-        TicketSaleServiceImpl(clientOptionsWithUserAgent)
-    }
-
-    private val health: HealthService by lazy { HealthServiceImpl(clientOptionsWithUserAgent) }
-
-    private val version: VersionService by lazy { VersionServiceImpl(clientOptionsWithUserAgent) }
-
-    private val client: ClientService by lazy { ClientServiceImpl(clientOptionsWithUserAgent) }
-
     override fun async(): BelieveClientAsync = async
 
     override fun withRawResponse(): BelieveClient.WithRawResponse = withRawResponse
@@ -170,32 +135,10 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
      */
     override fun teamMembers(): TeamMemberService = teamMembers
 
-    /** Register webhook endpoints and trigger events for testing */
-    override fun webhooks(): WebhookService = webhooks
-
-    /** Ticket sales with 300 records for practicing pagination, filtering, and financial data */
-    override fun ticketSales(): TicketSaleService = ticketSales
-
-    override fun health(): HealthService = health
-
-    override fun version(): VersionService = version
-
-    override fun client(): ClientService = client
-
-    override fun getWelcome(
-        params: ClientGetWelcomeParams,
-        requestOptions: RequestOptions,
-    ): ClientGetWelcomeResponse =
-        // get /
-        withRawResponse().getWelcome(params, requestOptions).parse()
-
     override fun close() = clientOptions.close()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         BelieveClient.WithRawResponse {
-
-        private val errorHandler: Handler<HttpResponse> =
-            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
         private val characters: CharacterService.WithRawResponse by lazy {
             CharacterServiceImpl.WithRawResponseImpl(clientOptions)
@@ -253,26 +196,6 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
             TeamMemberServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val webhooks: WebhookService.WithRawResponse by lazy {
-            WebhookServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val ticketSales: TicketSaleService.WithRawResponse by lazy {
-            TicketSaleServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val health: HealthService.WithRawResponse by lazy {
-            HealthServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val version: VersionService.WithRawResponse by lazy {
-            VersionServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val client: ClientService.WithRawResponse by lazy {
-            ClientServiceImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: (ClientOptions.Builder) -> Unit
         ): BelieveClient.WithRawResponse =
@@ -320,46 +243,5 @@ class BelieveClientImpl(private val clientOptions: ClientOptions) : BelieveClien
          * Managers
          */
         override fun teamMembers(): TeamMemberService.WithRawResponse = teamMembers
-
-        /** Register webhook endpoints and trigger events for testing */
-        override fun webhooks(): WebhookService.WithRawResponse = webhooks
-
-        /**
-         * Ticket sales with 300 records for practicing pagination, filtering, and financial data
-         */
-        override fun ticketSales(): TicketSaleService.WithRawResponse = ticketSales
-
-        override fun health(): HealthService.WithRawResponse = health
-
-        override fun version(): VersionService.WithRawResponse = version
-
-        override fun client(): ClientService.WithRawResponse = client
-
-        private val getWelcomeHandler: Handler<ClientGetWelcomeResponse> =
-            jsonHandler<ClientGetWelcomeResponse>(clientOptions.jsonMapper)
-
-        override fun getWelcome(
-            params: ClientGetWelcomeParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<ClientGetWelcomeResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("")
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { getWelcomeHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
     }
 }

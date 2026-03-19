@@ -3,36 +3,19 @@
 package com.believe.api.client
 
 import com.believe.api.core.ClientOptions
-import com.believe.api.core.RequestOptions
 import com.believe.api.core.getPackageVersion
-import com.believe.api.core.handlers.errorBodyHandler
-import com.believe.api.core.handlers.errorHandler
-import com.believe.api.core.handlers.jsonHandler
-import com.believe.api.core.http.HttpMethod
-import com.believe.api.core.http.HttpRequest
-import com.believe.api.core.http.HttpResponse
-import com.believe.api.core.http.HttpResponse.Handler
-import com.believe.api.core.http.HttpResponseFor
-import com.believe.api.core.http.parseable
-import com.believe.api.core.prepareAsync
-import com.believe.api.models.ClientGetWelcomeParams
-import com.believe.api.models.ClientGetWelcomeResponse
 import com.believe.api.services.async.BelieveServiceAsync
 import com.believe.api.services.async.BelieveServiceAsyncImpl
 import com.believe.api.services.async.BiscuitServiceAsync
 import com.believe.api.services.async.BiscuitServiceAsyncImpl
 import com.believe.api.services.async.CharacterServiceAsync
 import com.believe.api.services.async.CharacterServiceAsyncImpl
-import com.believe.api.services.async.ClientServiceAsync
-import com.believe.api.services.async.ClientServiceAsyncImpl
 import com.believe.api.services.async.CoachingServiceAsync
 import com.believe.api.services.async.CoachingServiceAsyncImpl
 import com.believe.api.services.async.ConflictServiceAsync
 import com.believe.api.services.async.ConflictServiceAsyncImpl
 import com.believe.api.services.async.EpisodeServiceAsync
 import com.believe.api.services.async.EpisodeServiceAsyncImpl
-import com.believe.api.services.async.HealthServiceAsync
-import com.believe.api.services.async.HealthServiceAsyncImpl
 import com.believe.api.services.async.MatchServiceAsync
 import com.believe.api.services.async.MatchServiceAsyncImpl
 import com.believe.api.services.async.PepTalkServiceAsync
@@ -49,12 +32,6 @@ import com.believe.api.services.async.TeamMemberServiceAsync
 import com.believe.api.services.async.TeamMemberServiceAsyncImpl
 import com.believe.api.services.async.TeamServiceAsync
 import com.believe.api.services.async.TeamServiceAsyncImpl
-import com.believe.api.services.async.TicketSaleServiceAsync
-import com.believe.api.services.async.TicketSaleServiceAsyncImpl
-import com.believe.api.services.async.VersionServiceAsync
-import com.believe.api.services.async.VersionServiceAsyncImpl
-import com.believe.api.services.async.WebhookServiceAsync
-import com.believe.api.services.async.WebhookServiceAsyncImpl
 
 class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : BelieveClientAsync {
 
@@ -127,26 +104,6 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
         TeamMemberServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
-    private val webhooks: WebhookServiceAsync by lazy {
-        WebhookServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
-    private val ticketSales: TicketSaleServiceAsync by lazy {
-        TicketSaleServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
-    private val health: HealthServiceAsync by lazy {
-        HealthServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
-    private val version: VersionServiceAsync by lazy {
-        VersionServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
-    private val client: ClientServiceAsync by lazy {
-        ClientServiceAsyncImpl(clientOptionsWithUserAgent)
-    }
-
     override fun sync(): BelieveClient = sync
 
     override fun withRawResponse(): BelieveClientAsync.WithRawResponse = withRawResponse
@@ -196,32 +153,10 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
      */
     override fun teamMembers(): TeamMemberServiceAsync = teamMembers
 
-    /** Register webhook endpoints and trigger events for testing */
-    override fun webhooks(): WebhookServiceAsync = webhooks
-
-    /** Ticket sales with 300 records for practicing pagination, filtering, and financial data */
-    override fun ticketSales(): TicketSaleServiceAsync = ticketSales
-
-    override fun health(): HealthServiceAsync = health
-
-    override fun version(): VersionServiceAsync = version
-
-    override fun client(): ClientServiceAsync = client
-
-    override suspend fun getWelcome(
-        params: ClientGetWelcomeParams,
-        requestOptions: RequestOptions,
-    ): ClientGetWelcomeResponse =
-        // get /
-        withRawResponse().getWelcome(params, requestOptions).parse()
-
     override fun close() = clientOptions.close()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         BelieveClientAsync.WithRawResponse {
-
-        private val errorHandler: Handler<HttpResponse> =
-            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
 
         private val characters: CharacterServiceAsync.WithRawResponse by lazy {
             CharacterServiceAsyncImpl.WithRawResponseImpl(clientOptions)
@@ -279,26 +214,6 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
             TeamMemberServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
-        private val webhooks: WebhookServiceAsync.WithRawResponse by lazy {
-            WebhookServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val ticketSales: TicketSaleServiceAsync.WithRawResponse by lazy {
-            TicketSaleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val health: HealthServiceAsync.WithRawResponse by lazy {
-            HealthServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val version: VersionServiceAsync.WithRawResponse by lazy {
-            VersionServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
-        private val client: ClientServiceAsync.WithRawResponse by lazy {
-            ClientServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
-
         override fun withOptions(
             modifier: (ClientOptions.Builder) -> Unit
         ): BelieveClientAsync.WithRawResponse =
@@ -348,46 +263,5 @@ class BelieveClientAsyncImpl(private val clientOptions: ClientOptions) : Believe
          * Managers
          */
         override fun teamMembers(): TeamMemberServiceAsync.WithRawResponse = teamMembers
-
-        /** Register webhook endpoints and trigger events for testing */
-        override fun webhooks(): WebhookServiceAsync.WithRawResponse = webhooks
-
-        /**
-         * Ticket sales with 300 records for practicing pagination, filtering, and financial data
-         */
-        override fun ticketSales(): TicketSaleServiceAsync.WithRawResponse = ticketSales
-
-        override fun health(): HealthServiceAsync.WithRawResponse = health
-
-        override fun version(): VersionServiceAsync.WithRawResponse = version
-
-        override fun client(): ClientServiceAsync.WithRawResponse = client
-
-        private val getWelcomeHandler: Handler<ClientGetWelcomeResponse> =
-            jsonHandler<ClientGetWelcomeResponse>(clientOptions.jsonMapper)
-
-        override suspend fun getWelcome(
-            params: ClientGetWelcomeParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<ClientGetWelcomeResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { getWelcomeHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
     }
 }
