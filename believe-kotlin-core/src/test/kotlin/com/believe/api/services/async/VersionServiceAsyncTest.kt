@@ -3,6 +3,7 @@
 package com.believe.api.services.async
 
 import com.believe.api.client.okhttp.BelieveOkHttpClientAsync
+import com.believe.api.models.version.VersionRetrieveParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -11,11 +12,13 @@ internal class VersionServiceAsyncTest {
     @Disabled("Mock server tests are disabled")
     @Test
     suspend fun retrieve() {
-        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val versionServiceAsync = client.version()
+      val client = BelieveOkHttpClientAsync.builder()
+          .apiKey("My API Key")
+          .build()
+      val versionServiceAsync = client.version()
 
-        val version = versionServiceAsync.retrieve()
+      val version = versionServiceAsync.retrieve()
 
-        version.validate()
+      version.validate()
     }
 }

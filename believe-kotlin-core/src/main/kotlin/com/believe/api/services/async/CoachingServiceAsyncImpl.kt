@@ -3,41 +3,35 @@
 package com.believe.api.services.async
 
 import com.believe.api.core.ClientOptions
+import com.believe.api.services.async.CoachingServiceAsync
+import com.believe.api.services.async.CoachingServiceAsyncImpl
 import com.believe.api.services.async.coaching.PrincipleServiceAsync
 import com.believe.api.services.async.coaching.PrincipleServiceAsyncImpl
 
-class CoachingServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
-    CoachingServiceAsync {
+class CoachingServiceAsyncImpl internal constructor(
+    private val clientOptions: ClientOptions,
 
-    private val withRawResponse: CoachingServiceAsync.WithRawResponse by lazy {
-        WithRawResponseImpl(clientOptions)
-    }
+) : CoachingServiceAsync {
 
-    private val principles: PrincipleServiceAsync by lazy {
-        PrincipleServiceAsyncImpl(clientOptions)
-    }
+    private val withRawResponse: CoachingServiceAsync.WithRawResponse by lazy { WithRawResponseImpl(clientOptions) }
+
+    private val principles: PrincipleServiceAsync by lazy { PrincipleServiceAsyncImpl(clientOptions) }
 
     override fun withRawResponse(): CoachingServiceAsync.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CoachingServiceAsync =
-        CoachingServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
+    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CoachingServiceAsync = CoachingServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
     /** Interactive endpoints for motivation and guidance */
     override fun principles(): PrincipleServiceAsync = principles
 
-    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        CoachingServiceAsync.WithRawResponse {
+    class WithRawResponseImpl internal constructor(
+        private val clientOptions: ClientOptions,
 
-        private val principles: PrincipleServiceAsync.WithRawResponse by lazy {
-            PrincipleServiceAsyncImpl.WithRawResponseImpl(clientOptions)
-        }
+    ) : CoachingServiceAsync.WithRawResponse {
 
-        override fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): CoachingServiceAsync.WithRawResponse =
-            CoachingServiceAsyncImpl.WithRawResponseImpl(
-                clientOptions.toBuilder().apply(modifier).build()
-            )
+        private val principles: PrincipleServiceAsync.WithRawResponse by lazy { PrincipleServiceAsyncImpl.WithRawResponseImpl(clientOptions) }
+
+        override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CoachingServiceAsync.WithRawResponse = CoachingServiceAsyncImpl.WithRawResponseImpl(clientOptions.toBuilder().apply(modifier).build())
 
         /** Interactive endpoints for motivation and guidance */
         override fun principles(): PrincipleServiceAsync.WithRawResponse = principles

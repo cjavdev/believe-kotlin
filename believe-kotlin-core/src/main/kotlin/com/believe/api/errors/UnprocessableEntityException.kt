@@ -6,9 +6,14 @@ import com.believe.api.core.JsonValue
 import com.believe.api.core.checkRequired
 import com.believe.api.core.http.Headers
 
-class UnprocessableEntityException
-private constructor(private val headers: Headers, private val body: JsonValue, cause: Throwable?) :
-    BelieveServiceException("422: $body", cause) {
+class UnprocessableEntityException private constructor(
+    private val headers: Headers,
+    private val body: JsonValue,
+    cause: Throwable?,
+
+) : BelieveServiceException(
+  "422: $body", cause
+) {
 
     override fun statusCode(): Int = 422
 
@@ -24,6 +29,7 @@ private constructor(private val headers: Headers, private val body: JsonValue, c
          * Returns a mutable builder for constructing an instance of [UnprocessableEntityException].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .headers()
          * .body()
@@ -39,17 +45,27 @@ private constructor(private val headers: Headers, private val body: JsonValue, c
         private var body: JsonValue? = null
         private var cause: Throwable? = null
 
-        internal fun from(unprocessableEntityException: UnprocessableEntityException) = apply {
-            headers = unprocessableEntityException.headers
-            body = unprocessableEntityException.body
-            cause = unprocessableEntityException.cause
-        }
+        internal fun from(unprocessableEntityException: UnprocessableEntityException) =
+            apply {
+                headers = unprocessableEntityException.headers
+                body = unprocessableEntityException.body
+                cause = unprocessableEntityException.cause
+            }
 
-        fun headers(headers: Headers) = apply { this.headers = headers }
+        fun headers(headers: Headers) =
+            apply {
+                this.headers = headers
+            }
 
-        fun body(body: JsonValue) = apply { this.body = body }
+        fun body(body: JsonValue) =
+            apply {
+                this.body = body
+            }
 
-        fun cause(cause: Throwable?) = apply { this.cause = cause }
+        fun cause(cause: Throwable?) =
+            apply {
+                this.cause = cause
+            }
 
         /**
          * Returns an immutable instance of [UnprocessableEntityException].
@@ -57,6 +73,7 @@ private constructor(private val headers: Headers, private val body: JsonValue, c
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .headers()
          * .body()
@@ -66,9 +83,13 @@ private constructor(private val headers: Headers, private val body: JsonValue, c
          */
         fun build(): UnprocessableEntityException =
             UnprocessableEntityException(
-                checkRequired("headers", headers),
-                checkRequired("body", body),
-                cause,
+              checkRequired(
+                "headers", headers
+              ),
+              checkRequired(
+                "body", body
+              ),
+              cause,
             )
     }
 }

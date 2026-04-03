@@ -17,67 +17,61 @@ import com.believe.api.core.http.parseable
 import com.believe.api.core.prepareAsync
 import com.believe.api.models.reframe.ReframeTransformNegativeThoughtsParams
 import com.believe.api.models.reframe.ReframeTransformNegativeThoughtsResponse
+import com.believe.api.services.async.ReframeServiceAsync
+import com.believe.api.services.async.ReframeServiceAsyncImpl
 
 /** Interactive endpoints for motivation and guidance */
-class ReframeServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
-    ReframeServiceAsync {
+class ReframeServiceAsyncImpl internal constructor(
+    private val clientOptions: ClientOptions,
 
-    private val withRawResponse: ReframeServiceAsync.WithRawResponse by lazy {
-        WithRawResponseImpl(clientOptions)
-    }
+) : ReframeServiceAsync {
+
+    private val withRawResponse: ReframeServiceAsync.WithRawResponse by lazy { WithRawResponseImpl(clientOptions) }
 
     override fun withRawResponse(): ReframeServiceAsync.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ReframeServiceAsync =
-        ReframeServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
+    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ReframeServiceAsync = ReframeServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
-    override suspend fun transformNegativeThoughts(
-        params: ReframeTransformNegativeThoughtsParams,
-        requestOptions: RequestOptions,
-    ): ReframeTransformNegativeThoughtsResponse =
+    override suspend fun transformNegativeThoughts(params: ReframeTransformNegativeThoughtsParams, requestOptions: RequestOptions): ReframeTransformNegativeThoughtsResponse =
         // post /reframe
         withRawResponse().transformNegativeThoughts(params, requestOptions).parse()
 
-    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        ReframeServiceAsync.WithRawResponse {
+    class WithRawResponseImpl internal constructor(
+        private val clientOptions: ClientOptions,
 
-        private val errorHandler: Handler<HttpResponse> =
-            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+    ) : ReframeServiceAsync.WithRawResponse {
 
-        override fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): ReframeServiceAsync.WithRawResponse =
-            ReframeServiceAsyncImpl.WithRawResponseImpl(
-                clientOptions.toBuilder().apply(modifier).build()
+        private val errorHandler: Handler<HttpResponse> = errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ReframeServiceAsync.WithRawResponse = ReframeServiceAsyncImpl.WithRawResponseImpl(clientOptions.toBuilder().apply(modifier).build())
+
+        private val transformNegativeThoughtsHandler: Handler<ReframeTransformNegativeThoughtsResponse> = jsonHandler<ReframeTransformNegativeThoughtsResponse>(clientOptions.jsonMapper)
+
+        override suspend fun transformNegativeThoughts(params: ReframeTransformNegativeThoughtsParams, requestOptions: RequestOptions): HttpResponseFor<ReframeTransformNegativeThoughtsResponse> {
+          val request = HttpRequest.builder()
+            .method(HttpMethod.POST)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("reframe")
+            .body(json(clientOptions.jsonMapper, params._body()))
+            .build()
+            .prepareAsync(
+              clientOptions, params
             )
-
-        private val transformNegativeThoughtsHandler:
-            Handler<ReframeTransformNegativeThoughtsResponse> =
-            jsonHandler<ReframeTransformNegativeThoughtsResponse>(clientOptions.jsonMapper)
-
-        override suspend fun transformNegativeThoughts(
-            params: ReframeTransformNegativeThoughtsParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<ReframeTransformNegativeThoughtsResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("reframe")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { transformNegativeThoughtsHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  transformNegativeThoughtsHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
     }
 }

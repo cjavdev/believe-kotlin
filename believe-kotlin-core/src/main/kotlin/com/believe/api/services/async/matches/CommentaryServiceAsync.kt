@@ -7,14 +7,13 @@ import com.believe.api.core.RequestOptions
 import com.believe.api.core.http.HttpResponseFor
 import com.believe.api.models.matches.commentary.CommentaryStreamParams
 import com.believe.api.models.matches.commentary.CommentaryStreamResponse
+import com.believe.api.services.async.matches.CommentaryServiceAsync
 import com.google.errorprone.annotations.MustBeClosed
 
 /** Server-Sent Events (SSE) streaming endpoints */
 interface CommentaryServiceAsync {
 
-    /**
-     * Returns a view of this service that provides access to raw HTTP responses for each method.
-     */
+    /** Returns a view of this service that provides access to raw HTTP responses for each method. */
     fun withRawResponse(): WithRawResponse
 
     /**
@@ -24,31 +23,26 @@ interface CommentaryServiceAsync {
      */
     fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CommentaryServiceAsync
 
-    /**
-     * Stream live match commentary for a specific match. Uses Server-Sent Events (SSE) to stream
-     * commentary events in real-time.
-     */
-    suspend fun stream(
-        matchId: String,
-        params: CommentaryStreamParams = CommentaryStreamParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CommentaryStreamResponse =
-        stream(params.toBuilder().matchId(matchId).build(), requestOptions)
+    /** Stream live match commentary for a specific match. Uses Server-Sent Events (SSE) to stream commentary events in real-time. */
+    suspend fun stream(matchId: String, params: CommentaryStreamParams = CommentaryStreamParams.none(), requestOptions: RequestOptions = RequestOptions.none()): CommentaryStreamResponse =
+        stream(
+          params.toBuilder()
+              .matchId(matchId)
+              .build(), requestOptions
+        )
 
     /** @see stream */
-    suspend fun stream(
-        params: CommentaryStreamParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CommentaryStreamResponse
+    suspend fun stream(params: CommentaryStreamParams, requestOptions: RequestOptions = RequestOptions.none()): CommentaryStreamResponse
 
     /** @see stream */
     suspend fun stream(matchId: String, requestOptions: RequestOptions): CommentaryStreamResponse =
-        stream(matchId, CommentaryStreamParams.none(), requestOptions)
+        stream(
+          matchId,
+          CommentaryStreamParams.none(),
+          requestOptions,
+        )
 
-    /**
-     * A view of [CommentaryServiceAsync] that provides access to raw HTTP responses for each
-     * method.
-     */
+    /** A view of [CommentaryServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
         /**
@@ -56,35 +50,28 @@ interface CommentaryServiceAsync {
          *
          * The original service is not modified.
          */
-        fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): CommentaryServiceAsync.WithRawResponse
+        fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CommentaryServiceAsync.WithRawResponse
 
-        /**
-         * Returns a raw HTTP response for `post /matches/{match_id}/commentary/stream`, but is
-         * otherwise the same as [CommentaryServiceAsync.stream].
-         */
+        /** Returns a raw HTTP response for `post /matches/{match_id}/commentary/stream`, but is otherwise the             same as [CommentaryServiceAsync.stream]. */
         @MustBeClosed
-        suspend fun stream(
-            matchId: String,
-            params: CommentaryStreamParams = CommentaryStreamParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<CommentaryStreamResponse> =
-            stream(params.toBuilder().matchId(matchId).build(), requestOptions)
+        suspend fun stream(matchId: String, params: CommentaryStreamParams = CommentaryStreamParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<CommentaryStreamResponse> =
+            stream(
+              params.toBuilder()
+                  .matchId(matchId)
+                  .build(), requestOptions
+            )
 
         /** @see stream */
         @MustBeClosed
-        suspend fun stream(
-            params: CommentaryStreamParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<CommentaryStreamResponse>
+        suspend fun stream(params: CommentaryStreamParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<CommentaryStreamResponse>
 
         /** @see stream */
         @MustBeClosed
-        suspend fun stream(
-            matchId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<CommentaryStreamResponse> =
-            stream(matchId, CommentaryStreamParams.none(), requestOptions)
+        suspend fun stream(matchId: String, requestOptions: RequestOptions): HttpResponseFor<CommentaryStreamResponse> =
+            stream(
+              matchId,
+              CommentaryStreamParams.none(),
+              requestOptions,
+            )
     }
 }

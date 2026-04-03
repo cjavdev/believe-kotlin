@@ -17,66 +17,61 @@ import com.believe.api.core.http.parseable
 import com.believe.api.core.prepareAsync
 import com.believe.api.models.believe.BelieveSubmitParams
 import com.believe.api.models.believe.BelieveSubmitResponse
+import com.believe.api.services.async.BelieveServiceAsync
+import com.believe.api.services.async.BelieveServiceAsyncImpl
 
 /** Interactive endpoints for motivation and guidance */
-class BelieveServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
-    BelieveServiceAsync {
+class BelieveServiceAsyncImpl internal constructor(
+    private val clientOptions: ClientOptions,
 
-    private val withRawResponse: BelieveServiceAsync.WithRawResponse by lazy {
-        WithRawResponseImpl(clientOptions)
-    }
+) : BelieveServiceAsync {
+
+    private val withRawResponse: BelieveServiceAsync.WithRawResponse by lazy { WithRawResponseImpl(clientOptions) }
 
     override fun withRawResponse(): BelieveServiceAsync.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): BelieveServiceAsync =
-        BelieveServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
+    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): BelieveServiceAsync = BelieveServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
-    override suspend fun submit(
-        params: BelieveSubmitParams,
-        requestOptions: RequestOptions,
-    ): BelieveSubmitResponse =
+    override suspend fun submit(params: BelieveSubmitParams, requestOptions: RequestOptions): BelieveSubmitResponse =
         // post /believe
         withRawResponse().submit(params, requestOptions).parse()
 
-    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        BelieveServiceAsync.WithRawResponse {
+    class WithRawResponseImpl internal constructor(
+        private val clientOptions: ClientOptions,
 
-        private val errorHandler: Handler<HttpResponse> =
-            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+    ) : BelieveServiceAsync.WithRawResponse {
 
-        override fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): BelieveServiceAsync.WithRawResponse =
-            BelieveServiceAsyncImpl.WithRawResponseImpl(
-                clientOptions.toBuilder().apply(modifier).build()
+        private val errorHandler: Handler<HttpResponse> = errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): BelieveServiceAsync.WithRawResponse = BelieveServiceAsyncImpl.WithRawResponseImpl(clientOptions.toBuilder().apply(modifier).build())
+
+        private val submitHandler: Handler<BelieveSubmitResponse> = jsonHandler<BelieveSubmitResponse>(clientOptions.jsonMapper)
+
+        override suspend fun submit(params: BelieveSubmitParams, requestOptions: RequestOptions): HttpResponseFor<BelieveSubmitResponse> {
+          val request = HttpRequest.builder()
+            .method(HttpMethod.POST)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("believe")
+            .body(json(clientOptions.jsonMapper, params._body()))
+            .build()
+            .prepareAsync(
+              clientOptions, params
             )
-
-        private val submitHandler: Handler<BelieveSubmitResponse> =
-            jsonHandler<BelieveSubmitResponse>(clientOptions.jsonMapper)
-
-        override suspend fun submit(
-            params: BelieveSubmitParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<BelieveSubmitResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("believe")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { submitHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  submitHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
     }
 }

@@ -21,14 +21,13 @@ import com.believe.api.models.teammembers.TeamMemberRetrieveParams
 import com.believe.api.models.teammembers.TeamMemberRetrieveResponse
 import com.believe.api.models.teammembers.TeamMemberUpdateParams
 import com.believe.api.models.teammembers.TeamMemberUpdateResponse
+import com.believe.api.services.blocking.TeamMemberService
 import com.google.errorprone.annotations.MustBeClosed
 
 /** Team members with union types (oneOf) - Players, Coaches, Medical Staff, Equipment Managers */
 interface TeamMemberService {
 
-    /**
-     * Returns a view of this service that provides access to raw HTTP responses for each method.
-     */
+    /** Returns a view of this service that provides access to raw HTTP responses for each method. */
     fun withRawResponse(): WithRawResponse
 
     /**
@@ -41,18 +40,15 @@ interface TeamMemberService {
     /**
      * Add a new team member to a team.
      *
-     * The request body is a **union type (oneOf)** - you must include the `member_type`
-     * discriminator field:
+     * The request body is a **union type (oneOf)** - you must include the `member_type` discriminator field:
      * - `"member_type": "player"` - Creates a player (requires position, jersey_number, etc.)
      * - `"member_type": "coach"` - Creates a coach (requires specialty, etc.)
      * - `"member_type": "medical_staff"` - Creates medical staff (requires medical specialty, etc.)
-     * - `"member_type": "equipment_manager"` - Creates equipment manager (requires
-     *   responsibilities, etc.)
+     * - `"member_type": "equipment_manager"` - Creates equipment manager (requires responsibilities, etc.)
      *
      * The `character_id` field references an existing character from `/characters/{id}`.
      *
      * **Example for creating a player:**
-     *
      * ```json
      * {
      *   "member_type": "player",
@@ -66,45 +62,39 @@ interface TeamMemberService {
      * }
      * ```
      */
-    fun create(
-        params: TeamMemberCreateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberCreateResponse
+    fun create(params: TeamMemberCreateParams, requestOptions: RequestOptions = RequestOptions.none()): TeamMemberCreateResponse
 
     /** @see create */
-    fun create(
-        member: TeamMemberCreateParams.Member,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberCreateResponse =
-        create(TeamMemberCreateParams.builder().member(member).build(), requestOptions)
+    fun create(member: TeamMemberCreateParams.Member, requestOptions: RequestOptions = RequestOptions.none()): TeamMemberCreateResponse =
+        create(
+          TeamMemberCreateParams.builder()
+              .member(member)
+              .build(), requestOptions
+        )
 
     /** @see create */
-    fun create(
-        player: TeamMemberCreateParams.Member.Player,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberCreateResponse =
-        create(TeamMemberCreateParams.Member.ofPlayer(player), requestOptions)
+    fun create(player: TeamMemberCreateParams.Member.Player, requestOptions: RequestOptions = RequestOptions.none()): TeamMemberCreateResponse =
+        create(
+          TeamMemberCreateParams.Member.ofPlayer(player), requestOptions
+        )
 
     /** @see create */
-    fun create(
-        coach: TeamMemberCreateParams.Member.Coach,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberCreateResponse =
-        create(TeamMemberCreateParams.Member.ofCoach(coach), requestOptions)
+    fun create(coach: TeamMemberCreateParams.Member.Coach, requestOptions: RequestOptions = RequestOptions.none()): TeamMemberCreateResponse =
+        create(
+          TeamMemberCreateParams.Member.ofCoach(coach), requestOptions
+        )
 
     /** @see create */
-    fun create(
-        medicalStaff: TeamMemberCreateParams.Member.MedicalStaff,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberCreateResponse =
-        create(TeamMemberCreateParams.Member.ofMedicalStaff(medicalStaff), requestOptions)
+    fun create(medicalStaff: TeamMemberCreateParams.Member.MedicalStaff, requestOptions: RequestOptions = RequestOptions.none()): TeamMemberCreateResponse =
+        create(
+          TeamMemberCreateParams.Member.ofMedicalStaff(medicalStaff), requestOptions
+        )
 
     /** @see create */
-    fun create(
-        equipmentManager: TeamMemberCreateParams.Member.EquipmentManager,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberCreateResponse =
-        create(TeamMemberCreateParams.Member.ofEquipmentManager(equipmentManager), requestOptions)
+    fun create(equipmentManager: TeamMemberCreateParams.Member.EquipmentManager, requestOptions: RequestOptions = RequestOptions.none()): TeamMemberCreateResponse =
+        create(
+          TeamMemberCreateParams.Member.ofEquipmentManager(equipmentManager), requestOptions
+        )
 
     /**
      * Retrieve detailed information about a specific team member.
@@ -117,104 +107,99 @@ interface TeamMemberService {
      *
      * Use `character_id` to fetch full character details from `/characters/{character_id}`.
      */
-    fun retrieve(
-        memberId: String,
-        params: TeamMemberRetrieveParams = TeamMemberRetrieveParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberRetrieveResponse =
-        retrieve(params.toBuilder().memberId(memberId).build(), requestOptions)
+    fun retrieve(memberId: String, params: TeamMemberRetrieveParams = TeamMemberRetrieveParams.none(), requestOptions: RequestOptions = RequestOptions.none()): TeamMemberRetrieveResponse =
+        retrieve(
+          params.toBuilder()
+              .memberId(memberId)
+              .build(), requestOptions
+        )
 
     /** @see retrieve */
-    fun retrieve(
-        params: TeamMemberRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberRetrieveResponse
+    fun retrieve(params: TeamMemberRetrieveParams, requestOptions: RequestOptions = RequestOptions.none()): TeamMemberRetrieveResponse
 
     /** @see retrieve */
     fun retrieve(memberId: String, requestOptions: RequestOptions): TeamMemberRetrieveResponse =
-        retrieve(memberId, TeamMemberRetrieveParams.none(), requestOptions)
+        retrieve(
+          memberId,
+          TeamMemberRetrieveParams.none(),
+          requestOptions,
+        )
 
     /** Update specific fields of an existing team member. Fields vary by member type. */
-    fun update(
-        memberId: String,
-        params: TeamMemberUpdateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberUpdateResponse =
-        update(params.toBuilder().memberId(memberId).build(), requestOptions)
+    fun update(memberId: String, params: TeamMemberUpdateParams, requestOptions: RequestOptions = RequestOptions.none()): TeamMemberUpdateResponse =
+        update(
+          params.toBuilder()
+              .memberId(memberId)
+              .build(), requestOptions
+        )
 
     /** @see update */
-    fun update(
-        params: TeamMemberUpdateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberUpdateResponse
+    fun update(params: TeamMemberUpdateParams, requestOptions: RequestOptions = RequestOptions.none()): TeamMemberUpdateResponse
 
     /**
      * Get a paginated list of all team members.
      *
-     * This endpoint demonstrates **union types (oneOf)** in the response. Each team member can be
-     * one of: Player, Coach, MedicalStaff, or EquipmentManager. The `member_type` field acts as a
-     * discriminator to determine the shape of each object.
+     * This endpoint demonstrates **union types (oneOf)** in the response.
+     * Each team member can be one of: Player, Coach, MedicalStaff, or EquipmentManager.
+     * The `member_type` field acts as a discriminator to determine the shape of each object.
      */
-    fun list(
-        params: TeamMemberListParams = TeamMemberListParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberListPage
+    fun list(params: TeamMemberListParams = TeamMemberListParams.none(), requestOptions: RequestOptions = RequestOptions.none()): TeamMemberListPage
 
     /** @see list */
     fun list(requestOptions: RequestOptions): TeamMemberListPage =
-        list(TeamMemberListParams.none(), requestOptions)
+        list(
+          TeamMemberListParams.none(), requestOptions
+        )
 
     /** Remove a team member from the roster. */
-    fun delete(
-        memberId: String,
-        params: TeamMemberDeleteParams = TeamMemberDeleteParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ) = delete(params.toBuilder().memberId(memberId).build(), requestOptions)
+    fun delete(memberId: String, params: TeamMemberDeleteParams = TeamMemberDeleteParams.none(), requestOptions: RequestOptions = RequestOptions.none()) =
+        delete(
+          params.toBuilder()
+              .memberId(memberId)
+              .build(), requestOptions
+        )
 
     /** @see delete */
-    fun delete(
-        params: TeamMemberDeleteParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    )
+    fun delete(params: TeamMemberDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see delete */
     fun delete(memberId: String, requestOptions: RequestOptions) =
-        delete(memberId, TeamMemberDeleteParams.none(), requestOptions)
+        delete(
+          memberId,
+          TeamMemberDeleteParams.none(),
+          requestOptions,
+        )
 
     /** Get only coaches (filtered subset of team members). */
-    fun listCoaches(
-        params: TeamMemberListCoachesParams = TeamMemberListCoachesParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberListCoachesPage
+    fun listCoaches(params: TeamMemberListCoachesParams = TeamMemberListCoachesParams.none(), requestOptions: RequestOptions = RequestOptions.none()): TeamMemberListCoachesPage
 
     /** @see listCoaches */
     fun listCoaches(requestOptions: RequestOptions): TeamMemberListCoachesPage =
-        listCoaches(TeamMemberListCoachesParams.none(), requestOptions)
+        listCoaches(
+          TeamMemberListCoachesParams.none(), requestOptions
+        )
 
     /** Get only players (filtered subset of team members). */
-    fun listPlayers(
-        params: TeamMemberListPlayersParams = TeamMemberListPlayersParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberListPlayersPage
+    fun listPlayers(params: TeamMemberListPlayersParams = TeamMemberListPlayersParams.none(), requestOptions: RequestOptions = RequestOptions.none()): TeamMemberListPlayersPage
 
     /** @see listPlayers */
     fun listPlayers(requestOptions: RequestOptions): TeamMemberListPlayersPage =
-        listPlayers(TeamMemberListPlayersParams.none(), requestOptions)
+        listPlayers(
+          TeamMemberListPlayersParams.none(), requestOptions
+        )
 
     /**
      * Get all staff members (medical staff and equipment managers).
      *
-     * This demonstrates a **narrower union type** - the response is oneOf MedicalStaff or
-     * EquipmentManager.
+     * This demonstrates a **narrower union type** - the response is oneOf MedicalStaff or EquipmentManager.
      */
-    fun listStaff(
-        params: TeamMemberListStaffParams = TeamMemberListStaffParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamMemberListStaffPage
+    fun listStaff(params: TeamMemberListStaffParams = TeamMemberListStaffParams.none(), requestOptions: RequestOptions = RequestOptions.none()): TeamMemberListStaffPage
 
     /** @see listStaff */
     fun listStaff(requestOptions: RequestOptions): TeamMemberListStaffPage =
-        listStaff(TeamMemberListStaffParams.none(), requestOptions)
+        listStaff(
+          TeamMemberListStaffParams.none(), requestOptions
+        )
 
     /** A view of [TeamMemberService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -224,194 +209,148 @@ interface TeamMemberService {
          *
          * The original service is not modified.
          */
-        fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): TeamMemberService.WithRawResponse
+        fun withOptions(modifier: (ClientOptions.Builder) -> Unit): TeamMemberService.WithRawResponse
 
-        /**
-         * Returns a raw HTTP response for `post /team-members`, but is otherwise the same as
-         * [TeamMemberService.create].
-         */
+        /** Returns a raw HTTP response for `post /team-members`, but is otherwise the             same as [TeamMemberService.create]. */
         @MustBeClosed
-        fun create(
-            params: TeamMemberCreateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberCreateResponse>
+        fun create(params: TeamMemberCreateParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberCreateResponse>
 
         /** @see create */
         @MustBeClosed
-        fun create(
-            member: TeamMemberCreateParams.Member,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberCreateResponse> =
-            create(TeamMemberCreateParams.builder().member(member).build(), requestOptions)
-
-        /** @see create */
-        @MustBeClosed
-        fun create(
-            player: TeamMemberCreateParams.Member.Player,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberCreateResponse> =
-            create(TeamMemberCreateParams.Member.ofPlayer(player), requestOptions)
-
-        /** @see create */
-        @MustBeClosed
-        fun create(
-            coach: TeamMemberCreateParams.Member.Coach,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberCreateResponse> =
-            create(TeamMemberCreateParams.Member.ofCoach(coach), requestOptions)
-
-        /** @see create */
-        @MustBeClosed
-        fun create(
-            medicalStaff: TeamMemberCreateParams.Member.MedicalStaff,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberCreateResponse> =
-            create(TeamMemberCreateParams.Member.ofMedicalStaff(medicalStaff), requestOptions)
-
-        /** @see create */
-        @MustBeClosed
-        fun create(
-            equipmentManager: TeamMemberCreateParams.Member.EquipmentManager,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberCreateResponse> =
+        fun create(member: TeamMemberCreateParams.Member, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberCreateResponse> =
             create(
-                TeamMemberCreateParams.Member.ofEquipmentManager(equipmentManager),
-                requestOptions,
+              TeamMemberCreateParams.builder()
+                  .member(member)
+                  .build(), requestOptions
             )
 
-        /**
-         * Returns a raw HTTP response for `get /team-members/{member_id}`, but is otherwise the
-         * same as [TeamMemberService.retrieve].
-         */
+        /** @see create */
         @MustBeClosed
-        fun retrieve(
-            memberId: String,
-            params: TeamMemberRetrieveParams = TeamMemberRetrieveParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberRetrieveResponse> =
-            retrieve(params.toBuilder().memberId(memberId).build(), requestOptions)
+        fun create(player: TeamMemberCreateParams.Member.Player, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberCreateResponse> =
+            create(
+              TeamMemberCreateParams.Member.ofPlayer(player), requestOptions
+            )
+
+        /** @see create */
+        @MustBeClosed
+        fun create(coach: TeamMemberCreateParams.Member.Coach, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberCreateResponse> =
+            create(
+              TeamMemberCreateParams.Member.ofCoach(coach), requestOptions
+            )
+
+        /** @see create */
+        @MustBeClosed
+        fun create(medicalStaff: TeamMemberCreateParams.Member.MedicalStaff, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberCreateResponse> =
+            create(
+              TeamMemberCreateParams.Member.ofMedicalStaff(medicalStaff), requestOptions
+            )
+
+        /** @see create */
+        @MustBeClosed
+        fun create(equipmentManager: TeamMemberCreateParams.Member.EquipmentManager, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberCreateResponse> =
+            create(
+              TeamMemberCreateParams.Member.ofEquipmentManager(equipmentManager), requestOptions
+            )
+
+        /** Returns a raw HTTP response for `get /team-members/{member_id}`, but is otherwise the             same as [TeamMemberService.retrieve]. */
+        @MustBeClosed
+        fun retrieve(memberId: String, params: TeamMemberRetrieveParams = TeamMemberRetrieveParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberRetrieveResponse> =
+            retrieve(
+              params.toBuilder()
+                  .memberId(memberId)
+                  .build(), requestOptions
+            )
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(
-            params: TeamMemberRetrieveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberRetrieveResponse>
+        fun retrieve(params: TeamMemberRetrieveParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberRetrieveResponse>
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(
-            memberId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<TeamMemberRetrieveResponse> =
-            retrieve(memberId, TeamMemberRetrieveParams.none(), requestOptions)
+        fun retrieve(memberId: String, requestOptions: RequestOptions): HttpResponseFor<TeamMemberRetrieveResponse> =
+            retrieve(
+              memberId,
+              TeamMemberRetrieveParams.none(),
+              requestOptions,
+            )
 
-        /**
-         * Returns a raw HTTP response for `patch /team-members/{member_id}`, but is otherwise the
-         * same as [TeamMemberService.update].
-         */
+        /** Returns a raw HTTP response for `patch /team-members/{member_id}`, but is otherwise the             same as [TeamMemberService.update]. */
         @MustBeClosed
-        fun update(
-            memberId: String,
-            params: TeamMemberUpdateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberUpdateResponse> =
-            update(params.toBuilder().memberId(memberId).build(), requestOptions)
+        fun update(memberId: String, params: TeamMemberUpdateParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberUpdateResponse> =
+            update(
+              params.toBuilder()
+                  .memberId(memberId)
+                  .build(), requestOptions
+            )
 
         /** @see update */
         @MustBeClosed
-        fun update(
-            params: TeamMemberUpdateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberUpdateResponse>
+        fun update(params: TeamMemberUpdateParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberUpdateResponse>
 
-        /**
-         * Returns a raw HTTP response for `get /team-members`, but is otherwise the same as
-         * [TeamMemberService.list].
-         */
+        /** Returns a raw HTTP response for `get /team-members`, but is otherwise the             same as [TeamMemberService.list]. */
         @MustBeClosed
-        fun list(
-            params: TeamMemberListParams = TeamMemberListParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberListPage>
+        fun list(params: TeamMemberListParams = TeamMemberListParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberListPage>
 
         /** @see list */
         @MustBeClosed
         fun list(requestOptions: RequestOptions): HttpResponseFor<TeamMemberListPage> =
-            list(TeamMemberListParams.none(), requestOptions)
+            list(
+              TeamMemberListParams.none(), requestOptions
+            )
 
-        /**
-         * Returns a raw HTTP response for `delete /team-members/{member_id}`, but is otherwise the
-         * same as [TeamMemberService.delete].
-         */
+        /** Returns a raw HTTP response for `delete /team-members/{member_id}`, but is otherwise the             same as [TeamMemberService.delete]. */
         @MustBeClosed
-        fun delete(
-            memberId: String,
-            params: TeamMemberDeleteParams = TeamMemberDeleteParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse = delete(params.toBuilder().memberId(memberId).build(), requestOptions)
+        fun delete(memberId: String, params: TeamMemberDeleteParams = TeamMemberDeleteParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponse =
+            delete(
+              params.toBuilder()
+                  .memberId(memberId)
+                  .build(), requestOptions
+            )
 
         /** @see delete */
         @MustBeClosed
-        fun delete(
-            params: TeamMemberDeleteParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        fun delete(params: TeamMemberDeleteParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponse
 
         /** @see delete */
         @MustBeClosed
         fun delete(memberId: String, requestOptions: RequestOptions): HttpResponse =
-            delete(memberId, TeamMemberDeleteParams.none(), requestOptions)
+            delete(
+              memberId,
+              TeamMemberDeleteParams.none(),
+              requestOptions,
+            )
 
-        /**
-         * Returns a raw HTTP response for `get /team-members/coaches/`, but is otherwise the same
-         * as [TeamMemberService.listCoaches].
-         */
+        /** Returns a raw HTTP response for `get /team-members/coaches/`, but is otherwise the             same as [TeamMemberService.listCoaches]. */
         @MustBeClosed
-        fun listCoaches(
-            params: TeamMemberListCoachesParams = TeamMemberListCoachesParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberListCoachesPage>
+        fun listCoaches(params: TeamMemberListCoachesParams = TeamMemberListCoachesParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberListCoachesPage>
 
         /** @see listCoaches */
         @MustBeClosed
-        fun listCoaches(
-            requestOptions: RequestOptions
-        ): HttpResponseFor<TeamMemberListCoachesPage> =
-            listCoaches(TeamMemberListCoachesParams.none(), requestOptions)
+        fun listCoaches(requestOptions: RequestOptions): HttpResponseFor<TeamMemberListCoachesPage> =
+            listCoaches(
+              TeamMemberListCoachesParams.none(), requestOptions
+            )
 
-        /**
-         * Returns a raw HTTP response for `get /team-members/players/`, but is otherwise the same
-         * as [TeamMemberService.listPlayers].
-         */
+        /** Returns a raw HTTP response for `get /team-members/players/`, but is otherwise the             same as [TeamMemberService.listPlayers]. */
         @MustBeClosed
-        fun listPlayers(
-            params: TeamMemberListPlayersParams = TeamMemberListPlayersParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberListPlayersPage>
+        fun listPlayers(params: TeamMemberListPlayersParams = TeamMemberListPlayersParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberListPlayersPage>
 
         /** @see listPlayers */
         @MustBeClosed
-        fun listPlayers(
-            requestOptions: RequestOptions
-        ): HttpResponseFor<TeamMemberListPlayersPage> =
-            listPlayers(TeamMemberListPlayersParams.none(), requestOptions)
+        fun listPlayers(requestOptions: RequestOptions): HttpResponseFor<TeamMemberListPlayersPage> =
+            listPlayers(
+              TeamMemberListPlayersParams.none(), requestOptions
+            )
 
-        /**
-         * Returns a raw HTTP response for `get /team-members/staff/`, but is otherwise the same as
-         * [TeamMemberService.listStaff].
-         */
+        /** Returns a raw HTTP response for `get /team-members/staff/`, but is otherwise the             same as [TeamMemberService.listStaff]. */
         @MustBeClosed
-        fun listStaff(
-            params: TeamMemberListStaffParams = TeamMemberListStaffParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamMemberListStaffPage>
+        fun listStaff(params: TeamMemberListStaffParams = TeamMemberListStaffParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamMemberListStaffPage>
 
         /** @see listStaff */
         @MustBeClosed
         fun listStaff(requestOptions: RequestOptions): HttpResponseFor<TeamMemberListStaffPage> =
-            listStaff(TeamMemberListStaffParams.none(), requestOptions)
+            listStaff(
+              TeamMemberListStaffParams.none(), requestOptions
+            )
     }
 }

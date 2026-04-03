@@ -2,7 +2,10 @@
 
 package com.believe.api.core
 
-class AutoPager<T> private constructor(private val firstPage: Page<T>) : Sequence<T> {
+class AutoPager <T> private constructor(
+    private val firstPage: Page<T>,
+
+) : Sequence<T> {
 
     companion object {
 

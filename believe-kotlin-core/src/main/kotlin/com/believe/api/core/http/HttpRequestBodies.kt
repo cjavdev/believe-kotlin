@@ -3,6 +3,7 @@
 package com.believe.api.core.http
 
 import com.believe.api.core.MultipartField
+import com.believe.api.core.http.HttpRequestBody
 import com.believe.api.core.toImmutable
 import com.believe.api.errors.BelieveInvalidDataException
 import com.fasterxml.jackson.databind.JsonNode
@@ -83,7 +84,12 @@ internal fun multipartFormData(
                         }
 
                     addPart(
-                        MultipartBody.Part.create(name, field.filename, field.contentType, partBody)
+                        MultipartBody.Part.create(
+                            name,
+                            field.filename,
+                            field.contentType,
+                            partBody,
+                        )
                     )
                 }
             }
@@ -96,8 +102,10 @@ private fun serializePart(name: String, node: JsonNode): Sequence<Pair<String, I
         JsonNodeType.NULL -> emptySequence()
         JsonNodeType.BINARY -> sequenceOf(name to node.binaryValue().inputStream())
         JsonNodeType.STRING -> sequenceOf(name to node.textValue().byteInputStream())
-        JsonNodeType.BOOLEAN -> sequenceOf(name to node.booleanValue().toString().byteInputStream())
-        JsonNodeType.NUMBER -> sequenceOf(name to node.numberValue().toString().byteInputStream())
+        JsonNodeType.BOOLEAN ->
+            sequenceOf(name to node.booleanValue().toString().byteInputStream())
+        JsonNodeType.NUMBER ->
+            sequenceOf(name to node.numberValue().toString().byteInputStream())
         JsonNodeType.ARRAY ->
             sequenceOf(
                 name to
@@ -132,8 +140,10 @@ private fun serializePart(name: String, node: JsonNode): Sequence<Pair<String, I
         null -> throw BelieveInvalidDataException("Unexpected JsonNode type: ${node.nodeType}")
     }
 
-private class MultipartBody
-private constructor(private val boundary: String, private val parts: List<Part>) : HttpRequestBody {
+private class MultipartBody private constructor(
+    private val boundary: String,
+    private val parts: List<Part>,
+) : HttpRequestBody {
     private val boundaryBytes: ByteArray = boundary.toByteArray()
     private val contentType = "multipart/form-data; boundary=$boundary"
 
@@ -209,8 +219,7 @@ private constructor(private val boundary: String, private val parts: List<Part>)
         fun build() = MultipartBody(boundary, parts.toImmutable())
     }
 
-    class Part
-    private constructor(
+    class Part private constructor(
         val contentDisposition: String,
         val contentType: String,
         val body: HttpRequestBody,
@@ -222,14 +231,15 @@ private constructor(private val boundary: String, private val parts: List<Part>)
                 contentType: String,
                 body: HttpRequestBody,
             ): Part {
-                val disposition = buildString {
-                    append("form-data; name=")
-                    appendQuotedString(name)
-                    if (filename != null) {
-                        append("; filename=")
-                        appendQuotedString(filename)
+                val disposition =
+                    buildString {
+                        append("form-data; name=")
+                        appendQuotedString(name)
+                        if (filename != null) {
+                            append("; filename=")
+                            appendQuotedString(filename)
+                        }
                     }
-                }
                 return Part(disposition, contentType, body)
             }
         }

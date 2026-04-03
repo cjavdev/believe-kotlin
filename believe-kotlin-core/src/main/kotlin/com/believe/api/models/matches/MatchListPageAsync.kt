@@ -5,15 +5,18 @@ package com.believe.api.models.matches
 import com.believe.api.core.AutoPagerAsync
 import com.believe.api.core.PageAsync
 import com.believe.api.core.checkRequired
+import com.believe.api.models.matches.Match
+import com.believe.api.models.matches.MatchListPageResponse
+import com.believe.api.models.matches.MatchListParams
 import com.believe.api.services.async.MatchServiceAsync
 import java.util.Objects
 
 /** @see MatchServiceAsync.list */
-class MatchListPageAsync
-private constructor(
+class MatchListPageAsync private constructor(
     private val service: MatchServiceAsync,
     private val params: MatchListParams,
     private val response: MatchListPageResponse,
+
 ) : PageAsync<Match> {
 
     /**
@@ -40,18 +43,20 @@ private constructor(
     override fun items(): List<Match> = data()
 
     override fun hasNextPage(): Boolean {
-        if (items().isEmpty()) {
-            return false
-        }
+      if (items().isEmpty()) {
+          return false
+      }
 
-        val offset = skip() ?: 0
-        val totalCount = total()
-        return totalCount == null || offset + items().size < totalCount
+      val offset = skip() ?: 0
+      val totalCount = total()
+      return totalCount == null || offset + items().size < totalCount;
     }
 
     fun nextPageParams(): MatchListParams {
-        val offset = skip() ?: 0
-        return params.toBuilder().skip(offset + items().size).build()
+      val offset = skip() ?: 0
+      return params.toBuilder()
+          .skip(offset + items().size)
+          .build()
     }
 
     override suspend fun nextPage(): MatchListPageAsync = service.list(nextPageParams())
@@ -72,6 +77,7 @@ private constructor(
          * Returns a mutable builder for constructing an instance of [MatchListPageAsync].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -88,19 +94,29 @@ private constructor(
         private var params: MatchListParams? = null
         private var response: MatchListPageResponse? = null
 
-        internal fun from(matchListPageAsync: MatchListPageAsync) = apply {
-            service = matchListPageAsync.service
-            params = matchListPageAsync.params
-            response = matchListPageAsync.response
-        }
+        internal fun from(matchListPageAsync: MatchListPageAsync) =
+            apply {
+                service = matchListPageAsync.service
+                params = matchListPageAsync.params
+                response = matchListPageAsync.response
+            }
 
-        fun service(service: MatchServiceAsync) = apply { this.service = service }
+        fun service(service: MatchServiceAsync) =
+            apply {
+                this.service = service
+            }
 
         /** The parameters that were used to request this page. */
-        fun params(params: MatchListParams) = apply { this.params = params }
+        fun params(params: MatchListParams) =
+            apply {
+                this.params = params
+            }
 
         /** The response that this page was parsed from. */
-        fun response(response: MatchListPageResponse) = apply { this.response = response }
+        fun response(response: MatchListPageResponse) =
+            apply {
+                this.response = response
+            }
 
         /**
          * Returns an immutable instance of [MatchListPageAsync].
@@ -108,6 +124,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -118,25 +135,27 @@ private constructor(
          */
         fun build(): MatchListPageAsync =
             MatchListPageAsync(
-                checkRequired("service", service),
-                checkRequired("params", params),
-                checkRequired("response", response),
+              checkRequired(
+                "service", service
+              ),
+              checkRequired(
+                "params", params
+              ),
+              checkRequired(
+                "response", response
+              ),
             )
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is MatchListPageAsync &&
-            service == other.service &&
-            params == other.params &&
-            response == other.response
+      return other is MatchListPageAsync && service == other.service && params == other.params && response == other.response
     }
 
     override fun hashCode(): Int = Objects.hash(service, params, response)
 
-    override fun toString() =
-        "MatchListPageAsync{service=$service, params=$params, response=$response}"
+    override fun toString() = "MatchListPageAsync{service=$service, params=$params, response=$response}"
 }

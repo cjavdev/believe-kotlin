@@ -13,6 +13,8 @@ import com.believe.api.core.http.Headers
 import com.believe.api.core.http.QueryParams
 import com.believe.api.core.toImmutable
 import com.believe.api.errors.BelieveInvalidDataException
+import com.believe.api.models.quotes.QuoteMoment
+import com.believe.api.models.quotes.QuoteTheme
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
@@ -21,98 +23,87 @@ import java.util.Collections
 import java.util.Objects
 
 /** Add a new memorable quote to the collection. */
-class QuoteCreateParams
-private constructor(
+class QuoteCreateParams private constructor(
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
+
 ) : Params {
 
     /**
      * ID of the character who said it
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun characterId(): String = body.characterId()
 
     /**
      * Context in which the quote was said
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun context(): String = body.context()
 
     /**
      * Type of moment when the quote was said
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun momentType(): QuoteMoment = body.momentType()
 
     /**
      * The quote text
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun text(): String = body.text()
 
     /**
      * Primary theme of the quote
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun theme(): QuoteTheme = body.theme()
 
     /**
      * Episode where the quote appears
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
      */
     fun episodeId(): String? = body.episodeId()
 
     /**
      * Whether this quote is humorous
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
      */
     fun isFunny(): Boolean? = body.isFunny()
 
     /**
      * Whether this quote is inspirational
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
      */
     fun isInspirational(): Boolean? = body.isInspirational()
 
     /**
      * Popularity/virality score (0-100)
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
      */
     fun popularityScore(): Double? = body.popularityScore()
 
     /**
      * Additional themes
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
      */
     fun secondaryThemes(): List<QuoteTheme>? = body.secondaryThemes()
 
     /**
      * Number of times shared on social media
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
      */
     fun timesShared(): Long? = body.timesShared()
 
@@ -209,6 +200,7 @@ private constructor(
          * Returns a mutable builder for constructing an instance of [QuoteCreateParams].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .characterId()
          * .context()
@@ -227,17 +219,18 @@ private constructor(
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
-        internal fun from(quoteCreateParams: QuoteCreateParams) = apply {
-            body = quoteCreateParams.body.toBuilder()
-            additionalHeaders = quoteCreateParams.additionalHeaders.toBuilder()
-            additionalQueryParams = quoteCreateParams.additionalQueryParams.toBuilder()
-        }
+        internal fun from(quoteCreateParams: QuoteCreateParams) =
+            apply {
+                body = quoteCreateParams.body.toBuilder()
+                additionalHeaders = quoteCreateParams.additionalHeaders.toBuilder()
+                additionalQueryParams = quoteCreateParams.additionalQueryParams.toBuilder()
+            }
 
         /**
          * Sets the entire request body.
          *
-         * This is generally only useful if you are already constructing the body separately.
-         * Otherwise, it's more convenient to use the top-level setters instead:
+         * This is generally only useful if you are already constructing the body separately. Otherwise,
+         * it's more convenient to use the top-level setters instead:
          * - [characterId]
          * - [context]
          * - [momentType]
@@ -245,109 +238,152 @@ private constructor(
          * - [theme]
          * - etc.
          */
-        fun body(body: Body) = apply { this.body = body.toBuilder() }
+        fun body(body: Body) =
+            apply {
+                this.body = body.toBuilder()
+            }
 
         /** ID of the character who said it */
-        fun characterId(characterId: String) = apply { body.characterId(characterId) }
+        fun characterId(characterId: String) =
+            apply {
+                body.characterId(characterId)
+            }
 
         /**
          * Sets [Builder.characterId] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.characterId] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.characterId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun characterId(characterId: JsonField<String>) = apply { body.characterId(characterId) }
+        fun characterId(characterId: JsonField<String>) =
+            apply {
+                body.characterId(characterId)
+            }
 
         /** Context in which the quote was said */
-        fun context(context: String) = apply { body.context(context) }
+        fun context(context: String) =
+            apply {
+                body.context(context)
+            }
 
         /**
          * Sets [Builder.context] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.context] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.context] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun context(context: JsonField<String>) = apply { body.context(context) }
+        fun context(context: JsonField<String>) =
+            apply {
+                body.context(context)
+            }
 
         /** Type of moment when the quote was said */
-        fun momentType(momentType: QuoteMoment) = apply { body.momentType(momentType) }
+        fun momentType(momentType: QuoteMoment) =
+            apply {
+                body.momentType(momentType)
+            }
 
         /**
          * Sets [Builder.momentType] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.momentType] with a well-typed [QuoteMoment] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * You should usually call [Builder.momentType] with a well-typed [QuoteMoment] value instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun momentType(momentType: JsonField<QuoteMoment>) = apply { body.momentType(momentType) }
+        fun momentType(momentType: JsonField<QuoteMoment>) =
+            apply {
+                body.momentType(momentType)
+            }
 
         /** The quote text */
-        fun text(text: String) = apply { body.text(text) }
+        fun text(text: String) =
+            apply {
+                body.text(text)
+            }
 
         /**
          * Sets [Builder.text] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.text] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.text] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun text(text: JsonField<String>) = apply { body.text(text) }
+        fun text(text: JsonField<String>) =
+            apply {
+                body.text(text)
+            }
 
         /** Primary theme of the quote */
-        fun theme(theme: QuoteTheme) = apply { body.theme(theme) }
+        fun theme(theme: QuoteTheme) =
+            apply {
+                body.theme(theme)
+            }
 
         /**
          * Sets [Builder.theme] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.theme] with a well-typed [QuoteTheme] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.theme] with a well-typed [QuoteTheme] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun theme(theme: JsonField<QuoteTheme>) = apply { body.theme(theme) }
+        fun theme(theme: JsonField<QuoteTheme>) =
+            apply {
+                body.theme(theme)
+            }
 
         /** Episode where the quote appears */
-        fun episodeId(episodeId: String?) = apply { body.episodeId(episodeId) }
+        fun episodeId(episodeId: String?) =
+            apply {
+                body.episodeId(episodeId)
+            }
 
         /**
          * Sets [Builder.episodeId] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.episodeId] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.episodeId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun episodeId(episodeId: JsonField<String>) = apply { body.episodeId(episodeId) }
+        fun episodeId(episodeId: JsonField<String>) =
+            apply {
+                body.episodeId(episodeId)
+            }
 
         /** Whether this quote is humorous */
-        fun isFunny(isFunny: Boolean) = apply { body.isFunny(isFunny) }
+        fun isFunny(isFunny: Boolean) =
+            apply {
+                body.isFunny(isFunny)
+            }
 
         /**
          * Sets [Builder.isFunny] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.isFunny] with a well-typed [Boolean] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.isFunny] with a well-typed [Boolean] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun isFunny(isFunny: JsonField<Boolean>) = apply { body.isFunny(isFunny) }
+        fun isFunny(isFunny: JsonField<Boolean>) =
+            apply {
+                body.isFunny(isFunny)
+            }
 
         /** Whether this quote is inspirational */
-        fun isInspirational(isInspirational: Boolean) = apply {
-            body.isInspirational(isInspirational)
-        }
+        fun isInspirational(isInspirational: Boolean) =
+            apply {
+                body.isInspirational(isInspirational)
+            }
 
         /**
          * Sets [Builder.isInspirational] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.isInspirational] with a well-typed [Boolean] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * You should usually call [Builder.isInspirational] with a well-typed [Boolean] value instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun isInspirational(isInspirational: JsonField<Boolean>) = apply {
-            body.isInspirational(isInspirational)
-        }
+        fun isInspirational(isInspirational: JsonField<Boolean>) =
+            apply {
+                body.isInspirational(isInspirational)
+            }
 
         /** Popularity/virality score (0-100) */
-        fun popularityScore(popularityScore: Double?) = apply {
-            body.popularityScore(popularityScore)
-        }
+        fun popularityScore(popularityScore: Double?) =
+            apply {
+                body.popularityScore(popularityScore)
+            }
 
         /**
          * Alias for [Builder.popularityScore].
@@ -359,41 +395,46 @@ private constructor(
         /**
          * Sets [Builder.popularityScore] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.popularityScore] with a well-typed [Double] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * You should usually call [Builder.popularityScore] with a well-typed [Double] value instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun popularityScore(popularityScore: JsonField<Double>) = apply {
-            body.popularityScore(popularityScore)
-        }
+        fun popularityScore(popularityScore: JsonField<Double>) =
+            apply {
+                body.popularityScore(popularityScore)
+            }
 
         /** Additional themes */
-        fun secondaryThemes(secondaryThemes: List<QuoteTheme>) = apply {
-            body.secondaryThemes(secondaryThemes)
-        }
+        fun secondaryThemes(secondaryThemes: List<QuoteTheme>) =
+            apply {
+                body.secondaryThemes(secondaryThemes)
+            }
 
         /**
          * Sets [Builder.secondaryThemes] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.secondaryThemes] with a well-typed `List<QuoteTheme>`
-         * value instead. This method is primarily for setting the field to an undocumented or not
-         * yet supported value.
+         * You should usually call [Builder.secondaryThemes] with a well-typed `List<QuoteTheme>` value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun secondaryThemes(secondaryThemes: JsonField<List<QuoteTheme>>) = apply {
-            body.secondaryThemes(secondaryThemes)
-        }
+        fun secondaryThemes(secondaryThemes: JsonField<List<QuoteTheme>>) =
+            apply {
+                body.secondaryThemes(secondaryThemes)
+            }
 
         /**
          * Adds a single [QuoteTheme] to [secondaryThemes].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addSecondaryTheme(secondaryTheme: QuoteTheme) = apply {
-            body.addSecondaryTheme(secondaryTheme)
-        }
+        fun addSecondaryTheme(secondaryTheme: QuoteTheme) =
+            apply {
+                body.addSecondaryTheme(secondaryTheme)
+            }
 
         /** Number of times shared on social media */
-        fun timesShared(timesShared: Long?) = apply { body.timesShared(timesShared) }
+        fun timesShared(timesShared: Long?) =
+            apply {
+                body.timesShared(timesShared)
+            }
 
         /**
          * Alias for [Builder.timesShared].
@@ -405,128 +446,164 @@ private constructor(
         /**
          * Sets [Builder.timesShared] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.timesShared] with a well-typed [Long] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.timesShared] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun timesShared(timesShared: JsonField<Long>) = apply { body.timesShared(timesShared) }
+        fun timesShared(timesShared: JsonField<Long>) =
+            apply {
+                body.timesShared(timesShared)
+            }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            body.additionalProperties(additionalBodyProperties)
-        }
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
+            apply {
+                body.additionalProperties(additionalBodyProperties)
+            }
 
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            body.putAdditionalProperty(key, value)
-        }
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) =
+            apply {
+                body.putAdditionalProperty(
+                  key, value
+                )
+            }
 
         fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
             apply {
                 body.putAllAdditionalProperties(additionalBodyProperties)
             }
 
-        fun removeAdditionalBodyProperty(key: String) = apply { body.removeAdditionalProperty(key) }
+        fun removeAdditionalBodyProperty(key: String) =
+            apply {
+                body.removeAdditionalProperty(key)
+            }
 
-        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
-            body.removeAllAdditionalProperties(keys)
-        }
+        fun removeAllAdditionalBodyProperties(keys: Set<String>) =
+            apply {
+                body.removeAllAdditionalProperties(keys)
+            }
 
-        fun additionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.clear()
-            putAllAdditionalHeaders(additionalHeaders)
-        }
+        fun additionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.clear()
+                putAllAdditionalHeaders(additionalHeaders)
+            }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.clear()
-            putAllAdditionalHeaders(additionalHeaders)
-        }
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.clear()
+                putAllAdditionalHeaders(additionalHeaders)
+            }
 
-        fun putAdditionalHeader(name: String, value: String) = apply {
-            additionalHeaders.put(name, value)
-        }
+        fun putAdditionalHeader(name: String, value: String) =
+            apply {
+                additionalHeaders.put(name, value)
+            }
 
-        fun putAdditionalHeaders(name: String, values: Iterable<String>) = apply {
-            additionalHeaders.put(name, values)
-        }
+        fun putAdditionalHeaders(name: String, values: Iterable<String>) =
+            apply {
+                additionalHeaders.put(name, values)
+            }
 
-        fun putAllAdditionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.putAll(additionalHeaders)
-        }
+        fun putAllAdditionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.putAll(additionalHeaders)
+            }
 
-        fun putAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.putAll(additionalHeaders)
-        }
+        fun putAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.putAll(additionalHeaders)
+            }
 
-        fun replaceAdditionalHeaders(name: String, value: String) = apply {
-            additionalHeaders.replace(name, value)
-        }
+        fun replaceAdditionalHeaders(name: String, value: String) =
+            apply {
+                additionalHeaders.replace(name, value)
+            }
 
-        fun replaceAdditionalHeaders(name: String, values: Iterable<String>) = apply {
-            additionalHeaders.replace(name, values)
-        }
+        fun replaceAdditionalHeaders(name: String, values: Iterable<String>) =
+            apply {
+                additionalHeaders.replace(name, values)
+            }
 
-        fun replaceAllAdditionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.replaceAll(additionalHeaders)
-        }
+        fun replaceAllAdditionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.replaceAll(additionalHeaders)
+            }
 
-        fun replaceAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.replaceAll(additionalHeaders)
-        }
+        fun replaceAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.replaceAll(additionalHeaders)
+            }
 
-        fun removeAdditionalHeaders(name: String) = apply { additionalHeaders.remove(name) }
+        fun removeAdditionalHeaders(name: String) =
+            apply {
+                additionalHeaders.remove(name)
+            }
 
-        fun removeAllAdditionalHeaders(names: Set<String>) = apply {
-            additionalHeaders.removeAll(names)
-        }
+        fun removeAllAdditionalHeaders(names: Set<String>) =
+            apply {
+                additionalHeaders.removeAll(names)
+            }
 
-        fun additionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.clear()
-            putAllAdditionalQueryParams(additionalQueryParams)
-        }
+        fun additionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.clear()
+                putAllAdditionalQueryParams(additionalQueryParams)
+            }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
-            this.additionalQueryParams.clear()
-            putAllAdditionalQueryParams(additionalQueryParams)
-        }
+        fun additionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalQueryParams.clear()
+                putAllAdditionalQueryParams(additionalQueryParams)
+            }
 
-        fun putAdditionalQueryParam(key: String, value: String) = apply {
-            additionalQueryParams.put(key, value)
-        }
+        fun putAdditionalQueryParam(key: String, value: String) =
+            apply {
+                additionalQueryParams.put(key, value)
+            }
 
-        fun putAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
-            additionalQueryParams.put(key, values)
-        }
+        fun putAdditionalQueryParams(key: String, values: Iterable<String>) =
+            apply {
+                additionalQueryParams.put(key, values)
+            }
 
-        fun putAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.putAll(additionalQueryParams)
-        }
+        fun putAllAdditionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.putAll(additionalQueryParams)
+            }
 
         fun putAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
             apply {
                 this.additionalQueryParams.putAll(additionalQueryParams)
             }
 
-        fun replaceAdditionalQueryParams(key: String, value: String) = apply {
-            additionalQueryParams.replace(key, value)
-        }
+        fun replaceAdditionalQueryParams(key: String, value: String) =
+            apply {
+                additionalQueryParams.replace(key, value)
+            }
 
-        fun replaceAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
-            additionalQueryParams.replace(key, values)
-        }
+        fun replaceAdditionalQueryParams(key: String, values: Iterable<String>) =
+            apply {
+                additionalQueryParams.replace(key, values)
+            }
 
-        fun replaceAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.replaceAll(additionalQueryParams)
-        }
+        fun replaceAllAdditionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.replaceAll(additionalQueryParams)
+            }
 
         fun replaceAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
             apply {
                 this.additionalQueryParams.replaceAll(additionalQueryParams)
             }
 
-        fun removeAdditionalQueryParams(key: String) = apply { additionalQueryParams.remove(key) }
+        fun removeAdditionalQueryParams(key: String) =
+            apply {
+                additionalQueryParams.remove(key)
+            }
 
-        fun removeAllAdditionalQueryParams(keys: Set<String>) = apply {
-            additionalQueryParams.removeAll(keys)
-        }
+        fun removeAllAdditionalQueryParams(keys: Set<String>) =
+            apply {
+                additionalQueryParams.removeAll(keys)
+            }
 
         /**
          * Returns an immutable instance of [QuoteCreateParams].
@@ -534,6 +611,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .characterId()
          * .context()
@@ -546,9 +624,9 @@ private constructor(
          */
         fun build(): QuoteCreateParams =
             QuoteCreateParams(
-                body.build(),
-                additionalHeaders.build(),
-                additionalQueryParams.build(),
+              body.build(),
+              additionalHeaders.build(),
+              additionalQueryParams.build(),
             )
     }
 
@@ -559,9 +637,7 @@ private constructor(
     override fun _queryParams(): QueryParams = additionalQueryParams
 
     /** Model for creating a new quote. */
-    class Body
-    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-    private constructor(
+    class Body @JsonCreator(mode = JsonCreator.Mode.DISABLED) private constructor(
         private val characterId: JsonField<String>,
         private val context: JsonField<String>,
         private val momentType: JsonField<QuoteMoment>,
@@ -574,137 +650,111 @@ private constructor(
         private val secondaryThemes: JsonField<List<QuoteTheme>>,
         private val timesShared: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
+
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("character_id")
-            @ExcludeMissing
-            characterId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("character_id") @ExcludeMissing characterId: JsonField<String> = JsonMissing.of(),
             @JsonProperty("context") @ExcludeMissing context: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("moment_type")
-            @ExcludeMissing
-            momentType: JsonField<QuoteMoment> = JsonMissing.of(),
+            @JsonProperty("moment_type") @ExcludeMissing momentType: JsonField<QuoteMoment> = JsonMissing.of(),
             @JsonProperty("text") @ExcludeMissing text: JsonField<String> = JsonMissing.of(),
             @JsonProperty("theme") @ExcludeMissing theme: JsonField<QuoteTheme> = JsonMissing.of(),
-            @JsonProperty("episode_id")
-            @ExcludeMissing
-            episodeId: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("is_funny")
-            @ExcludeMissing
-            isFunny: JsonField<Boolean> = JsonMissing.of(),
-            @JsonProperty("is_inspirational")
-            @ExcludeMissing
-            isInspirational: JsonField<Boolean> = JsonMissing.of(),
-            @JsonProperty("popularity_score")
-            @ExcludeMissing
-            popularityScore: JsonField<Double> = JsonMissing.of(),
-            @JsonProperty("secondary_themes")
-            @ExcludeMissing
-            secondaryThemes: JsonField<List<QuoteTheme>> = JsonMissing.of(),
-            @JsonProperty("times_shared")
-            @ExcludeMissing
-            timesShared: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("episode_id") @ExcludeMissing episodeId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("is_funny") @ExcludeMissing isFunny: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("is_inspirational") @ExcludeMissing isInspirational: JsonField<Boolean> = JsonMissing.of(),
+            @JsonProperty("popularity_score") @ExcludeMissing popularityScore: JsonField<Double> = JsonMissing.of(),
+            @JsonProperty("secondary_themes") @ExcludeMissing secondaryThemes: JsonField<List<QuoteTheme>> = JsonMissing.of(),
+            @JsonProperty("times_shared") @ExcludeMissing timesShared: JsonField<Long> = JsonMissing.of()
         ) : this(
-            characterId,
-            context,
-            momentType,
-            text,
-            theme,
-            episodeId,
-            isFunny,
-            isInspirational,
-            popularityScore,
-            secondaryThemes,
-            timesShared,
-            mutableMapOf(),
+          characterId,
+          context,
+          momentType,
+          text,
+          theme,
+          episodeId,
+          isFunny,
+          isInspirational,
+          popularityScore,
+          secondaryThemes,
+          timesShared,
+          mutableMapOf(),
         )
 
         /**
          * ID of the character who said it
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun characterId(): String = characterId.getRequired("character_id")
 
         /**
          * Context in which the quote was said
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun context(): String = context.getRequired("context")
 
         /**
          * Type of moment when the quote was said
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun momentType(): QuoteMoment = momentType.getRequired("moment_type")
 
         /**
          * The quote text
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun text(): String = text.getRequired("text")
 
         /**
          * Primary theme of the quote
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun theme(): QuoteTheme = theme.getRequired("theme")
 
         /**
          * Episode where the quote appears
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
          */
         fun episodeId(): String? = episodeId.getNullable("episode_id")
 
         /**
          * Whether this quote is humorous
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
          */
         fun isFunny(): Boolean? = isFunny.getNullable("is_funny")
 
         /**
          * Whether this quote is inspirational
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
          */
         fun isInspirational(): Boolean? = isInspirational.getNullable("is_inspirational")
 
         /**
          * Popularity/virality score (0-100)
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
          */
         fun popularityScore(): Double? = popularityScore.getNullable("popularity_score")
 
         /**
          * Additional themes
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
          */
         fun secondaryThemes(): List<QuoteTheme>? = secondaryThemes.getNullable("secondary_themes")
 
         /**
          * Number of times shared on social media
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
          */
         fun timesShared(): Long? = timesShared.getNullable("times_shared")
 
@@ -722,7 +772,9 @@ private constructor(
          *
          * Unlike [context], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("context") @ExcludeMissing fun _context(): JsonField<String> = context
+        @JsonProperty("context")
+        @ExcludeMissing
+        fun _context(): JsonField<String> = context
 
         /**
          * Returns the raw JSON value of [momentType].
@@ -738,34 +790,41 @@ private constructor(
          *
          * Unlike [text], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("text") @ExcludeMissing fun _text(): JsonField<String> = text
+        @JsonProperty("text")
+        @ExcludeMissing
+        fun _text(): JsonField<String> = text
 
         /**
          * Returns the raw JSON value of [theme].
          *
          * Unlike [theme], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("theme") @ExcludeMissing fun _theme(): JsonField<QuoteTheme> = theme
+        @JsonProperty("theme")
+        @ExcludeMissing
+        fun _theme(): JsonField<QuoteTheme> = theme
 
         /**
          * Returns the raw JSON value of [episodeId].
          *
          * Unlike [episodeId], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("episode_id") @ExcludeMissing fun _episodeId(): JsonField<String> = episodeId
+        @JsonProperty("episode_id")
+        @ExcludeMissing
+        fun _episodeId(): JsonField<String> = episodeId
 
         /**
          * Returns the raw JSON value of [isFunny].
          *
          * Unlike [isFunny], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("is_funny") @ExcludeMissing fun _isFunny(): JsonField<Boolean> = isFunny
+        @JsonProperty("is_funny")
+        @ExcludeMissing
+        fun _isFunny(): JsonField<Boolean> = isFunny
 
         /**
          * Returns the raw JSON value of [isInspirational].
          *
-         * Unlike [isInspirational], this method doesn't throw if the JSON field has an unexpected
-         * type.
+         * Unlike [isInspirational], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("is_inspirational")
         @ExcludeMissing
@@ -774,8 +833,7 @@ private constructor(
         /**
          * Returns the raw JSON value of [popularityScore].
          *
-         * Unlike [popularityScore], this method doesn't throw if the JSON field has an unexpected
-         * type.
+         * Unlike [popularityScore], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("popularity_score")
         @ExcludeMissing
@@ -784,8 +842,7 @@ private constructor(
         /**
          * Returns the raw JSON value of [secondaryThemes].
          *
-         * Unlike [secondaryThemes], this method doesn't throw if the JSON field has an unexpected
-         * type.
+         * Unlike [secondaryThemes], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("secondary_themes")
         @ExcludeMissing
@@ -802,13 +859,12 @@ private constructor(
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
-            additionalProperties.put(key, value)
+          additionalProperties.put(key, value)
         }
 
         @JsonAnyGetter
         @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> =
-            Collections.unmodifiableMap(additionalProperties)
+        fun _additionalProperties(): Map<String, JsonValue> = Collections.unmodifiableMap(additionalProperties)
 
         fun toBuilder() = Builder().from(this)
 
@@ -818,6 +874,7 @@ private constructor(
              * Returns a mutable builder for constructing an instance of [Body].
              *
              * The following fields are required:
+             *
              * ```kotlin
              * .characterId()
              * .context()
@@ -845,20 +902,21 @@ private constructor(
             private var timesShared: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            internal fun from(body: Body) = apply {
-                characterId = body.characterId
-                context = body.context
-                momentType = body.momentType
-                text = body.text
-                theme = body.theme
-                episodeId = body.episodeId
-                isFunny = body.isFunny
-                isInspirational = body.isInspirational
-                popularityScore = body.popularityScore
-                secondaryThemes = body.secondaryThemes.map { it.toMutableList() }
-                timesShared = body.timesShared
-                additionalProperties = body.additionalProperties.toMutableMap()
-            }
+            internal fun from(body: Body) =
+                apply {
+                    characterId = body.characterId
+                    context = body.context
+                    momentType = body.momentType
+                    text = body.text
+                    theme = body.theme
+                    episodeId = body.episodeId
+                    isFunny = body.isFunny
+                    isInspirational = body.isInspirational
+                    popularityScore = body.popularityScore
+                    secondaryThemes = body.secondaryThemes.map { it.toMutableList() }
+                    timesShared = body.timesShared
+                    additionalProperties = body.additionalProperties.toMutableMap()
+                }
 
             /** ID of the character who said it */
             fun characterId(characterId: String) = characterId(JsonField.of(characterId))
@@ -866,13 +924,13 @@ private constructor(
             /**
              * Sets [Builder.characterId] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.characterId] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.characterId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun characterId(characterId: JsonField<String>) = apply {
-                this.characterId = characterId
-            }
+            fun characterId(characterId: JsonField<String>) =
+                apply {
+                    this.characterId = characterId
+                }
 
             /** Context in which the quote was said */
             fun context(context: String) = context(JsonField.of(context))
@@ -880,11 +938,13 @@ private constructor(
             /**
              * Sets [Builder.context] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.context] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.context] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun context(context: JsonField<String>) = apply { this.context = context }
+            fun context(context: JsonField<String>) =
+                apply {
+                    this.context = context
+                }
 
             /** Type of moment when the quote was said */
             fun momentType(momentType: QuoteMoment) = momentType(JsonField.of(momentType))
@@ -892,13 +952,13 @@ private constructor(
             /**
              * Sets [Builder.momentType] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.momentType] with a well-typed [QuoteMoment] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.momentType] with a well-typed [QuoteMoment] value instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun momentType(momentType: JsonField<QuoteMoment>) = apply {
-                this.momentType = momentType
-            }
+            fun momentType(momentType: JsonField<QuoteMoment>) =
+                apply {
+                    this.momentType = momentType
+                }
 
             /** The quote text */
             fun text(text: String) = text(JsonField.of(text))
@@ -906,11 +966,13 @@ private constructor(
             /**
              * Sets [Builder.text] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.text] with a well-typed [String] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.text] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun text(text: JsonField<String>) = apply { this.text = text }
+            fun text(text: JsonField<String>) =
+                apply {
+                    this.text = text
+                }
 
             /** Primary theme of the quote */
             fun theme(theme: QuoteTheme) = theme(JsonField.of(theme))
@@ -918,11 +980,13 @@ private constructor(
             /**
              * Sets [Builder.theme] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.theme] with a well-typed [QuoteTheme] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.theme] with a well-typed [QuoteTheme] value instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun theme(theme: JsonField<QuoteTheme>) = apply { this.theme = theme }
+            fun theme(theme: JsonField<QuoteTheme>) =
+                apply {
+                    this.theme = theme
+                }
 
             /** Episode where the quote appears */
             fun episodeId(episodeId: String?) = episodeId(JsonField.ofNullable(episodeId))
@@ -930,11 +994,13 @@ private constructor(
             /**
              * Sets [Builder.episodeId] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.episodeId] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.episodeId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun episodeId(episodeId: JsonField<String>) = apply { this.episodeId = episodeId }
+            fun episodeId(episodeId: JsonField<String>) =
+                apply {
+                    this.episodeId = episodeId
+                }
 
             /** Whether this quote is humorous */
             fun isFunny(isFunny: Boolean) = isFunny(JsonField.of(isFunny))
@@ -942,76 +1008,74 @@ private constructor(
             /**
              * Sets [Builder.isFunny] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.isFunny] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.isFunny] with a well-typed [Boolean] value instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun isFunny(isFunny: JsonField<Boolean>) = apply { this.isFunny = isFunny }
+            fun isFunny(isFunny: JsonField<Boolean>) =
+                apply {
+                    this.isFunny = isFunny
+                }
 
             /** Whether this quote is inspirational */
-            fun isInspirational(isInspirational: Boolean) =
-                isInspirational(JsonField.of(isInspirational))
+            fun isInspirational(isInspirational: Boolean) = isInspirational(JsonField.of(isInspirational))
 
             /**
              * Sets [Builder.isInspirational] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.isInspirational] with a well-typed [Boolean] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.isInspirational] with a well-typed [Boolean] value instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun isInspirational(isInspirational: JsonField<Boolean>) = apply {
-                this.isInspirational = isInspirational
-            }
+            fun isInspirational(isInspirational: JsonField<Boolean>) =
+                apply {
+                    this.isInspirational = isInspirational
+                }
 
             /** Popularity/virality score (0-100) */
-            fun popularityScore(popularityScore: Double?) =
-                popularityScore(JsonField.ofNullable(popularityScore))
+            fun popularityScore(popularityScore: Double?) = popularityScore(JsonField.ofNullable(popularityScore))
 
             /**
              * Alias for [Builder.popularityScore].
              *
              * This unboxed primitive overload exists for backwards compatibility.
              */
-            fun popularityScore(popularityScore: Double) =
-                popularityScore(popularityScore as Double?)
+            fun popularityScore(popularityScore: Double) = popularityScore(popularityScore as Double?)
 
             /**
              * Sets [Builder.popularityScore] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.popularityScore] with a well-typed [Double] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.popularityScore] with a well-typed [Double] value instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun popularityScore(popularityScore: JsonField<Double>) = apply {
-                this.popularityScore = popularityScore
-            }
+            fun popularityScore(popularityScore: JsonField<Double>) =
+                apply {
+                    this.popularityScore = popularityScore
+                }
 
             /** Additional themes */
-            fun secondaryThemes(secondaryThemes: List<QuoteTheme>) =
-                secondaryThemes(JsonField.of(secondaryThemes))
+            fun secondaryThemes(secondaryThemes: List<QuoteTheme>) = secondaryThemes(JsonField.of(secondaryThemes))
 
             /**
              * Sets [Builder.secondaryThemes] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.secondaryThemes] with a well-typed
-             * `List<QuoteTheme>` value instead. This method is primarily for setting the field to
-             * an undocumented or not yet supported value.
+             * You should usually call [Builder.secondaryThemes] with a well-typed `List<QuoteTheme>` value instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun secondaryThemes(secondaryThemes: JsonField<List<QuoteTheme>>) = apply {
-                this.secondaryThemes = secondaryThemes.map { it.toMutableList() }
-            }
+            fun secondaryThemes(secondaryThemes: JsonField<List<QuoteTheme>>) =
+                apply {
+                    this.secondaryThemes = secondaryThemes.map { it.toMutableList() }
+                }
 
             /**
              * Adds a single [QuoteTheme] to [secondaryThemes].
              *
              * @throws IllegalStateException if the field was previously set to a non-list.
              */
-            fun addSecondaryTheme(secondaryTheme: QuoteTheme) = apply {
-                secondaryThemes =
-                    (secondaryThemes ?: JsonField.of(mutableListOf())).also {
+            fun addSecondaryTheme(secondaryTheme: QuoteTheme) =
+                apply {
+                    secondaryThemes = (secondaryThemes ?: JsonField.of(mutableListOf())).also {
                         checkKnown("secondaryThemes", it).add(secondaryTheme)
                     }
-            }
+                }
 
             /** Number of times shared on social media */
             fun timesShared(timesShared: Long?) = timesShared(JsonField.ofNullable(timesShared))
@@ -1026,30 +1090,39 @@ private constructor(
             /**
              * Sets [Builder.timesShared] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.timesShared] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.timesShared] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun timesShared(timesShared: JsonField<Long>) = apply { this.timesShared = timesShared }
+            fun timesShared(timesShared: JsonField<Long>) =
+                apply {
+                    this.timesShared = timesShared
+                }
 
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
 
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply {
+                    additionalProperties.put(key, value)
+                }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply {
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+            fun removeAdditionalProperty(key: String) =
+                apply {
+                    additionalProperties.remove(key)
+                }
 
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
+            fun removeAllAdditionalProperties(keys: Set<String>) =
+                apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
 
             /**
              * Returns an immutable instance of [Body].
@@ -1057,6 +1130,7 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              *
              * The following fields are required:
+             *
              * ```kotlin
              * .characterId()
              * .context()
@@ -1069,41 +1143,52 @@ private constructor(
              */
             fun build(): Body =
                 Body(
-                    checkRequired("characterId", characterId),
-                    checkRequired("context", context),
-                    checkRequired("momentType", momentType),
-                    checkRequired("text", text),
-                    checkRequired("theme", theme),
-                    episodeId,
-                    isFunny,
-                    isInspirational,
-                    popularityScore,
-                    (secondaryThemes ?: JsonMissing.of()).map { it.toImmutable() },
-                    timesShared,
-                    additionalProperties.toMutableMap(),
+                  checkRequired(
+                    "characterId", characterId
+                  ),
+                  checkRequired(
+                    "context", context
+                  ),
+                  checkRequired(
+                    "momentType", momentType
+                  ),
+                  checkRequired(
+                    "text", text
+                  ),
+                  checkRequired(
+                    "theme", theme
+                  ),
+                  episodeId,
+                  isFunny,
+                  isInspirational,
+                  popularityScore,
+                  (secondaryThemes?: JsonMissing.of()).map { it.toImmutable() },
+                  timesShared,
+                  additionalProperties.toMutableMap(),
                 )
         }
 
         private var validated: Boolean = false
 
-        fun validate(): Body = apply {
-            if (validated) {
-                return@apply
-            }
+        fun validate(): Body =
+            apply {
+                if (validated) {
+                  return@apply
+                }
 
-            characterId()
-            context()
-            momentType().validate()
-            text()
-            theme().validate()
-            episodeId()
-            isFunny()
-            isInspirational()
-            popularityScore()
-            secondaryThemes()?.forEach { it.validate() }
-            timesShared()
-            validated = true
-        }
+                characterId()
+                context()
+                momentType().validate()
+                text()
+                theme().validate()
+                episodeId()
+                isFunny()
+                isInspirational()
+                popularityScore()
+                secondaryThemes()?.forEach { it.validate() }
+                timesShared()
+                validated = true
+            }
 
         fun isValid(): Boolean =
             try {
@@ -1114,80 +1199,36 @@ private constructor(
             }
 
         /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
+         * Returns a score indicating how many valid values are contained in this object recursively.
          *
          * Used for best match union deserialization.
          */
-        internal fun validity(): Int =
-            (if (characterId.asKnown() == null) 0 else 1) +
-                (if (context.asKnown() == null) 0 else 1) +
-                (momentType.asKnown()?.validity() ?: 0) +
-                (if (text.asKnown() == null) 0 else 1) +
-                (theme.asKnown()?.validity() ?: 0) +
-                (if (episodeId.asKnown() == null) 0 else 1) +
-                (if (isFunny.asKnown() == null) 0 else 1) +
-                (if (isInspirational.asKnown() == null) 0 else 1) +
-                (if (popularityScore.asKnown() == null) 0 else 1) +
-                (secondaryThemes.asKnown()?.sumOf { it.validity().toInt() } ?: 0) +
-                (if (timesShared.asKnown() == null) 0 else 1)
+        internal fun validity(): Int = (if (characterId.asKnown() == null) 0 else 1) + (if (context.asKnown() == null) 0 else 1) + (momentType.asKnown()?.validity() ?: 0) + (if (text.asKnown() == null) 0 else 1) + (theme.asKnown()?.validity() ?: 0) + (if (episodeId.asKnown() == null) 0 else 1) + (if (isFunny.asKnown() == null) 0 else 1) + (if (isInspirational.asKnown() == null) 0 else 1) + (if (popularityScore.asKnown() == null) 0 else 1) + (secondaryThemes.asKnown()?.sumOf { it.validity().toInt() } ?: 0) + (if (timesShared.asKnown() == null) 0 else 1)
 
         override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
+          if (this === other) {
+              return true
+          }
 
-            return other is Body &&
-                characterId == other.characterId &&
-                context == other.context &&
-                momentType == other.momentType &&
-                text == other.text &&
-                theme == other.theme &&
-                episodeId == other.episodeId &&
-                isFunny == other.isFunny &&
-                isInspirational == other.isInspirational &&
-                popularityScore == other.popularityScore &&
-                secondaryThemes == other.secondaryThemes &&
-                timesShared == other.timesShared &&
-                additionalProperties == other.additionalProperties
+          return other is Body && characterId == other.characterId && context == other.context && momentType == other.momentType && text == other.text && theme == other.theme && episodeId == other.episodeId && isFunny == other.isFunny && isInspirational == other.isInspirational && popularityScore == other.popularityScore && secondaryThemes == other.secondaryThemes && timesShared == other.timesShared && additionalProperties == other.additionalProperties
         }
 
-        private val hashCode: Int by lazy {
-            Objects.hash(
-                characterId,
-                context,
-                momentType,
-                text,
-                theme,
-                episodeId,
-                isFunny,
-                isInspirational,
-                popularityScore,
-                secondaryThemes,
-                timesShared,
-                additionalProperties,
-            )
-        }
+        private val hashCode: Int by lazy { Objects.hash(characterId, context, momentType, text, theme, episodeId, isFunny, isInspirational, popularityScore, secondaryThemes, timesShared, additionalProperties) }
 
         override fun hashCode(): Int = hashCode
 
-        override fun toString() =
-            "Body{characterId=$characterId, context=$context, momentType=$momentType, text=$text, theme=$theme, episodeId=$episodeId, isFunny=$isFunny, isInspirational=$isInspirational, popularityScore=$popularityScore, secondaryThemes=$secondaryThemes, timesShared=$timesShared, additionalProperties=$additionalProperties}"
+        override fun toString() = "Body{characterId=$characterId, context=$context, momentType=$momentType, text=$text, theme=$theme, episodeId=$episodeId, isFunny=$isFunny, isInspirational=$isInspirational, popularityScore=$popularityScore, secondaryThemes=$secondaryThemes, timesShared=$timesShared, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is QuoteCreateParams &&
-            body == other.body &&
-            additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams
+      return other is QuoteCreateParams && body == other.body && additionalHeaders == other.additionalHeaders && additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int = Objects.hash(body, additionalHeaders, additionalQueryParams)
 
-    override fun toString() =
-        "QuoteCreateParams{body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+    override fun toString() = "QuoteCreateParams{body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

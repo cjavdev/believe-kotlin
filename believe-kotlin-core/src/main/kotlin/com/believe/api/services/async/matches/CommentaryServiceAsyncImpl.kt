@@ -18,69 +18,63 @@ import com.believe.api.core.http.parseable
 import com.believe.api.core.prepareAsync
 import com.believe.api.models.matches.commentary.CommentaryStreamParams
 import com.believe.api.models.matches.commentary.CommentaryStreamResponse
+import com.believe.api.services.async.matches.CommentaryServiceAsync
+import com.believe.api.services.async.matches.CommentaryServiceAsyncImpl
 
 /** Server-Sent Events (SSE) streaming endpoints */
-class CommentaryServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
-    CommentaryServiceAsync {
+class CommentaryServiceAsyncImpl internal constructor(
+    private val clientOptions: ClientOptions,
 
-    private val withRawResponse: CommentaryServiceAsync.WithRawResponse by lazy {
-        WithRawResponseImpl(clientOptions)
-    }
+) : CommentaryServiceAsync {
+
+    private val withRawResponse: CommentaryServiceAsync.WithRawResponse by lazy { WithRawResponseImpl(clientOptions) }
 
     override fun withRawResponse(): CommentaryServiceAsync.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CommentaryServiceAsync =
-        CommentaryServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
+    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CommentaryServiceAsync = CommentaryServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
-    override suspend fun stream(
-        params: CommentaryStreamParams,
-        requestOptions: RequestOptions,
-    ): CommentaryStreamResponse =
+    override suspend fun stream(params: CommentaryStreamParams, requestOptions: RequestOptions): CommentaryStreamResponse =
         // post /matches/{match_id}/commentary/stream
         withRawResponse().stream(params, requestOptions).parse()
 
-    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        CommentaryServiceAsync.WithRawResponse {
+    class WithRawResponseImpl internal constructor(
+        private val clientOptions: ClientOptions,
 
-        private val errorHandler: Handler<HttpResponse> =
-            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+    ) : CommentaryServiceAsync.WithRawResponse {
 
-        override fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): CommentaryServiceAsync.WithRawResponse =
-            CommentaryServiceAsyncImpl.WithRawResponseImpl(
-                clientOptions.toBuilder().apply(modifier).build()
+        private val errorHandler: Handler<HttpResponse> = errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CommentaryServiceAsync.WithRawResponse = CommentaryServiceAsyncImpl.WithRawResponseImpl(clientOptions.toBuilder().apply(modifier).build())
+
+        private val streamHandler: Handler<CommentaryStreamResponse> = jsonHandler<CommentaryStreamResponse>(clientOptions.jsonMapper)
+
+        override suspend fun stream(params: CommentaryStreamParams, requestOptions: RequestOptions): HttpResponseFor<CommentaryStreamResponse> {
+          // We check here instead of in the params builder because this can be specified positionally or in the params class.
+          checkRequired("matchId", params.matchId())
+          val request = HttpRequest.builder()
+            .method(HttpMethod.POST)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("matches", params._pathParam(0), "commentary", "stream")
+            .apply { params._body()?.let{ body(json(clientOptions.jsonMapper, it)) } }
+            .build()
+            .prepareAsync(
+              clientOptions, params
             )
-
-        private val streamHandler: Handler<CommentaryStreamResponse> =
-            jsonHandler<CommentaryStreamResponse>(clientOptions.jsonMapper)
-
-        override suspend fun stream(
-            params: CommentaryStreamParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<CommentaryStreamResponse> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("matchId", params.matchId())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("matches", params._pathParam(0), "commentary", "stream")
-                    .apply { params._body()?.let { body(json(clientOptions.jsonMapper, it)) } }
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { streamHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  streamHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
     }
 }

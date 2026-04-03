@@ -15,14 +15,13 @@ import com.believe.api.models.episodes.EpisodeListPageAsync
 import com.believe.api.models.episodes.EpisodeListParams
 import com.believe.api.models.episodes.EpisodeRetrieveParams
 import com.believe.api.models.episodes.EpisodeUpdateParams
+import com.believe.api.services.async.EpisodeServiceAsync
 import com.google.errorprone.annotations.MustBeClosed
 
 /** Operations related to TV episodes */
 interface EpisodeServiceAsync {
 
-    /**
-     * Returns a view of this service that provides access to raw HTTP responses for each method.
-     */
+    /** Returns a view of this service that provides access to raw HTTP responses for each method. */
     fun withRawResponse(): WithRawResponse
 
     /**
@@ -33,96 +32,94 @@ interface EpisodeServiceAsync {
     fun withOptions(modifier: (ClientOptions.Builder) -> Unit): EpisodeServiceAsync
 
     /** Add a new episode to the series. */
-    suspend fun create(
-        params: EpisodeCreateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): Episode
+    suspend fun create(params: EpisodeCreateParams, requestOptions: RequestOptions = RequestOptions.none()): Episode
 
     /** Retrieve detailed information about a specific episode. */
-    suspend fun retrieve(
-        episodeId: String,
-        params: EpisodeRetrieveParams = EpisodeRetrieveParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): Episode = retrieve(params.toBuilder().episodeId(episodeId).build(), requestOptions)
+    suspend fun retrieve(episodeId: String, params: EpisodeRetrieveParams = EpisodeRetrieveParams.none(), requestOptions: RequestOptions = RequestOptions.none()): Episode =
+        retrieve(
+          params.toBuilder()
+              .episodeId(episodeId)
+              .build(), requestOptions
+        )
 
     /** @see retrieve */
-    suspend fun retrieve(
-        params: EpisodeRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): Episode
+    suspend fun retrieve(params: EpisodeRetrieveParams, requestOptions: RequestOptions = RequestOptions.none()): Episode
 
     /** @see retrieve */
     suspend fun retrieve(episodeId: String, requestOptions: RequestOptions): Episode =
-        retrieve(episodeId, EpisodeRetrieveParams.none(), requestOptions)
+        retrieve(
+          episodeId,
+          EpisodeRetrieveParams.none(),
+          requestOptions,
+        )
 
     /** Update specific fields of an existing episode. */
-    suspend fun update(
-        episodeId: String,
-        params: EpisodeUpdateParams = EpisodeUpdateParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): Episode = update(params.toBuilder().episodeId(episodeId).build(), requestOptions)
+    suspend fun update(episodeId: String, params: EpisodeUpdateParams = EpisodeUpdateParams.none(), requestOptions: RequestOptions = RequestOptions.none()): Episode =
+        update(
+          params.toBuilder()
+              .episodeId(episodeId)
+              .build(), requestOptions
+        )
 
     /** @see update */
-    suspend fun update(
-        params: EpisodeUpdateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): Episode
+    suspend fun update(params: EpisodeUpdateParams, requestOptions: RequestOptions = RequestOptions.none()): Episode
 
     /** @see update */
     suspend fun update(episodeId: String, requestOptions: RequestOptions): Episode =
-        update(episodeId, EpisodeUpdateParams.none(), requestOptions)
+        update(
+          episodeId,
+          EpisodeUpdateParams.none(),
+          requestOptions,
+        )
 
     /** Get a paginated list of all Ted Lasso episodes with optional filtering by season. */
-    suspend fun list(
-        params: EpisodeListParams = EpisodeListParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): EpisodeListPageAsync
+    suspend fun list(params: EpisodeListParams = EpisodeListParams.none(), requestOptions: RequestOptions = RequestOptions.none()): EpisodeListPageAsync
 
     /** @see list */
     suspend fun list(requestOptions: RequestOptions): EpisodeListPageAsync =
-        list(EpisodeListParams.none(), requestOptions)
+        list(
+          EpisodeListParams.none(), requestOptions
+        )
 
     /** Remove an episode from the database. */
-    suspend fun delete(
-        episodeId: String,
-        params: EpisodeDeleteParams = EpisodeDeleteParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ) = delete(params.toBuilder().episodeId(episodeId).build(), requestOptions)
+    suspend fun delete(episodeId: String, params: EpisodeDeleteParams = EpisodeDeleteParams.none(), requestOptions: RequestOptions = RequestOptions.none()) =
+        delete(
+          params.toBuilder()
+              .episodeId(episodeId)
+              .build(), requestOptions
+        )
 
     /** @see delete */
-    suspend fun delete(
-        params: EpisodeDeleteParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    )
+    suspend fun delete(params: EpisodeDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see delete */
     suspend fun delete(episodeId: String, requestOptions: RequestOptions) =
-        delete(episodeId, EpisodeDeleteParams.none(), requestOptions)
+        delete(
+          episodeId,
+          EpisodeDeleteParams.none(),
+          requestOptions,
+        )
 
     /** Get Ted's wisdom and memorable moments from a specific episode. */
-    suspend fun getWisdom(
-        episodeId: String,
-        params: EpisodeGetWisdomParams = EpisodeGetWisdomParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): EpisodeGetWisdomResponse =
-        getWisdom(params.toBuilder().episodeId(episodeId).build(), requestOptions)
+    suspend fun getWisdom(episodeId: String, params: EpisodeGetWisdomParams = EpisodeGetWisdomParams.none(), requestOptions: RequestOptions = RequestOptions.none()): EpisodeGetWisdomResponse =
+        getWisdom(
+          params.toBuilder()
+              .episodeId(episodeId)
+              .build(), requestOptions
+        )
 
     /** @see getWisdom */
-    suspend fun getWisdom(
-        params: EpisodeGetWisdomParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): EpisodeGetWisdomResponse
+    suspend fun getWisdom(params: EpisodeGetWisdomParams, requestOptions: RequestOptions = RequestOptions.none()): EpisodeGetWisdomResponse
 
     /** @see getWisdom */
-    suspend fun getWisdom(
-        episodeId: String,
-        requestOptions: RequestOptions,
-    ): EpisodeGetWisdomResponse =
-        getWisdom(episodeId, EpisodeGetWisdomParams.none(), requestOptions)
+    suspend fun getWisdom(episodeId: String, requestOptions: RequestOptions): EpisodeGetWisdomResponse =
+        getWisdom(
+          episodeId,
+          EpisodeGetWisdomParams.none(),
+          requestOptions,
+        )
 
-    /**
-     * A view of [EpisodeServiceAsync] that provides access to raw HTTP responses for each method.
-     */
+    /** A view of [EpisodeServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
         /**
@@ -130,136 +127,109 @@ interface EpisodeServiceAsync {
          *
          * The original service is not modified.
          */
-        fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): EpisodeServiceAsync.WithRawResponse
+        fun withOptions(modifier: (ClientOptions.Builder) -> Unit): EpisodeServiceAsync.WithRawResponse
 
-        /**
-         * Returns a raw HTTP response for `post /episodes`, but is otherwise the same as
-         * [EpisodeServiceAsync.create].
-         */
+        /** Returns a raw HTTP response for `post /episodes`, but is otherwise the             same as [EpisodeServiceAsync.create]. */
         @MustBeClosed
-        suspend fun create(
-            params: EpisodeCreateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Episode>
+        suspend fun create(params: EpisodeCreateParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<Episode>
 
-        /**
-         * Returns a raw HTTP response for `get /episodes/{episode_id}`, but is otherwise the same
-         * as [EpisodeServiceAsync.retrieve].
-         */
+        /** Returns a raw HTTP response for `get /episodes/{episode_id}`, but is otherwise the             same as [EpisodeServiceAsync.retrieve]. */
         @MustBeClosed
-        suspend fun retrieve(
-            episodeId: String,
-            params: EpisodeRetrieveParams = EpisodeRetrieveParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Episode> =
-            retrieve(params.toBuilder().episodeId(episodeId).build(), requestOptions)
+        suspend fun retrieve(episodeId: String, params: EpisodeRetrieveParams = EpisodeRetrieveParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<Episode> =
+            retrieve(
+              params.toBuilder()
+                  .episodeId(episodeId)
+                  .build(), requestOptions
+            )
 
         /** @see retrieve */
         @MustBeClosed
-        suspend fun retrieve(
-            params: EpisodeRetrieveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Episode>
+        suspend fun retrieve(params: EpisodeRetrieveParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<Episode>
 
         /** @see retrieve */
         @MustBeClosed
-        suspend fun retrieve(
-            episodeId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<Episode> =
-            retrieve(episodeId, EpisodeRetrieveParams.none(), requestOptions)
+        suspend fun retrieve(episodeId: String, requestOptions: RequestOptions): HttpResponseFor<Episode> =
+            retrieve(
+              episodeId,
+              EpisodeRetrieveParams.none(),
+              requestOptions,
+            )
 
-        /**
-         * Returns a raw HTTP response for `patch /episodes/{episode_id}`, but is otherwise the same
-         * as [EpisodeServiceAsync.update].
-         */
+        /** Returns a raw HTTP response for `patch /episodes/{episode_id}`, but is otherwise the             same as [EpisodeServiceAsync.update]. */
         @MustBeClosed
-        suspend fun update(
-            episodeId: String,
-            params: EpisodeUpdateParams = EpisodeUpdateParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Episode> =
-            update(params.toBuilder().episodeId(episodeId).build(), requestOptions)
+        suspend fun update(episodeId: String, params: EpisodeUpdateParams = EpisodeUpdateParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<Episode> =
+            update(
+              params.toBuilder()
+                  .episodeId(episodeId)
+                  .build(), requestOptions
+            )
 
         /** @see update */
         @MustBeClosed
-        suspend fun update(
-            params: EpisodeUpdateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Episode>
+        suspend fun update(params: EpisodeUpdateParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<Episode>
 
         /** @see update */
         @MustBeClosed
-        suspend fun update(
-            episodeId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<Episode> = update(episodeId, EpisodeUpdateParams.none(), requestOptions)
+        suspend fun update(episodeId: String, requestOptions: RequestOptions): HttpResponseFor<Episode> =
+            update(
+              episodeId,
+              EpisodeUpdateParams.none(),
+              requestOptions,
+            )
 
-        /**
-         * Returns a raw HTTP response for `get /episodes`, but is otherwise the same as
-         * [EpisodeServiceAsync.list].
-         */
+        /** Returns a raw HTTP response for `get /episodes`, but is otherwise the             same as [EpisodeServiceAsync.list]. */
         @MustBeClosed
-        suspend fun list(
-            params: EpisodeListParams = EpisodeListParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<EpisodeListPageAsync>
+        suspend fun list(params: EpisodeListParams = EpisodeListParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<EpisodeListPageAsync>
 
         /** @see list */
         @MustBeClosed
         suspend fun list(requestOptions: RequestOptions): HttpResponseFor<EpisodeListPageAsync> =
-            list(EpisodeListParams.none(), requestOptions)
+            list(
+              EpisodeListParams.none(), requestOptions
+            )
 
-        /**
-         * Returns a raw HTTP response for `delete /episodes/{episode_id}`, but is otherwise the
-         * same as [EpisodeServiceAsync.delete].
-         */
+        /** Returns a raw HTTP response for `delete /episodes/{episode_id}`, but is otherwise the             same as [EpisodeServiceAsync.delete]. */
         @MustBeClosed
-        suspend fun delete(
-            episodeId: String,
-            params: EpisodeDeleteParams = EpisodeDeleteParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse = delete(params.toBuilder().episodeId(episodeId).build(), requestOptions)
+        suspend fun delete(episodeId: String, params: EpisodeDeleteParams = EpisodeDeleteParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponse =
+            delete(
+              params.toBuilder()
+                  .episodeId(episodeId)
+                  .build(), requestOptions
+            )
 
         /** @see delete */
         @MustBeClosed
-        suspend fun delete(
-            params: EpisodeDeleteParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        suspend fun delete(params: EpisodeDeleteParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponse
 
         /** @see delete */
         @MustBeClosed
         suspend fun delete(episodeId: String, requestOptions: RequestOptions): HttpResponse =
-            delete(episodeId, EpisodeDeleteParams.none(), requestOptions)
+            delete(
+              episodeId,
+              EpisodeDeleteParams.none(),
+              requestOptions,
+            )
 
-        /**
-         * Returns a raw HTTP response for `get /episodes/{episode_id}/wisdom`, but is otherwise the
-         * same as [EpisodeServiceAsync.getWisdom].
-         */
+        /** Returns a raw HTTP response for `get /episodes/{episode_id}/wisdom`, but is otherwise the             same as [EpisodeServiceAsync.getWisdom]. */
         @MustBeClosed
-        suspend fun getWisdom(
-            episodeId: String,
-            params: EpisodeGetWisdomParams = EpisodeGetWisdomParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<EpisodeGetWisdomResponse> =
-            getWisdom(params.toBuilder().episodeId(episodeId).build(), requestOptions)
-
-        /** @see getWisdom */
-        @MustBeClosed
-        suspend fun getWisdom(
-            params: EpisodeGetWisdomParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<EpisodeGetWisdomResponse>
+        suspend fun getWisdom(episodeId: String, params: EpisodeGetWisdomParams = EpisodeGetWisdomParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<EpisodeGetWisdomResponse> =
+            getWisdom(
+              params.toBuilder()
+                  .episodeId(episodeId)
+                  .build(), requestOptions
+            )
 
         /** @see getWisdom */
         @MustBeClosed
-        suspend fun getWisdom(
-            episodeId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<EpisodeGetWisdomResponse> =
-            getWisdom(episodeId, EpisodeGetWisdomParams.none(), requestOptions)
+        suspend fun getWisdom(params: EpisodeGetWisdomParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<EpisodeGetWisdomResponse>
+
+        /** @see getWisdom */
+        @MustBeClosed
+        suspend fun getWisdom(episodeId: String, requestOptions: RequestOptions): HttpResponseFor<EpisodeGetWisdomResponse> =
+            getWisdom(
+              episodeId,
+              EpisodeGetWisdomParams.none(),
+              requestOptions,
+            )
     }
 }

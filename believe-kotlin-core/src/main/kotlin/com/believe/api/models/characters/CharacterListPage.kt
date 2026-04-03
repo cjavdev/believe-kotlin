@@ -5,15 +5,18 @@ package com.believe.api.models.characters
 import com.believe.api.core.AutoPager
 import com.believe.api.core.Page
 import com.believe.api.core.checkRequired
+import com.believe.api.models.characters.Character
+import com.believe.api.models.characters.CharacterListPageResponse
+import com.believe.api.models.characters.CharacterListParams
 import com.believe.api.services.blocking.CharacterService
 import java.util.Objects
 
 /** @see CharacterService.list */
-class CharacterListPage
-private constructor(
+class CharacterListPage private constructor(
     private val service: CharacterService,
     private val params: CharacterListParams,
     private val response: CharacterListPageResponse,
+
 ) : Page<Character> {
 
     /**
@@ -40,18 +43,20 @@ private constructor(
     override fun items(): List<Character> = data()
 
     override fun hasNextPage(): Boolean {
-        if (items().isEmpty()) {
-            return false
-        }
+      if (items().isEmpty()) {
+          return false
+      }
 
-        val offset = skip() ?: 0
-        val totalCount = total()
-        return totalCount == null || offset + items().size < totalCount
+      val offset = skip() ?: 0
+      val totalCount = total()
+      return totalCount == null || offset + items().size < totalCount;
     }
 
     fun nextPageParams(): CharacterListParams {
-        val offset = skip() ?: 0
-        return params.toBuilder().skip(offset + items().size).build()
+      val offset = skip() ?: 0
+      return params.toBuilder()
+          .skip(offset + items().size)
+          .build()
     }
 
     override fun nextPage(): CharacterListPage = service.list(nextPageParams())
@@ -72,6 +77,7 @@ private constructor(
          * Returns a mutable builder for constructing an instance of [CharacterListPage].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -88,19 +94,29 @@ private constructor(
         private var params: CharacterListParams? = null
         private var response: CharacterListPageResponse? = null
 
-        internal fun from(characterListPage: CharacterListPage) = apply {
-            service = characterListPage.service
-            params = characterListPage.params
-            response = characterListPage.response
-        }
+        internal fun from(characterListPage: CharacterListPage) =
+            apply {
+                service = characterListPage.service
+                params = characterListPage.params
+                response = characterListPage.response
+            }
 
-        fun service(service: CharacterService) = apply { this.service = service }
+        fun service(service: CharacterService) =
+            apply {
+                this.service = service
+            }
 
         /** The parameters that were used to request this page. */
-        fun params(params: CharacterListParams) = apply { this.params = params }
+        fun params(params: CharacterListParams) =
+            apply {
+                this.params = params
+            }
 
         /** The response that this page was parsed from. */
-        fun response(response: CharacterListPageResponse) = apply { this.response = response }
+        fun response(response: CharacterListPageResponse) =
+            apply {
+                this.response = response
+            }
 
         /**
          * Returns an immutable instance of [CharacterListPage].
@@ -108,6 +124,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -118,25 +135,27 @@ private constructor(
          */
         fun build(): CharacterListPage =
             CharacterListPage(
-                checkRequired("service", service),
-                checkRequired("params", params),
-                checkRequired("response", response),
+              checkRequired(
+                "service", service
+              ),
+              checkRequired(
+                "params", params
+              ),
+              checkRequired(
+                "response", response
+              ),
             )
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is CharacterListPage &&
-            service == other.service &&
-            params == other.params &&
-            response == other.response
+      return other is CharacterListPage && service == other.service && params == other.params && response == other.response
     }
 
     override fun hashCode(): Int = Objects.hash(service, params, response)
 
-    override fun toString() =
-        "CharacterListPage{service=$service, params=$params, response=$response}"
+    override fun toString() = "CharacterListPage{service=$service, params=$params, response=$response}"
 }

@@ -6,9 +6,14 @@ import com.believe.api.core.JsonValue
 import com.believe.api.core.checkRequired
 import com.believe.api.core.http.Headers
 
-class RateLimitException
-private constructor(private val headers: Headers, private val body: JsonValue, cause: Throwable?) :
-    BelieveServiceException("429: $body", cause) {
+class RateLimitException private constructor(
+    private val headers: Headers,
+    private val body: JsonValue,
+    cause: Throwable?,
+
+) : BelieveServiceException(
+  "429: $body", cause
+) {
 
     override fun statusCode(): Int = 429
 
@@ -24,6 +29,7 @@ private constructor(private val headers: Headers, private val body: JsonValue, c
          * Returns a mutable builder for constructing an instance of [RateLimitException].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .headers()
          * .body()
@@ -39,17 +45,27 @@ private constructor(private val headers: Headers, private val body: JsonValue, c
         private var body: JsonValue? = null
         private var cause: Throwable? = null
 
-        internal fun from(rateLimitException: RateLimitException) = apply {
-            headers = rateLimitException.headers
-            body = rateLimitException.body
-            cause = rateLimitException.cause
-        }
+        internal fun from(rateLimitException: RateLimitException) =
+            apply {
+                headers = rateLimitException.headers
+                body = rateLimitException.body
+                cause = rateLimitException.cause
+            }
 
-        fun headers(headers: Headers) = apply { this.headers = headers }
+        fun headers(headers: Headers) =
+            apply {
+                this.headers = headers
+            }
 
-        fun body(body: JsonValue) = apply { this.body = body }
+        fun body(body: JsonValue) =
+            apply {
+                this.body = body
+            }
 
-        fun cause(cause: Throwable?) = apply { this.cause = cause }
+        fun cause(cause: Throwable?) =
+            apply {
+                this.cause = cause
+            }
 
         /**
          * Returns an immutable instance of [RateLimitException].
@@ -57,6 +73,7 @@ private constructor(private val headers: Headers, private val body: JsonValue, c
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .headers()
          * .body()
@@ -66,9 +83,13 @@ private constructor(private val headers: Headers, private val body: JsonValue, c
          */
         fun build(): RateLimitException =
             RateLimitException(
-                checkRequired("headers", headers),
-                checkRequired("body", body),
-                cause,
+              checkRequired(
+                "headers", headers
+              ),
+              checkRequired(
+                "body", body
+              ),
+              cause,
             )
     }
 }

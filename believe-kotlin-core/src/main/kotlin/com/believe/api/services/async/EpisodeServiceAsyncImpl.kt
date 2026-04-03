@@ -22,251 +22,240 @@ import com.believe.api.models.episodes.EpisodeCreateParams
 import com.believe.api.models.episodes.EpisodeDeleteParams
 import com.believe.api.models.episodes.EpisodeGetWisdomParams
 import com.believe.api.models.episodes.EpisodeGetWisdomResponse
+import com.believe.api.models.episodes.EpisodeListPage
 import com.believe.api.models.episodes.EpisodeListPageAsync
 import com.believe.api.models.episodes.EpisodeListParams
 import com.believe.api.models.episodes.EpisodeRetrieveParams
 import com.believe.api.models.episodes.EpisodeUpdateParams
 import com.believe.api.models.episodes.PaginatedResponse
+import com.believe.api.services.async.EpisodeServiceAsync
+import com.believe.api.services.async.EpisodeServiceAsyncImpl
 
 /** Operations related to TV episodes */
-class EpisodeServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
-    EpisodeServiceAsync {
+class EpisodeServiceAsyncImpl internal constructor(
+    private val clientOptions: ClientOptions,
 
-    private val withRawResponse: EpisodeServiceAsync.WithRawResponse by lazy {
-        WithRawResponseImpl(clientOptions)
-    }
+) : EpisodeServiceAsync {
+
+    private val withRawResponse: EpisodeServiceAsync.WithRawResponse by lazy { WithRawResponseImpl(clientOptions) }
 
     override fun withRawResponse(): EpisodeServiceAsync.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): EpisodeServiceAsync =
-        EpisodeServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
+    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): EpisodeServiceAsync = EpisodeServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
-    override suspend fun create(
-        params: EpisodeCreateParams,
-        requestOptions: RequestOptions,
-    ): Episode =
+    override suspend fun create(params: EpisodeCreateParams, requestOptions: RequestOptions): Episode =
         // post /episodes
         withRawResponse().create(params, requestOptions).parse()
 
-    override suspend fun retrieve(
-        params: EpisodeRetrieveParams,
-        requestOptions: RequestOptions,
-    ): Episode =
+    override suspend fun retrieve(params: EpisodeRetrieveParams, requestOptions: RequestOptions): Episode =
         // get /episodes/{episode_id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
-    override suspend fun update(
-        params: EpisodeUpdateParams,
-        requestOptions: RequestOptions,
-    ): Episode =
+    override suspend fun update(params: EpisodeUpdateParams, requestOptions: RequestOptions): Episode =
         // patch /episodes/{episode_id}
         withRawResponse().update(params, requestOptions).parse()
 
-    override suspend fun list(
-        params: EpisodeListParams,
-        requestOptions: RequestOptions,
-    ): EpisodeListPageAsync =
+    override suspend fun list(params: EpisodeListParams, requestOptions: RequestOptions): EpisodeListPageAsync =
         // get /episodes
         withRawResponse().list(params, requestOptions).parse()
 
     override suspend fun delete(params: EpisodeDeleteParams, requestOptions: RequestOptions) {
-        // delete /episodes/{episode_id}
-        withRawResponse().delete(params, requestOptions)
+      // delete /episodes/{episode_id}
+      withRawResponse().delete(params, requestOptions)
     }
 
-    override suspend fun getWisdom(
-        params: EpisodeGetWisdomParams,
-        requestOptions: RequestOptions,
-    ): EpisodeGetWisdomResponse =
+    override suspend fun getWisdom(params: EpisodeGetWisdomParams, requestOptions: RequestOptions): EpisodeGetWisdomResponse =
         // get /episodes/{episode_id}/wisdom
         withRawResponse().getWisdom(params, requestOptions).parse()
 
-    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        EpisodeServiceAsync.WithRawResponse {
+    class WithRawResponseImpl internal constructor(
+        private val clientOptions: ClientOptions,
 
-        private val errorHandler: Handler<HttpResponse> =
-            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+    ) : EpisodeServiceAsync.WithRawResponse {
 
-        override fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): EpisodeServiceAsync.WithRawResponse =
-            EpisodeServiceAsyncImpl.WithRawResponseImpl(
-                clientOptions.toBuilder().apply(modifier).build()
-            )
+        private val errorHandler: Handler<HttpResponse> = errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): EpisodeServiceAsync.WithRawResponse = EpisodeServiceAsyncImpl.WithRawResponseImpl(clientOptions.toBuilder().apply(modifier).build())
 
         private val createHandler: Handler<Episode> = jsonHandler<Episode>(clientOptions.jsonMapper)
 
-        override suspend fun create(
-            params: EpisodeCreateParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<Episode> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("episodes")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { createHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+        override suspend fun create(params: EpisodeCreateParams, requestOptions: RequestOptions): HttpResponseFor<Episode> {
+          val request = HttpRequest.builder()
+            .method(HttpMethod.POST)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("episodes")
+            .body(json(clientOptions.jsonMapper, params._body()))
+            .build()
+            .prepareAsync(
+              clientOptions, params
+            )
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  createHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
 
-        private val retrieveHandler: Handler<Episode> =
-            jsonHandler<Episode>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<Episode> = jsonHandler<Episode>(clientOptions.jsonMapper)
 
-        override suspend fun retrieve(
-            params: EpisodeRetrieveParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<Episode> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("episodeId", params.episodeId())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("episodes", params._pathParam(0))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { retrieveHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+        override suspend fun retrieve(params: EpisodeRetrieveParams, requestOptions: RequestOptions): HttpResponseFor<Episode> {
+          // We check here instead of in the params builder because this can be specified positionally or in the params class.
+          checkRequired("episodeId", params.episodeId())
+          val request = HttpRequest.builder()
+            .method(HttpMethod.GET)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("episodes", params._pathParam(0))
+            .build()
+            .prepareAsync(
+              clientOptions, params
+            )
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  retrieveHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
 
         private val updateHandler: Handler<Episode> = jsonHandler<Episode>(clientOptions.jsonMapper)
 
-        override suspend fun update(
-            params: EpisodeUpdateParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<Episode> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("episodeId", params.episodeId())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.PATCH)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("episodes", params._pathParam(0))
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { updateHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+        override suspend fun update(params: EpisodeUpdateParams, requestOptions: RequestOptions): HttpResponseFor<Episode> {
+          // We check here instead of in the params builder because this can be specified positionally or in the params class.
+          checkRequired("episodeId", params.episodeId())
+          val request = HttpRequest.builder()
+            .method(HttpMethod.PATCH)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("episodes", params._pathParam(0))
+            .body(json(clientOptions.jsonMapper, params._body()))
+            .build()
+            .prepareAsync(
+              clientOptions, params
+            )
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  updateHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
 
-        private val listHandler: Handler<PaginatedResponse> =
-            jsonHandler<PaginatedResponse>(clientOptions.jsonMapper)
+        private val listHandler: Handler<PaginatedResponse> = jsonHandler<PaginatedResponse>(clientOptions.jsonMapper)
 
-        override suspend fun list(
-            params: EpisodeListParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<EpisodeListPageAsync> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("episodes")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { listHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-                    .let {
-                        EpisodeListPageAsync.builder()
-                            .service(EpisodeServiceAsyncImpl(clientOptions))
-                            .params(params)
-                            .response(it)
-                            .build()
-                    }
-            }
+        override suspend fun list(params: EpisodeListParams, requestOptions: RequestOptions): HttpResponseFor<EpisodeListPageAsync> {
+          val request = HttpRequest.builder()
+            .method(HttpMethod.GET)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("episodes")
+            .build()
+            .prepareAsync(
+              clientOptions, params
+            )
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  listHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+              .let {
+                  EpisodeListPageAsync.builder()
+                      .service(EpisodeServiceAsyncImpl(clientOptions))
+                      .params(params)
+                      .response(it)
+                      .build()
+              }
+          }
         }
 
         private val deleteHandler: Handler<Void?> = emptyHandler()
 
-        override suspend fun delete(
-            params: EpisodeDeleteParams,
-            requestOptions: RequestOptions,
-        ): HttpResponse {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("episodeId", params.episodeId())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.DELETE)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("episodes", params._pathParam(0))
-                    .apply { params._body()?.let { body(json(clientOptions.jsonMapper, it)) } }
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response.use { deleteHandler.handle(it) }
-            }
+        override suspend fun delete(params: EpisodeDeleteParams, requestOptions: RequestOptions): HttpResponse {
+          // We check here instead of in the params builder because this can be specified positionally or in the params class.
+          checkRequired("episodeId", params.episodeId())
+          val request = HttpRequest.builder()
+            .method(HttpMethod.DELETE)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("episodes", params._pathParam(0))
+            .apply { params._body()?.let{ body(json(clientOptions.jsonMapper, it)) } }
+            .build()
+            .prepareAsync(
+              clientOptions, params
+            )
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  deleteHandler.handle(it)
+              }
+          }
         }
 
-        private val getWisdomHandler: Handler<EpisodeGetWisdomResponse> =
-            jsonHandler<EpisodeGetWisdomResponse>(clientOptions.jsonMapper)
+        private val getWisdomHandler: Handler<EpisodeGetWisdomResponse> = jsonHandler<EpisodeGetWisdomResponse>(clientOptions.jsonMapper)
 
-        override suspend fun getWisdom(
-            params: EpisodeGetWisdomParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<EpisodeGetWisdomResponse> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("episodeId", params.episodeId())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("episodes", params._pathParam(0), "wisdom")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { getWisdomHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+        override suspend fun getWisdom(params: EpisodeGetWisdomParams, requestOptions: RequestOptions): HttpResponseFor<EpisodeGetWisdomResponse> {
+          // We check here instead of in the params builder because this can be specified positionally or in the params class.
+          checkRequired("episodeId", params.episodeId())
+          val request = HttpRequest.builder()
+            .method(HttpMethod.GET)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("episodes", params._pathParam(0), "wisdom")
+            .build()
+            .prepareAsync(
+              clientOptions, params
+            )
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  getWisdomHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
     }
 }

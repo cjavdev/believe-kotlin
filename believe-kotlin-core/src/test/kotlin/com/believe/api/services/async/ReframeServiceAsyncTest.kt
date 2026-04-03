@@ -12,17 +12,16 @@ internal class ReframeServiceAsyncTest {
     @Disabled("Mock server tests are disabled")
     @Test
     suspend fun transformNegativeThoughts() {
-        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val reframeServiceAsync = client.reframe()
+      val client = BelieveOkHttpClientAsync.builder()
+          .apiKey("My API Key")
+          .build()
+      val reframeServiceAsync = client.reframe()
 
-        val response =
-            reframeServiceAsync.transformNegativeThoughts(
-                ReframeTransformNegativeThoughtsParams.builder()
-                    .negativeThought("I'm not good enough for this job.")
-                    .recurring(true)
-                    .build()
-            )
+      val response = reframeServiceAsync.transformNegativeThoughts(ReframeTransformNegativeThoughtsParams.builder()
+          .negativeThought("I'm not good enough for this job.")
+          .recurring(true)
+          .build())
 
-        response.validate()
+      response.validate()
     }
 }

@@ -7,14 +7,13 @@ import com.believe.api.core.RequestOptions
 import com.believe.api.core.http.HttpResponseFor
 import com.believe.api.models.conflicts.ConflictResolveParams
 import com.believe.api.models.conflicts.ConflictResolveResponse
+import com.believe.api.services.async.ConflictServiceAsync
 import com.google.errorprone.annotations.MustBeClosed
 
 /** Interactive endpoints for motivation and guidance */
 interface ConflictServiceAsync {
 
-    /**
-     * Returns a view of this service that provides access to raw HTTP responses for each method.
-     */
+    /** Returns a view of this service that provides access to raw HTTP responses for each method. */
     fun withRawResponse(): WithRawResponse
 
     /**
@@ -25,14 +24,9 @@ interface ConflictServiceAsync {
     fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ConflictServiceAsync
 
     /** Get Ted Lasso-style advice for resolving conflicts. */
-    suspend fun resolve(
-        params: ConflictResolveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): ConflictResolveResponse
+    suspend fun resolve(params: ConflictResolveParams, requestOptions: RequestOptions = RequestOptions.none()): ConflictResolveResponse
 
-    /**
-     * A view of [ConflictServiceAsync] that provides access to raw HTTP responses for each method.
-     */
+    /** A view of [ConflictServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
         /**
@@ -40,18 +34,10 @@ interface ConflictServiceAsync {
          *
          * The original service is not modified.
          */
-        fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): ConflictServiceAsync.WithRawResponse
+        fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ConflictServiceAsync.WithRawResponse
 
-        /**
-         * Returns a raw HTTP response for `post /conflicts/resolve`, but is otherwise the same as
-         * [ConflictServiceAsync.resolve].
-         */
+        /** Returns a raw HTTP response for `post /conflicts/resolve`, but is otherwise the             same as [ConflictServiceAsync.resolve]. */
         @MustBeClosed
-        suspend fun resolve(
-            params: ConflictResolveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ConflictResolveResponse>
+        suspend fun resolve(params: ConflictResolveParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<ConflictResolveResponse>
     }
 }

@@ -5,15 +5,18 @@ package com.believe.api.models.quotes
 import com.believe.api.core.AutoPagerAsync
 import com.believe.api.core.PageAsync
 import com.believe.api.core.checkRequired
+import com.believe.api.models.quotes.PaginatedResponseQuote
+import com.believe.api.models.quotes.Quote
+import com.believe.api.models.quotes.QuoteListByCharacterParams
 import com.believe.api.services.async.QuoteServiceAsync
 import java.util.Objects
 
 /** @see QuoteServiceAsync.listByCharacter */
-class QuoteListByCharacterPageAsync
-private constructor(
+class QuoteListByCharacterPageAsync private constructor(
     private val service: QuoteServiceAsync,
     private val params: QuoteListByCharacterParams,
     private val response: PaginatedResponseQuote,
+
 ) : PageAsync<Quote> {
 
     /**
@@ -40,22 +43,23 @@ private constructor(
     override fun items(): List<Quote> = data()
 
     override fun hasNextPage(): Boolean {
-        if (items().isEmpty()) {
-            return false
-        }
+      if (items().isEmpty()) {
+          return false
+      }
 
-        val offset = skip() ?: 0
-        val totalCount = total()
-        return totalCount == null || offset + items().size < totalCount
+      val offset = skip() ?: 0
+      val totalCount = total()
+      return totalCount == null || offset + items().size < totalCount;
     }
 
     fun nextPageParams(): QuoteListByCharacterParams {
-        val offset = skip() ?: 0
-        return params.toBuilder().skip(offset + items().size).build()
+      val offset = skip() ?: 0
+      return params.toBuilder()
+          .skip(offset + items().size)
+          .build()
     }
 
-    override suspend fun nextPage(): QuoteListByCharacterPageAsync =
-        service.listByCharacter(nextPageParams())
+    override suspend fun nextPage(): QuoteListByCharacterPageAsync = service.listByCharacter(nextPageParams())
 
     fun autoPager(): AutoPagerAsync<Quote> = AutoPagerAsync.from(this)
 
@@ -70,10 +74,10 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of
-         * [QuoteListByCharacterPageAsync].
+         * Returns a mutable builder for constructing an instance of [QuoteListByCharacterPageAsync].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -90,19 +94,29 @@ private constructor(
         private var params: QuoteListByCharacterParams? = null
         private var response: PaginatedResponseQuote? = null
 
-        internal fun from(quoteListByCharacterPageAsync: QuoteListByCharacterPageAsync) = apply {
-            service = quoteListByCharacterPageAsync.service
-            params = quoteListByCharacterPageAsync.params
-            response = quoteListByCharacterPageAsync.response
-        }
+        internal fun from(quoteListByCharacterPageAsync: QuoteListByCharacterPageAsync) =
+            apply {
+                service = quoteListByCharacterPageAsync.service
+                params = quoteListByCharacterPageAsync.params
+                response = quoteListByCharacterPageAsync.response
+            }
 
-        fun service(service: QuoteServiceAsync) = apply { this.service = service }
+        fun service(service: QuoteServiceAsync) =
+            apply {
+                this.service = service
+            }
 
         /** The parameters that were used to request this page. */
-        fun params(params: QuoteListByCharacterParams) = apply { this.params = params }
+        fun params(params: QuoteListByCharacterParams) =
+            apply {
+                this.params = params
+            }
 
         /** The response that this page was parsed from. */
-        fun response(response: PaginatedResponseQuote) = apply { this.response = response }
+        fun response(response: PaginatedResponseQuote) =
+            apply {
+                this.response = response
+            }
 
         /**
          * Returns an immutable instance of [QuoteListByCharacterPageAsync].
@@ -110,6 +124,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -120,25 +135,27 @@ private constructor(
          */
         fun build(): QuoteListByCharacterPageAsync =
             QuoteListByCharacterPageAsync(
-                checkRequired("service", service),
-                checkRequired("params", params),
-                checkRequired("response", response),
+              checkRequired(
+                "service", service
+              ),
+              checkRequired(
+                "params", params
+              ),
+              checkRequired(
+                "response", response
+              ),
             )
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is QuoteListByCharacterPageAsync &&
-            service == other.service &&
-            params == other.params &&
-            response == other.response
+      return other is QuoteListByCharacterPageAsync && service == other.service && params == other.params && response == other.response
     }
 
     override fun hashCode(): Int = Objects.hash(service, params, response)
 
-    override fun toString() =
-        "QuoteListByCharacterPageAsync{service=$service, params=$params, response=$response}"
+    override fun toString() = "QuoteListByCharacterPageAsync{service=$service, params=$params, response=$response}"
 }

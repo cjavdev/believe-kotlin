@@ -17,66 +17,61 @@ import com.believe.api.core.http.parseable
 import com.believe.api.core.prepare
 import com.believe.api.models.conflicts.ConflictResolveParams
 import com.believe.api.models.conflicts.ConflictResolveResponse
+import com.believe.api.services.blocking.ConflictService
+import com.believe.api.services.blocking.ConflictServiceImpl
 
 /** Interactive endpoints for motivation and guidance */
-class ConflictServiceImpl internal constructor(private val clientOptions: ClientOptions) :
-    ConflictService {
+class ConflictServiceImpl internal constructor(
+    private val clientOptions: ClientOptions,
 
-    private val withRawResponse: ConflictService.WithRawResponse by lazy {
-        WithRawResponseImpl(clientOptions)
-    }
+) : ConflictService {
+
+    private val withRawResponse: ConflictService.WithRawResponse by lazy { WithRawResponseImpl(clientOptions) }
 
     override fun withRawResponse(): ConflictService.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ConflictService =
-        ConflictServiceImpl(clientOptions.toBuilder().apply(modifier).build())
+    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ConflictService = ConflictServiceImpl(clientOptions.toBuilder().apply(modifier).build())
 
-    override fun resolve(
-        params: ConflictResolveParams,
-        requestOptions: RequestOptions,
-    ): ConflictResolveResponse =
+    override fun resolve(params: ConflictResolveParams, requestOptions: RequestOptions): ConflictResolveResponse =
         // post /conflicts/resolve
         withRawResponse().resolve(params, requestOptions).parse()
 
-    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        ConflictService.WithRawResponse {
+    class WithRawResponseImpl internal constructor(
+        private val clientOptions: ClientOptions,
 
-        private val errorHandler: Handler<HttpResponse> =
-            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+    ) : ConflictService.WithRawResponse {
 
-        override fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): ConflictService.WithRawResponse =
-            ConflictServiceImpl.WithRawResponseImpl(
-                clientOptions.toBuilder().apply(modifier).build()
+        private val errorHandler: Handler<HttpResponse> = errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ConflictService.WithRawResponse = ConflictServiceImpl.WithRawResponseImpl(clientOptions.toBuilder().apply(modifier).build())
+
+        private val resolveHandler: Handler<ConflictResolveResponse> = jsonHandler<ConflictResolveResponse>(clientOptions.jsonMapper)
+
+        override fun resolve(params: ConflictResolveParams, requestOptions: RequestOptions): HttpResponseFor<ConflictResolveResponse> {
+          val request = HttpRequest.builder()
+            .method(HttpMethod.POST)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("conflicts", "resolve")
+            .body(json(clientOptions.jsonMapper, params._body()))
+            .build()
+            .prepare(
+              clientOptions, params
             )
-
-        private val resolveHandler: Handler<ConflictResolveResponse> =
-            jsonHandler<ConflictResolveResponse>(clientOptions.jsonMapper)
-
-        override fun resolve(
-            params: ConflictResolveParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<ConflictResolveResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("conflicts", "resolve")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { resolveHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.execute(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  resolveHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
     }
 }

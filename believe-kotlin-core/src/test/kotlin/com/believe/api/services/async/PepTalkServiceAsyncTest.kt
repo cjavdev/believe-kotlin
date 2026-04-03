@@ -12,12 +12,15 @@ internal class PepTalkServiceAsyncTest {
     @Disabled("Mock server tests are disabled")
     @Test
     suspend fun retrieve() {
-        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val pepTalkServiceAsync = client.pepTalk()
+      val client = BelieveOkHttpClientAsync.builder()
+          .apiKey("My API Key")
+          .build()
+      val pepTalkServiceAsync = client.pepTalk()
 
-        val pepTalk =
-            pepTalkServiceAsync.retrieve(PepTalkRetrieveParams.builder().stream(true).build())
+      val pepTalk = pepTalkServiceAsync.retrieve(PepTalkRetrieveParams.builder()
+          .stream(true)
+          .build())
 
-        pepTalk.validate()
+      pepTalk.validate()
     }
 }

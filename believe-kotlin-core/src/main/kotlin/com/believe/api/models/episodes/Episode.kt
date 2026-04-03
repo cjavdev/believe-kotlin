@@ -19,9 +19,7 @@ import java.util.Collections
 import java.util.Objects
 
 /** Full episode model with ID. */
-class Episode
-@JsonCreator(mode = JsonCreator.Mode.DISABLED)
-private constructor(
+class Episode @JsonCreator(mode = JsonCreator.Mode.DISABLED) private constructor(
     private val id: JsonField<String>,
     private val airDate: JsonField<LocalDate>,
     private val characterFocus: JsonField<List<String>>,
@@ -39,186 +37,156 @@ private constructor(
     private val usViewersMillions: JsonField<Double>,
     private val viewerRating: JsonField<Double>,
     private val additionalProperties: MutableMap<String, JsonValue>,
+
 ) {
 
     @JsonCreator
     private constructor(
         @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
         @JsonProperty("air_date") @ExcludeMissing airDate: JsonField<LocalDate> = JsonMissing.of(),
-        @JsonProperty("character_focus")
-        @ExcludeMissing
-        characterFocus: JsonField<List<String>> = JsonMissing.of(),
+        @JsonProperty("character_focus") @ExcludeMissing characterFocus: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("director") @ExcludeMissing director: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("episode_number")
-        @ExcludeMissing
-        episodeNumber: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("episode_number") @ExcludeMissing episodeNumber: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("main_theme") @ExcludeMissing mainTheme: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("runtime_minutes")
-        @ExcludeMissing
-        runtimeMinutes: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("runtime_minutes") @ExcludeMissing runtimeMinutes: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("season") @ExcludeMissing season: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("synopsis") @ExcludeMissing synopsis: JsonField<String> = JsonMissing.of(),
         @JsonProperty("ted_wisdom") @ExcludeMissing tedWisdom: JsonField<String> = JsonMissing.of(),
         @JsonProperty("title") @ExcludeMissing title: JsonField<String> = JsonMissing.of(),
         @JsonProperty("writer") @ExcludeMissing writer: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("biscuits_with_boss_moment")
-        @ExcludeMissing
-        biscuitsWithBossMoment: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("memorable_moments")
-        @ExcludeMissing
-        memorableMoments: JsonField<List<String>> = JsonMissing.of(),
-        @JsonProperty("us_viewers_millions")
-        @ExcludeMissing
-        usViewersMillions: JsonField<Double> = JsonMissing.of(),
-        @JsonProperty("viewer_rating")
-        @ExcludeMissing
-        viewerRating: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("biscuits_with_boss_moment") @ExcludeMissing biscuitsWithBossMoment: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("memorable_moments") @ExcludeMissing memorableMoments: JsonField<List<String>> = JsonMissing.of(),
+        @JsonProperty("us_viewers_millions") @ExcludeMissing usViewersMillions: JsonField<Double> = JsonMissing.of(),
+        @JsonProperty("viewer_rating") @ExcludeMissing viewerRating: JsonField<Double> = JsonMissing.of()
     ) : this(
-        id,
-        airDate,
-        characterFocus,
-        director,
-        episodeNumber,
-        mainTheme,
-        runtimeMinutes,
-        season,
-        synopsis,
-        tedWisdom,
-        title,
-        writer,
-        biscuitsWithBossMoment,
-        memorableMoments,
-        usViewersMillions,
-        viewerRating,
-        mutableMapOf(),
+      id,
+      airDate,
+      characterFocus,
+      director,
+      episodeNumber,
+      mainTheme,
+      runtimeMinutes,
+      season,
+      synopsis,
+      tedWisdom,
+      title,
+      writer,
+      biscuitsWithBossMoment,
+      memorableMoments,
+      usViewersMillions,
+      viewerRating,
+      mutableMapOf(),
     )
 
     /**
      * Unique identifier (format: s##e##)
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun id(): String = id.getRequired("id")
 
     /**
      * Original air date
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun airDate(): LocalDate = airDate.getRequired("air_date")
 
     /**
      * Characters with significant development
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun characterFocus(): List<String> = characterFocus.getRequired("character_focus")
 
     /**
      * Episode director
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun director(): String = director.getRequired("director")
 
     /**
      * Episode number within season
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun episodeNumber(): Long = episodeNumber.getRequired("episode_number")
 
     /**
      * Central theme of the episode
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun mainTheme(): String = mainTheme.getRequired("main_theme")
 
     /**
      * Episode runtime in minutes
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun runtimeMinutes(): Long = runtimeMinutes.getRequired("runtime_minutes")
 
     /**
      * Season number
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun season(): Long = season.getRequired("season")
 
     /**
      * Brief plot synopsis
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun synopsis(): String = synopsis.getRequired("synopsis")
 
     /**
      * Key piece of Ted wisdom from the episode
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun tedWisdom(): String = tedWisdom.getRequired("ted_wisdom")
 
     /**
      * Episode title
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun title(): String = title.getRequired("title")
 
     /**
      * Episode writer(s)
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun writer(): String = writer.getRequired("writer")
 
     /**
      * Notable biscuits with the boss scene
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
      */
-    fun biscuitsWithBossMoment(): String? =
-        biscuitsWithBossMoment.getNullable("biscuits_with_boss_moment")
+    fun biscuitsWithBossMoment(): String? = biscuitsWithBossMoment.getNullable("biscuits_with_boss_moment")
 
     /**
      * Standout moments from the episode
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
      */
     fun memorableMoments(): List<String>? = memorableMoments.getNullable("memorable_moments")
 
     /**
      * US viewership in millions
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
      */
     fun usViewersMillions(): Double? = usViewersMillions.getNullable("us_viewers_millions")
 
     /**
      * Viewer rating out of 10
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
      */
     fun viewerRating(): Double? = viewerRating.getNullable("viewer_rating")
 
@@ -227,14 +195,18 @@ private constructor(
      *
      * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
+    @JsonProperty("id")
+    @ExcludeMissing
+    fun _id(): JsonField<String> = id
 
     /**
      * Returns the raw JSON value of [airDate].
      *
      * Unlike [airDate], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("air_date") @ExcludeMissing fun _airDate(): JsonField<LocalDate> = airDate
+    @JsonProperty("air_date")
+    @ExcludeMissing
+    fun _airDate(): JsonField<LocalDate> = airDate
 
     /**
      * Returns the raw JSON value of [characterFocus].
@@ -250,7 +222,9 @@ private constructor(
      *
      * Unlike [director], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("director") @ExcludeMissing fun _director(): JsonField<String> = director
+    @JsonProperty("director")
+    @ExcludeMissing
+    fun _director(): JsonField<String> = director
 
     /**
      * Returns the raw JSON value of [episodeNumber].
@@ -266,7 +240,9 @@ private constructor(
      *
      * Unlike [mainTheme], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("main_theme") @ExcludeMissing fun _mainTheme(): JsonField<String> = mainTheme
+    @JsonProperty("main_theme")
+    @ExcludeMissing
+    fun _mainTheme(): JsonField<String> = mainTheme
 
     /**
      * Returns the raw JSON value of [runtimeMinutes].
@@ -282,41 +258,50 @@ private constructor(
      *
      * Unlike [season], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("season") @ExcludeMissing fun _season(): JsonField<Long> = season
+    @JsonProperty("season")
+    @ExcludeMissing
+    fun _season(): JsonField<Long> = season
 
     /**
      * Returns the raw JSON value of [synopsis].
      *
      * Unlike [synopsis], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("synopsis") @ExcludeMissing fun _synopsis(): JsonField<String> = synopsis
+    @JsonProperty("synopsis")
+    @ExcludeMissing
+    fun _synopsis(): JsonField<String> = synopsis
 
     /**
      * Returns the raw JSON value of [tedWisdom].
      *
      * Unlike [tedWisdom], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("ted_wisdom") @ExcludeMissing fun _tedWisdom(): JsonField<String> = tedWisdom
+    @JsonProperty("ted_wisdom")
+    @ExcludeMissing
+    fun _tedWisdom(): JsonField<String> = tedWisdom
 
     /**
      * Returns the raw JSON value of [title].
      *
      * Unlike [title], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("title") @ExcludeMissing fun _title(): JsonField<String> = title
+    @JsonProperty("title")
+    @ExcludeMissing
+    fun _title(): JsonField<String> = title
 
     /**
      * Returns the raw JSON value of [writer].
      *
      * Unlike [writer], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("writer") @ExcludeMissing fun _writer(): JsonField<String> = writer
+    @JsonProperty("writer")
+    @ExcludeMissing
+    fun _writer(): JsonField<String> = writer
 
     /**
      * Returns the raw JSON value of [biscuitsWithBossMoment].
      *
-     * Unlike [biscuitsWithBossMoment], this method doesn't throw if the JSON field has an
-     * unexpected type.
+     * Unlike [biscuitsWithBossMoment], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("biscuits_with_boss_moment")
     @ExcludeMissing
@@ -325,8 +310,7 @@ private constructor(
     /**
      * Returns the raw JSON value of [memorableMoments].
      *
-     * Unlike [memorableMoments], this method doesn't throw if the JSON field has an unexpected
-     * type.
+     * Unlike [memorableMoments], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("memorable_moments")
     @ExcludeMissing
@@ -335,8 +319,7 @@ private constructor(
     /**
      * Returns the raw JSON value of [usViewersMillions].
      *
-     * Unlike [usViewersMillions], this method doesn't throw if the JSON field has an unexpected
-     * type.
+     * Unlike [usViewersMillions], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("us_viewers_millions")
     @ExcludeMissing
@@ -353,13 +336,12 @@ private constructor(
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
-        additionalProperties.put(key, value)
+      additionalProperties.put(key, value)
     }
 
     @JsonAnyGetter
     @ExcludeMissing
-    fun _additionalProperties(): Map<String, JsonValue> =
-        Collections.unmodifiableMap(additionalProperties)
+    fun _additionalProperties(): Map<String, JsonValue> = Collections.unmodifiableMap(additionalProperties)
 
     fun toBuilder() = Builder().from(this)
 
@@ -369,6 +351,7 @@ private constructor(
          * Returns a mutable builder for constructing an instance of [Episode].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .id()
          * .airDate()
@@ -408,25 +391,26 @@ private constructor(
         private var viewerRating: JsonField<Double> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-        internal fun from(episode: Episode) = apply {
-            id = episode.id
-            airDate = episode.airDate
-            characterFocus = episode.characterFocus.map { it.toMutableList() }
-            director = episode.director
-            episodeNumber = episode.episodeNumber
-            mainTheme = episode.mainTheme
-            runtimeMinutes = episode.runtimeMinutes
-            season = episode.season
-            synopsis = episode.synopsis
-            tedWisdom = episode.tedWisdom
-            title = episode.title
-            writer = episode.writer
-            biscuitsWithBossMoment = episode.biscuitsWithBossMoment
-            memorableMoments = episode.memorableMoments.map { it.toMutableList() }
-            usViewersMillions = episode.usViewersMillions
-            viewerRating = episode.viewerRating
-            additionalProperties = episode.additionalProperties.toMutableMap()
-        }
+        internal fun from(episode: Episode) =
+            apply {
+                id = episode.id
+                airDate = episode.airDate
+                characterFocus = episode.characterFocus.map { it.toMutableList() }
+                director = episode.director
+                episodeNumber = episode.episodeNumber
+                mainTheme = episode.mainTheme
+                runtimeMinutes = episode.runtimeMinutes
+                season = episode.season
+                synopsis = episode.synopsis
+                tedWisdom = episode.tedWisdom
+                title = episode.title
+                writer = episode.writer
+                biscuitsWithBossMoment = episode.biscuitsWithBossMoment
+                memorableMoments = episode.memorableMoments.map { it.toMutableList() }
+                usViewersMillions = episode.usViewersMillions
+                viewerRating = episode.viewerRating
+                additionalProperties = episode.additionalProperties.toMutableMap()
+            }
 
         /** Unique identifier (format: s##e##) */
         fun id(id: String) = id(JsonField.of(id))
@@ -434,10 +418,13 @@ private constructor(
         /**
          * Sets [Builder.id] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.id] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.id] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun id(id: JsonField<String>) = apply { this.id = id }
+        fun id(id: JsonField<String>) =
+            apply {
+                this.id = id
+            }
 
         /** Original air date */
         fun airDate(airDate: LocalDate) = airDate(JsonField.of(airDate))
@@ -445,38 +432,39 @@ private constructor(
         /**
          * Sets [Builder.airDate] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.airDate] with a well-typed [LocalDate] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.airDate] with a well-typed [LocalDate] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun airDate(airDate: JsonField<LocalDate>) = apply { this.airDate = airDate }
+        fun airDate(airDate: JsonField<LocalDate>) =
+            apply {
+                this.airDate = airDate
+            }
 
         /** Characters with significant development */
-        fun characterFocus(characterFocus: List<String>) =
-            characterFocus(JsonField.of(characterFocus))
+        fun characterFocus(characterFocus: List<String>) = characterFocus(JsonField.of(characterFocus))
 
         /**
          * Sets [Builder.characterFocus] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.characterFocus] with a well-typed `List<String>` value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * You should usually call [Builder.characterFocus] with a well-typed `List<String>` value instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun characterFocus(characterFocus: JsonField<List<String>>) = apply {
-            this.characterFocus = characterFocus.map { it.toMutableList() }
-        }
+        fun characterFocus(characterFocus: JsonField<List<String>>) =
+            apply {
+                this.characterFocus = characterFocus.map { it.toMutableList() }
+            }
 
         /**
          * Adds a single [String] to [Builder.characterFocus].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addCharacterFocus(characterFocus: String) = apply {
-            this.characterFocus =
-                (this.characterFocus ?: JsonField.of(mutableListOf())).also {
+        fun addCharacterFocus(characterFocus: String) =
+            apply {
+                this.characterFocus = (this.characterFocus ?: JsonField.of(mutableListOf())).also {
                     checkKnown("characterFocus", it).add(characterFocus)
                 }
-        }
+            }
 
         /** Episode director */
         fun director(director: String) = director(JsonField.of(director))
@@ -484,10 +472,13 @@ private constructor(
         /**
          * Sets [Builder.director] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.director] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.director] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun director(director: JsonField<String>) = apply { this.director = director }
+        fun director(director: JsonField<String>) =
+            apply {
+                this.director = director
+            }
 
         /** Episode number within season */
         fun episodeNumber(episodeNumber: Long) = episodeNumber(JsonField.of(episodeNumber))
@@ -495,13 +486,13 @@ private constructor(
         /**
          * Sets [Builder.episodeNumber] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.episodeNumber] with a well-typed [Long] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.episodeNumber] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun episodeNumber(episodeNumber: JsonField<Long>) = apply {
-            this.episodeNumber = episodeNumber
-        }
+        fun episodeNumber(episodeNumber: JsonField<Long>) =
+            apply {
+                this.episodeNumber = episodeNumber
+            }
 
         /** Central theme of the episode */
         fun mainTheme(mainTheme: String) = mainTheme(JsonField.of(mainTheme))
@@ -509,11 +500,13 @@ private constructor(
         /**
          * Sets [Builder.mainTheme] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.mainTheme] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.mainTheme] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun mainTheme(mainTheme: JsonField<String>) = apply { this.mainTheme = mainTheme }
+        fun mainTheme(mainTheme: JsonField<String>) =
+            apply {
+                this.mainTheme = mainTheme
+            }
 
         /** Episode runtime in minutes */
         fun runtimeMinutes(runtimeMinutes: Long) = runtimeMinutes(JsonField.of(runtimeMinutes))
@@ -521,13 +514,13 @@ private constructor(
         /**
          * Sets [Builder.runtimeMinutes] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.runtimeMinutes] with a well-typed [Long] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.runtimeMinutes] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun runtimeMinutes(runtimeMinutes: JsonField<Long>) = apply {
-            this.runtimeMinutes = runtimeMinutes
-        }
+        fun runtimeMinutes(runtimeMinutes: JsonField<Long>) =
+            apply {
+                this.runtimeMinutes = runtimeMinutes
+            }
 
         /** Season number */
         fun season(season: Long) = season(JsonField.of(season))
@@ -535,10 +528,13 @@ private constructor(
         /**
          * Sets [Builder.season] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.season] with a well-typed [Long] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.season] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun season(season: JsonField<Long>) = apply { this.season = season }
+        fun season(season: JsonField<Long>) =
+            apply {
+                this.season = season
+            }
 
         /** Brief plot synopsis */
         fun synopsis(synopsis: String) = synopsis(JsonField.of(synopsis))
@@ -546,10 +542,13 @@ private constructor(
         /**
          * Sets [Builder.synopsis] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.synopsis] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.synopsis] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun synopsis(synopsis: JsonField<String>) = apply { this.synopsis = synopsis }
+        fun synopsis(synopsis: JsonField<String>) =
+            apply {
+                this.synopsis = synopsis
+            }
 
         /** Key piece of Ted wisdom from the episode */
         fun tedWisdom(tedWisdom: String) = tedWisdom(JsonField.of(tedWisdom))
@@ -557,11 +556,13 @@ private constructor(
         /**
          * Sets [Builder.tedWisdom] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.tedWisdom] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.tedWisdom] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun tedWisdom(tedWisdom: JsonField<String>) = apply { this.tedWisdom = tedWisdom }
+        fun tedWisdom(tedWisdom: JsonField<String>) =
+            apply {
+                this.tedWisdom = tedWisdom
+            }
 
         /** Episode title */
         fun title(title: String) = title(JsonField.of(title))
@@ -569,10 +570,13 @@ private constructor(
         /**
          * Sets [Builder.title] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.title] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.title] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun title(title: JsonField<String>) = apply { this.title = title }
+        fun title(title: JsonField<String>) =
+            apply {
+                this.title = title
+            }
 
         /** Episode writer(s) */
         fun writer(writer: String) = writer(JsonField.of(writer))
@@ -580,75 +584,74 @@ private constructor(
         /**
          * Sets [Builder.writer] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.writer] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.writer] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun writer(writer: JsonField<String>) = apply { this.writer = writer }
+        fun writer(writer: JsonField<String>) =
+            apply {
+                this.writer = writer
+            }
 
         /** Notable biscuits with the boss scene */
-        fun biscuitsWithBossMoment(biscuitsWithBossMoment: String?) =
-            biscuitsWithBossMoment(JsonField.ofNullable(biscuitsWithBossMoment))
+        fun biscuitsWithBossMoment(biscuitsWithBossMoment: String?) = biscuitsWithBossMoment(JsonField.ofNullable(biscuitsWithBossMoment))
 
         /**
          * Sets [Builder.biscuitsWithBossMoment] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.biscuitsWithBossMoment] with a well-typed [String] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * You should usually call [Builder.biscuitsWithBossMoment] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun biscuitsWithBossMoment(biscuitsWithBossMoment: JsonField<String>) = apply {
-            this.biscuitsWithBossMoment = biscuitsWithBossMoment
-        }
+        fun biscuitsWithBossMoment(biscuitsWithBossMoment: JsonField<String>) =
+            apply {
+                this.biscuitsWithBossMoment = biscuitsWithBossMoment
+            }
 
         /** Standout moments from the episode */
-        fun memorableMoments(memorableMoments: List<String>) =
-            memorableMoments(JsonField.of(memorableMoments))
+        fun memorableMoments(memorableMoments: List<String>) = memorableMoments(JsonField.of(memorableMoments))
 
         /**
          * Sets [Builder.memorableMoments] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.memorableMoments] with a well-typed `List<String>` value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * You should usually call [Builder.memorableMoments] with a well-typed `List<String>` value instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun memorableMoments(memorableMoments: JsonField<List<String>>) = apply {
-            this.memorableMoments = memorableMoments.map { it.toMutableList() }
-        }
+        fun memorableMoments(memorableMoments: JsonField<List<String>>) =
+            apply {
+                this.memorableMoments = memorableMoments.map { it.toMutableList() }
+            }
 
         /**
          * Adds a single [String] to [memorableMoments].
          *
          * @throws IllegalStateException if the field was previously set to a non-list.
          */
-        fun addMemorableMoment(memorableMoment: String) = apply {
-            memorableMoments =
-                (memorableMoments ?: JsonField.of(mutableListOf())).also {
+        fun addMemorableMoment(memorableMoment: String) =
+            apply {
+                memorableMoments = (memorableMoments ?: JsonField.of(mutableListOf())).also {
                     checkKnown("memorableMoments", it).add(memorableMoment)
                 }
-        }
+            }
 
         /** US viewership in millions */
-        fun usViewersMillions(usViewersMillions: Double?) =
-            usViewersMillions(JsonField.ofNullable(usViewersMillions))
+        fun usViewersMillions(usViewersMillions: Double?) = usViewersMillions(JsonField.ofNullable(usViewersMillions))
 
         /**
          * Alias for [Builder.usViewersMillions].
          *
          * This unboxed primitive overload exists for backwards compatibility.
          */
-        fun usViewersMillions(usViewersMillions: Double) =
-            usViewersMillions(usViewersMillions as Double?)
+        fun usViewersMillions(usViewersMillions: Double) = usViewersMillions(usViewersMillions as Double?)
 
         /**
          * Sets [Builder.usViewersMillions] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.usViewersMillions] with a well-typed [Double] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * You should usually call [Builder.usViewersMillions] with a well-typed [Double] value instead. This method is primarily for setting the field to an undocumented or not yet
          * supported value.
          */
-        fun usViewersMillions(usViewersMillions: JsonField<Double>) = apply {
-            this.usViewersMillions = usViewersMillions
-        }
+        fun usViewersMillions(usViewersMillions: JsonField<Double>) =
+            apply {
+                this.usViewersMillions = usViewersMillions
+            }
 
         /** Viewer rating out of 10 */
         fun viewerRating(viewerRating: Double?) = viewerRating(JsonField.ofNullable(viewerRating))
@@ -663,32 +666,39 @@ private constructor(
         /**
          * Sets [Builder.viewerRating] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.viewerRating] with a well-typed [Double] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.viewerRating] with a well-typed [Double] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun viewerRating(viewerRating: JsonField<Double>) = apply {
-            this.viewerRating = viewerRating
-        }
+        fun viewerRating(viewerRating: JsonField<Double>) =
+            apply {
+                this.viewerRating = viewerRating
+            }
 
-        fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.clear()
-            putAllAdditionalProperties(additionalProperties)
-        }
+        fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
 
-        fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-            additionalProperties.put(key, value)
-        }
+        fun putAdditionalProperty(key: String, value: JsonValue) =
+            apply {
+                additionalProperties.put(key, value)
+            }
 
-        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-            this.additionalProperties.putAll(additionalProperties)
-        }
+        fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+            apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
 
-        fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+        fun removeAdditionalProperty(key: String) =
+            apply {
+                additionalProperties.remove(key)
+            }
 
-        fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-            keys.forEach(::removeAdditionalProperty)
-        }
+        fun removeAllAdditionalProperties(keys: Set<String>) =
+            apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
 
         /**
          * Returns an immutable instance of [Episode].
@@ -696,6 +706,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .id()
          * .airDate()
@@ -715,51 +726,76 @@ private constructor(
          */
         fun build(): Episode =
             Episode(
-                checkRequired("id", id),
-                checkRequired("airDate", airDate),
-                checkRequired("characterFocus", characterFocus).map { it.toImmutable() },
-                checkRequired("director", director),
-                checkRequired("episodeNumber", episodeNumber),
-                checkRequired("mainTheme", mainTheme),
-                checkRequired("runtimeMinutes", runtimeMinutes),
-                checkRequired("season", season),
-                checkRequired("synopsis", synopsis),
-                checkRequired("tedWisdom", tedWisdom),
-                checkRequired("title", title),
-                checkRequired("writer", writer),
-                biscuitsWithBossMoment,
-                (memorableMoments ?: JsonMissing.of()).map { it.toImmutable() },
-                usViewersMillions,
-                viewerRating,
-                additionalProperties.toMutableMap(),
+              checkRequired(
+                "id", id
+              ),
+              checkRequired(
+                "airDate", airDate
+              ),
+              checkRequired(
+                "characterFocus", characterFocus
+              ).map { it.toImmutable() },
+              checkRequired(
+                "director", director
+              ),
+              checkRequired(
+                "episodeNumber", episodeNumber
+              ),
+              checkRequired(
+                "mainTheme", mainTheme
+              ),
+              checkRequired(
+                "runtimeMinutes", runtimeMinutes
+              ),
+              checkRequired(
+                "season", season
+              ),
+              checkRequired(
+                "synopsis", synopsis
+              ),
+              checkRequired(
+                "tedWisdom", tedWisdom
+              ),
+              checkRequired(
+                "title", title
+              ),
+              checkRequired(
+                "writer", writer
+              ),
+              biscuitsWithBossMoment,
+              (memorableMoments?: JsonMissing.of()).map { it.toImmutable() },
+              usViewersMillions,
+              viewerRating,
+              additionalProperties.toMutableMap(),
             )
     }
 
     private var validated: Boolean = false
 
-    fun validate(): Episode = apply {
-        if (validated) {
-            return@apply
-        }
+    fun validate(): Episode =
+        apply {
+            if (validated) {
+              return@apply
+            }
 
-        id()
-        airDate()
-        characterFocus()
-        director()
-        episodeNumber()
-        mainTheme()
-        runtimeMinutes()
-        season()
-        synopsis()
-        tedWisdom()
-        title()
-        writer()
-        biscuitsWithBossMoment()
-        memorableMoments()
-        usViewersMillions()
-        viewerRating()
-        validated = true
-    }
+            id()
+            airDate()
+            characterFocus()
+            director()
+            episodeNumber()
+            mainTheme()
+            runtimeMinutes()
+            season()
+            synopsis()
+            tedWisdom()
+            title()
+            writer()
+            biscuitsWithBossMoment()
+            memorableMoments()
+            usViewersMillions()
+            viewerRating()
+            validated = true
+        }
 
     fun isValid(): Boolean =
         try {
@@ -774,73 +810,19 @@ private constructor(
      *
      * Used for best match union deserialization.
      */
-    internal fun validity(): Int =
-        (if (id.asKnown() == null) 0 else 1) +
-            (if (airDate.asKnown() == null) 0 else 1) +
-            (characterFocus.asKnown()?.size ?: 0) +
-            (if (director.asKnown() == null) 0 else 1) +
-            (if (episodeNumber.asKnown() == null) 0 else 1) +
-            (if (mainTheme.asKnown() == null) 0 else 1) +
-            (if (runtimeMinutes.asKnown() == null) 0 else 1) +
-            (if (season.asKnown() == null) 0 else 1) +
-            (if (synopsis.asKnown() == null) 0 else 1) +
-            (if (tedWisdom.asKnown() == null) 0 else 1) +
-            (if (title.asKnown() == null) 0 else 1) +
-            (if (writer.asKnown() == null) 0 else 1) +
-            (if (biscuitsWithBossMoment.asKnown() == null) 0 else 1) +
-            (memorableMoments.asKnown()?.size ?: 0) +
-            (if (usViewersMillions.asKnown() == null) 0 else 1) +
-            (if (viewerRating.asKnown() == null) 0 else 1)
+    internal fun validity(): Int = (if (id.asKnown() == null) 0 else 1) + (if (airDate.asKnown() == null) 0 else 1) + (characterFocus.asKnown()?.size ?: 0) + (if (director.asKnown() == null) 0 else 1) + (if (episodeNumber.asKnown() == null) 0 else 1) + (if (mainTheme.asKnown() == null) 0 else 1) + (if (runtimeMinutes.asKnown() == null) 0 else 1) + (if (season.asKnown() == null) 0 else 1) + (if (synopsis.asKnown() == null) 0 else 1) + (if (tedWisdom.asKnown() == null) 0 else 1) + (if (title.asKnown() == null) 0 else 1) + (if (writer.asKnown() == null) 0 else 1) + (if (biscuitsWithBossMoment.asKnown() == null) 0 else 1) + (memorableMoments.asKnown()?.size ?: 0) + (if (usViewersMillions.asKnown() == null) 0 else 1) + (if (viewerRating.asKnown() == null) 0 else 1)
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is Episode &&
-            id == other.id &&
-            airDate == other.airDate &&
-            characterFocus == other.characterFocus &&
-            director == other.director &&
-            episodeNumber == other.episodeNumber &&
-            mainTheme == other.mainTheme &&
-            runtimeMinutes == other.runtimeMinutes &&
-            season == other.season &&
-            synopsis == other.synopsis &&
-            tedWisdom == other.tedWisdom &&
-            title == other.title &&
-            writer == other.writer &&
-            biscuitsWithBossMoment == other.biscuitsWithBossMoment &&
-            memorableMoments == other.memorableMoments &&
-            usViewersMillions == other.usViewersMillions &&
-            viewerRating == other.viewerRating &&
-            additionalProperties == other.additionalProperties
+      return other is Episode && id == other.id && airDate == other.airDate && characterFocus == other.characterFocus && director == other.director && episodeNumber == other.episodeNumber && mainTheme == other.mainTheme && runtimeMinutes == other.runtimeMinutes && season == other.season && synopsis == other.synopsis && tedWisdom == other.tedWisdom && title == other.title && writer == other.writer && biscuitsWithBossMoment == other.biscuitsWithBossMoment && memorableMoments == other.memorableMoments && usViewersMillions == other.usViewersMillions && viewerRating == other.viewerRating && additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy {
-        Objects.hash(
-            id,
-            airDate,
-            characterFocus,
-            director,
-            episodeNumber,
-            mainTheme,
-            runtimeMinutes,
-            season,
-            synopsis,
-            tedWisdom,
-            title,
-            writer,
-            biscuitsWithBossMoment,
-            memorableMoments,
-            usViewersMillions,
-            viewerRating,
-            additionalProperties,
-        )
-    }
+    private val hashCode: Int by lazy { Objects.hash(id, airDate, characterFocus, director, episodeNumber, mainTheme, runtimeMinutes, season, synopsis, tedWisdom, title, writer, biscuitsWithBossMoment, memorableMoments, usViewersMillions, viewerRating, additionalProperties) }
 
     override fun hashCode(): Int = hashCode
 
-    override fun toString() =
-        "Episode{id=$id, airDate=$airDate, characterFocus=$characterFocus, director=$director, episodeNumber=$episodeNumber, mainTheme=$mainTheme, runtimeMinutes=$runtimeMinutes, season=$season, synopsis=$synopsis, tedWisdom=$tedWisdom, title=$title, writer=$writer, biscuitsWithBossMoment=$biscuitsWithBossMoment, memorableMoments=$memorableMoments, usViewersMillions=$usViewersMillions, viewerRating=$viewerRating, additionalProperties=$additionalProperties}"
+    override fun toString() = "Episode{id=$id, airDate=$airDate, characterFocus=$characterFocus, director=$director, episodeNumber=$episodeNumber, mainTheme=$mainTheme, runtimeMinutes=$runtimeMinutes, season=$season, synopsis=$synopsis, tedWisdom=$tedWisdom, title=$title, writer=$writer, biscuitsWithBossMoment=$biscuitsWithBossMoment, memorableMoments=$memorableMoments, usViewersMillions=$usViewersMillions, viewerRating=$viewerRating, additionalProperties=$additionalProperties}"
 }

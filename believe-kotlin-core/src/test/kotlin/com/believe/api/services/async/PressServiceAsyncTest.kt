@@ -12,20 +12,17 @@ internal class PressServiceAsyncTest {
     @Disabled("Mock server tests are disabled")
     @Test
     suspend fun simulate() {
-        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val pressServiceAsync = client.press()
+      val client = BelieveOkHttpClientAsync.builder()
+          .apiKey("My API Key")
+          .build()
+      val pressServiceAsync = client.press()
 
-        val response =
-            pressServiceAsync.simulate(
-                PressSimulateParams.builder()
-                    .question(
-                        "Ted, your team just lost 5-0. How do you explain this embarrassing defeat?"
-                    )
-                    .hostile(true)
-                    .topic("match_result")
-                    .build()
-            )
+      val response = pressServiceAsync.simulate(PressSimulateParams.builder()
+          .question("Ted, your team just lost 5-0. How do you explain this embarrassing defeat?")
+          .hostile(true)
+          .topic("match_result")
+          .build())
 
-        response.validate()
+      response.validate()
     }
 }

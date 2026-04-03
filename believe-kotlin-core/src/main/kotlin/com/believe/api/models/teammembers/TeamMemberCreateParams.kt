@@ -17,6 +17,10 @@ import com.believe.api.core.http.Headers
 import com.believe.api.core.http.QueryParams
 import com.believe.api.core.toImmutable
 import com.believe.api.errors.BelieveInvalidDataException
+import com.believe.api.models.teammembers.CoachSpecialty
+import com.believe.api.models.teammembers.MedicalSpecialty
+import com.believe.api.models.teammembers.Position
+import com.believe.api.models.teammembers.TeamMemberCreateParams
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
@@ -30,22 +34,20 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import java.util.Collections
 import java.util.Objects
+import java.util.Optional
 
 /**
  * Add a new team member to a team.
  *
- * The request body is a **union type (oneOf)** - you must include the `member_type` discriminator
- * field:
+ * The request body is a **union type (oneOf)** - you must include the `member_type` discriminator field:
  * - `"member_type": "player"` - Creates a player (requires position, jersey_number, etc.)
  * - `"member_type": "coach"` - Creates a coach (requires specialty, etc.)
  * - `"member_type": "medical_staff"` - Creates medical staff (requires medical specialty, etc.)
- * - `"member_type": "equipment_manager"` - Creates equipment manager (requires responsibilities,
- *   etc.)
+ * - `"member_type": "equipment_manager"` - Creates equipment manager (requires responsibilities, etc.)
  *
  * The `character_id` field references an existing character from `/characters/{id}`.
  *
  * **Example for creating a player:**
- *
  * ```json
  * {
  *   "member_type": "player",
@@ -59,11 +61,11 @@ import java.util.Objects
  * }
  * ```
  */
-class TeamMemberCreateParams
-private constructor(
+class TeamMemberCreateParams private constructor(
     private val member: Member,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
+
 ) : Params {
 
     /** A football player on the team. */
@@ -83,6 +85,7 @@ private constructor(
          * Returns a mutable builder for constructing an instance of [TeamMemberCreateParams].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .member()
          * ```
@@ -97,14 +100,18 @@ private constructor(
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
-        internal fun from(teamMemberCreateParams: TeamMemberCreateParams) = apply {
-            member = teamMemberCreateParams.member
-            additionalHeaders = teamMemberCreateParams.additionalHeaders.toBuilder()
-            additionalQueryParams = teamMemberCreateParams.additionalQueryParams.toBuilder()
-        }
+        internal fun from(teamMemberCreateParams: TeamMemberCreateParams) =
+            apply {
+                member = teamMemberCreateParams.member
+                additionalHeaders = teamMemberCreateParams.additionalHeaders.toBuilder()
+                additionalQueryParams = teamMemberCreateParams.additionalQueryParams.toBuilder()
+            }
 
         /** A football player on the team. */
-        fun member(member: Member) = apply { this.member = member }
+        fun member(member: Member) =
+            apply {
+                this.member = member
+            }
 
         /** Alias for calling [member] with `Member.ofPlayer(player)`. */
         fun member(player: Member.Player) = member(Member.ofPlayer(player))
@@ -116,106 +123,131 @@ private constructor(
         fun member(medicalStaff: Member.MedicalStaff) = member(Member.ofMedicalStaff(medicalStaff))
 
         /** Alias for calling [member] with `Member.ofEquipmentManager(equipmentManager)`. */
-        fun member(equipmentManager: Member.EquipmentManager) =
-            member(Member.ofEquipmentManager(equipmentManager))
+        fun member(equipmentManager: Member.EquipmentManager) = member(Member.ofEquipmentManager(equipmentManager))
 
-        fun additionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.clear()
-            putAllAdditionalHeaders(additionalHeaders)
-        }
+        fun additionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.clear()
+                putAllAdditionalHeaders(additionalHeaders)
+            }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.clear()
-            putAllAdditionalHeaders(additionalHeaders)
-        }
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.clear()
+                putAllAdditionalHeaders(additionalHeaders)
+            }
 
-        fun putAdditionalHeader(name: String, value: String) = apply {
-            additionalHeaders.put(name, value)
-        }
+        fun putAdditionalHeader(name: String, value: String) =
+            apply {
+                additionalHeaders.put(name, value)
+            }
 
-        fun putAdditionalHeaders(name: String, values: Iterable<String>) = apply {
-            additionalHeaders.put(name, values)
-        }
+        fun putAdditionalHeaders(name: String, values: Iterable<String>) =
+            apply {
+                additionalHeaders.put(name, values)
+            }
 
-        fun putAllAdditionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.putAll(additionalHeaders)
-        }
+        fun putAllAdditionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.putAll(additionalHeaders)
+            }
 
-        fun putAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.putAll(additionalHeaders)
-        }
+        fun putAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.putAll(additionalHeaders)
+            }
 
-        fun replaceAdditionalHeaders(name: String, value: String) = apply {
-            additionalHeaders.replace(name, value)
-        }
+        fun replaceAdditionalHeaders(name: String, value: String) =
+            apply {
+                additionalHeaders.replace(name, value)
+            }
 
-        fun replaceAdditionalHeaders(name: String, values: Iterable<String>) = apply {
-            additionalHeaders.replace(name, values)
-        }
+        fun replaceAdditionalHeaders(name: String, values: Iterable<String>) =
+            apply {
+                additionalHeaders.replace(name, values)
+            }
 
-        fun replaceAllAdditionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.replaceAll(additionalHeaders)
-        }
+        fun replaceAllAdditionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.replaceAll(additionalHeaders)
+            }
 
-        fun replaceAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.replaceAll(additionalHeaders)
-        }
+        fun replaceAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.replaceAll(additionalHeaders)
+            }
 
-        fun removeAdditionalHeaders(name: String) = apply { additionalHeaders.remove(name) }
+        fun removeAdditionalHeaders(name: String) =
+            apply {
+                additionalHeaders.remove(name)
+            }
 
-        fun removeAllAdditionalHeaders(names: Set<String>) = apply {
-            additionalHeaders.removeAll(names)
-        }
+        fun removeAllAdditionalHeaders(names: Set<String>) =
+            apply {
+                additionalHeaders.removeAll(names)
+            }
 
-        fun additionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.clear()
-            putAllAdditionalQueryParams(additionalQueryParams)
-        }
+        fun additionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.clear()
+                putAllAdditionalQueryParams(additionalQueryParams)
+            }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
-            this.additionalQueryParams.clear()
-            putAllAdditionalQueryParams(additionalQueryParams)
-        }
+        fun additionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalQueryParams.clear()
+                putAllAdditionalQueryParams(additionalQueryParams)
+            }
 
-        fun putAdditionalQueryParam(key: String, value: String) = apply {
-            additionalQueryParams.put(key, value)
-        }
+        fun putAdditionalQueryParam(key: String, value: String) =
+            apply {
+                additionalQueryParams.put(key, value)
+            }
 
-        fun putAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
-            additionalQueryParams.put(key, values)
-        }
+        fun putAdditionalQueryParams(key: String, values: Iterable<String>) =
+            apply {
+                additionalQueryParams.put(key, values)
+            }
 
-        fun putAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.putAll(additionalQueryParams)
-        }
+        fun putAllAdditionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.putAll(additionalQueryParams)
+            }
 
         fun putAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
             apply {
                 this.additionalQueryParams.putAll(additionalQueryParams)
             }
 
-        fun replaceAdditionalQueryParams(key: String, value: String) = apply {
-            additionalQueryParams.replace(key, value)
-        }
+        fun replaceAdditionalQueryParams(key: String, value: String) =
+            apply {
+                additionalQueryParams.replace(key, value)
+            }
 
-        fun replaceAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
-            additionalQueryParams.replace(key, values)
-        }
+        fun replaceAdditionalQueryParams(key: String, values: Iterable<String>) =
+            apply {
+                additionalQueryParams.replace(key, values)
+            }
 
-        fun replaceAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.replaceAll(additionalQueryParams)
-        }
+        fun replaceAllAdditionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.replaceAll(additionalQueryParams)
+            }
 
         fun replaceAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
             apply {
                 this.additionalQueryParams.replaceAll(additionalQueryParams)
             }
 
-        fun removeAdditionalQueryParams(key: String) = apply { additionalQueryParams.remove(key) }
+        fun removeAdditionalQueryParams(key: String) =
+            apply {
+                additionalQueryParams.remove(key)
+            }
 
-        fun removeAllAdditionalQueryParams(keys: Set<String>) = apply {
-            additionalQueryParams.removeAll(keys)
-        }
+        fun removeAllAdditionalQueryParams(keys: Set<String>) =
+            apply {
+                additionalQueryParams.removeAll(keys)
+            }
 
         /**
          * Returns an immutable instance of [TeamMemberCreateParams].
@@ -223,6 +255,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .member()
          * ```
@@ -231,9 +264,11 @@ private constructor(
          */
         fun build(): TeamMemberCreateParams =
             TeamMemberCreateParams(
-                checkRequired("member", member),
-                additionalHeaders.build(),
-                additionalQueryParams.build(),
+              checkRequired(
+                "member", member
+              ),
+              additionalHeaders.build(),
+              additionalQueryParams.build(),
             )
     }
 
@@ -246,13 +281,13 @@ private constructor(
     /** A football player on the team. */
     @JsonDeserialize(using = Member.Deserializer::class)
     @JsonSerialize(using = Member.Serializer::class)
-    class Member
-    private constructor(
+    class Member private constructor(
         private val player: Player? = null,
         private val coach: Coach? = null,
         private val medicalStaff: MedicalStaff? = null,
         private val equipmentManager: EquipmentManager? = null,
         private val _json: JsonValue? = null,
+
     ) {
 
         /** A football player on the team. */
@@ -300,32 +335,31 @@ private constructor(
 
         private var validated: Boolean = false
 
-        fun validate(): Member = apply {
-            if (validated) {
-                return@apply
-            }
+        fun validate(): Member =
+            apply {
+                if (validated) {
+                  return@apply
+                }
 
-            accept(
-                object : Visitor<Unit> {
+                accept(object : Visitor<Unit> {
                     override fun visitPlayer(player: Player) {
-                        player.validate()
+                      player.validate()
                     }
 
                     override fun visitCoach(coach: Coach) {
-                        coach.validate()
+                      coach.validate()
                     }
 
                     override fun visitMedicalStaff(medicalStaff: MedicalStaff) {
-                        medicalStaff.validate()
+                      medicalStaff.validate()
                     }
 
                     override fun visitEquipmentManager(equipmentManager: EquipmentManager) {
-                        equipmentManager.validate()
+                      equipmentManager.validate()
                     }
-                }
-            )
-            validated = true
-        }
+                })
+                validated = true
+            }
 
         fun isValid(): Boolean =
             try {
@@ -336,38 +370,29 @@ private constructor(
             }
 
         /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
+         * Returns a score indicating how many valid values are contained in this object recursively.
          *
          * Used for best match union deserialization.
          */
         internal fun validity(): Int =
-            accept(
-                object : Visitor<Int> {
-                    override fun visitPlayer(player: Player) = player.validity()
+            accept(object : Visitor<Int> {
+                override fun visitPlayer(player: Player) = player.validity()
 
-                    override fun visitCoach(coach: Coach) = coach.validity()
+                override fun visitCoach(coach: Coach) = coach.validity()
 
-                    override fun visitMedicalStaff(medicalStaff: MedicalStaff) =
-                        medicalStaff.validity()
+                override fun visitMedicalStaff(medicalStaff: MedicalStaff) = medicalStaff.validity()
 
-                    override fun visitEquipmentManager(equipmentManager: EquipmentManager) =
-                        equipmentManager.validity()
+                override fun visitEquipmentManager(equipmentManager: EquipmentManager) = equipmentManager.validity()
 
-                    override fun unknown(json: JsonValue?) = 0
-                }
-            )
+                override fun unknown(json: JsonValue?) = 0
+            })
 
         override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
+          if (this === other) {
+              return true
+          }
 
-            return other is Member &&
-                player == other.player &&
-                coach == other.coach &&
-                medicalStaff == other.medicalStaff &&
-                equipmentManager == other.equipmentManager
+          return other is Member && player == other.player && coach == other.coach && medicalStaff == other.medicalStaff && equipmentManager == other.equipmentManager
         }
 
         override fun hashCode(): Int = Objects.hash(player, coach, medicalStaff, equipmentManager)
@@ -394,8 +419,7 @@ private constructor(
             fun ofMedicalStaff(medicalStaff: MedicalStaff) = Member(medicalStaff = medicalStaff)
 
             /** Equipment and kit management staff. */
-            fun ofEquipmentManager(equipmentManager: EquipmentManager) =
-                Member(equipmentManager = equipmentManager)
+            fun ofEquipmentManager(equipmentManager: EquipmentManager) = Member(equipmentManager = equipmentManager)
         }
 
         /** An interface that defines how to map each variant of [Member] to a value of type [T]. */
@@ -416,73 +440,70 @@ private constructor(
             /**
              * Maps an unknown variant of [Member] to a value of type [T].
              *
-             * An instance of [Member] can contain an unknown variant if it was deserialized from
-             * data that doesn't match any known variant. For example, if the SDK is on an older
-             * version than the API, then the API may respond with new variants that the SDK is
-             * unaware of.
+             * An instance of [Member] can contain an unknown variant if it was deserialized from data
+             * that doesn't match any known variant. For example, if the SDK is on an older version than the
+             * API, then the API may respond with new variants that the SDK is unaware of.
              *
              * @throws BelieveInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw BelieveInvalidDataException("Unknown Member: $json")
+              throw BelieveInvalidDataException("Unknown Member: $json")
             }
         }
 
         internal class Deserializer : BaseDeserializer<Member>(Member::class) {
 
             override fun ObjectCodec.deserialize(node: JsonNode): Member {
-                val json = JsonValue.fromJsonNode(node)
-                val memberType = json.asObject()?.get("member_type")?.asString()
+              val json = JsonValue.fromJsonNode(node)
+              val memberType = json.asObject()?.get("member_type")?.asString()
 
-                when (memberType) {
-                    "player" -> {
-                        return tryDeserialize(node, jacksonTypeRef<Player>())?.let {
-                            Member(player = it, _json = json)
-                        } ?: Member(_json = json)
-                    }
-                    "coach" -> {
-                        return tryDeserialize(node, jacksonTypeRef<Coach>())?.let {
-                            Member(coach = it, _json = json)
-                        } ?: Member(_json = json)
-                    }
-                    "medical_staff" -> {
-                        return tryDeserialize(node, jacksonTypeRef<MedicalStaff>())?.let {
-                            Member(medicalStaff = it, _json = json)
-                        } ?: Member(_json = json)
-                    }
-                    "equipment_manager" -> {
-                        return tryDeserialize(node, jacksonTypeRef<EquipmentManager>())?.let {
-                            Member(equipmentManager = it, _json = json)
-                        } ?: Member(_json = json)
-                    }
-                }
+              when (memberType) {
+                  "player" -> {
+                      return tryDeserialize(node, jacksonTypeRef<Player>())
+                          ?.let {
+                              Member(player = it, _json = json)
+                          } ?: Member(_json = json)
+                  }
+                  "coach" -> {
+                      return tryDeserialize(node, jacksonTypeRef<Coach>())
+                          ?.let {
+                              Member(coach = it, _json = json)
+                          } ?: Member(_json = json)
+                  }
+                  "medical_staff" -> {
+                      return tryDeserialize(node, jacksonTypeRef<MedicalStaff>())
+                          ?.let {
+                              Member(medicalStaff = it, _json = json)
+                          } ?: Member(_json = json)
+                  }
+                  "equipment_manager" -> {
+                      return tryDeserialize(node, jacksonTypeRef<EquipmentManager>())
+                          ?.let {
+                              Member(equipmentManager = it, _json = json)
+                          } ?: Member(_json = json)
+                  }
+              }
 
-                return Member(_json = json)
+              return Member(_json = json)
             }
         }
 
         internal class Serializer : BaseSerializer<Member>(Member::class) {
 
-            override fun serialize(
-                value: Member,
-                generator: JsonGenerator,
-                provider: SerializerProvider,
-            ) {
-                when {
-                    value.player != null -> generator.writeObject(value.player)
-                    value.coach != null -> generator.writeObject(value.coach)
-                    value.medicalStaff != null -> generator.writeObject(value.medicalStaff)
-                    value.equipmentManager != null -> generator.writeObject(value.equipmentManager)
-                    value._json != null -> generator.writeObject(value._json)
-                    else -> throw IllegalStateException("Invalid Member")
-                }
+            override fun serialize(value: Member, generator: JsonGenerator, provider: SerializerProvider) {
+              when {
+                  value.player != null -> generator.writeObject(value.player)
+                  value.coach != null -> generator.writeObject(value.coach)
+                  value.medicalStaff != null -> generator.writeObject(value.medicalStaff)
+                  value.equipmentManager != null -> generator.writeObject(value.equipmentManager)
+                  value._json != null -> generator.writeObject(value._json)
+                  else -> throw IllegalStateException("Invalid Member")
+              }
             }
         }
 
         /** A football player on the team. */
-        class Player
-        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-        private constructor(
+        class Player @JsonCreator(mode = JsonCreator.Mode.DISABLED) private constructor(
             private val characterId: JsonField<String>,
             private val jerseyNumber: JsonField<Long>,
             private val position: JsonField<Position>,
@@ -493,132 +514,100 @@ private constructor(
             private val isCaptain: JsonField<Boolean>,
             private val memberType: JsonField<MemberType>,
             private val additionalProperties: MutableMap<String, JsonValue>,
+
         ) {
 
             @JsonCreator
             private constructor(
-                @JsonProperty("character_id")
-                @ExcludeMissing
-                characterId: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("jersey_number")
-                @ExcludeMissing
-                jerseyNumber: JsonField<Long> = JsonMissing.of(),
-                @JsonProperty("position")
-                @ExcludeMissing
-                position: JsonField<Position> = JsonMissing.of(),
-                @JsonProperty("team_id")
-                @ExcludeMissing
-                teamId: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("years_with_team")
-                @ExcludeMissing
-                yearsWithTeam: JsonField<Long> = JsonMissing.of(),
-                @JsonProperty("assists")
-                @ExcludeMissing
-                assists: JsonField<Long> = JsonMissing.of(),
-                @JsonProperty("goals_scored")
-                @ExcludeMissing
-                goalsScored: JsonField<Long> = JsonMissing.of(),
-                @JsonProperty("is_captain")
-                @ExcludeMissing
-                isCaptain: JsonField<Boolean> = JsonMissing.of(),
-                @JsonProperty("member_type")
-                @ExcludeMissing
-                memberType: JsonField<MemberType> = JsonMissing.of(),
+                @JsonProperty("character_id") @ExcludeMissing characterId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("jersey_number") @ExcludeMissing jerseyNumber: JsonField<Long> = JsonMissing.of(),
+                @JsonProperty("position") @ExcludeMissing position: JsonField<Position> = JsonMissing.of(),
+                @JsonProperty("team_id") @ExcludeMissing teamId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("years_with_team") @ExcludeMissing yearsWithTeam: JsonField<Long> = JsonMissing.of(),
+                @JsonProperty("assists") @ExcludeMissing assists: JsonField<Long> = JsonMissing.of(),
+                @JsonProperty("goals_scored") @ExcludeMissing goalsScored: JsonField<Long> = JsonMissing.of(),
+                @JsonProperty("is_captain") @ExcludeMissing isCaptain: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("member_type") @ExcludeMissing memberType: JsonField<MemberType> = JsonMissing.of()
             ) : this(
-                characterId,
-                jerseyNumber,
-                position,
-                teamId,
-                yearsWithTeam,
-                assists,
-                goalsScored,
-                isCaptain,
-                memberType,
-                mutableMapOf(),
+              characterId,
+              jerseyNumber,
+              position,
+              teamId,
+              yearsWithTeam,
+              assists,
+              goalsScored,
+              isCaptain,
+              memberType,
+              mutableMapOf(),
             )
 
             /**
              * ID of the character (references /characters/{id})
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun characterId(): String = characterId.getRequired("character_id")
 
             /**
              * Jersey/shirt number
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun jerseyNumber(): Long = jerseyNumber.getRequired("jersey_number")
 
             /**
              * Playing position on the field
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun position(): Position = position.getRequired("position")
 
             /**
              * ID of the team they belong to
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun teamId(): String = teamId.getRequired("team_id")
 
             /**
              * Number of years with the current team
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun yearsWithTeam(): Long = yearsWithTeam.getRequired("years_with_team")
 
             /**
              * Total assists for the team
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun assists(): Long? = assists.getNullable("assists")
 
             /**
              * Total goals scored for the team
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun goalsScored(): Long? = goalsScored.getNullable("goals_scored")
 
             /**
              * Whether this player is team captain
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun isCaptain(): Boolean? = isCaptain.getNullable("is_captain")
 
             /**
              * Discriminator field indicating this is a player
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun memberType(): MemberType? = memberType.getNullable("member_type")
 
             /**
              * Returns the raw JSON value of [characterId].
              *
-             * Unlike [characterId], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [characterId], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("character_id")
             @ExcludeMissing
@@ -627,8 +616,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [jerseyNumber].
              *
-             * Unlike [jerseyNumber], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [jerseyNumber], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("jersey_number")
             @ExcludeMissing
@@ -637,8 +625,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [position].
              *
-             * Unlike [position], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [position], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("position")
             @ExcludeMissing
@@ -649,13 +636,14 @@ private constructor(
              *
              * Unlike [teamId], this method doesn't throw if the JSON field has an unexpected type.
              */
-            @JsonProperty("team_id") @ExcludeMissing fun _teamId(): JsonField<String> = teamId
+            @JsonProperty("team_id")
+            @ExcludeMissing
+            fun _teamId(): JsonField<String> = teamId
 
             /**
              * Returns the raw JSON value of [yearsWithTeam].
              *
-             * Unlike [yearsWithTeam], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [yearsWithTeam], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("years_with_team")
             @ExcludeMissing
@@ -666,13 +654,14 @@ private constructor(
              *
              * Unlike [assists], this method doesn't throw if the JSON field has an unexpected type.
              */
-            @JsonProperty("assists") @ExcludeMissing fun _assists(): JsonField<Long> = assists
+            @JsonProperty("assists")
+            @ExcludeMissing
+            fun _assists(): JsonField<Long> = assists
 
             /**
              * Returns the raw JSON value of [goalsScored].
              *
-             * Unlike [goalsScored], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [goalsScored], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("goals_scored")
             @ExcludeMissing
@@ -681,8 +670,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [isCaptain].
              *
-             * Unlike [isCaptain], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [isCaptain], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("is_captain")
             @ExcludeMissing
@@ -691,8 +679,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [memberType].
              *
-             * Unlike [memberType], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [memberType], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("member_type")
             @ExcludeMissing
@@ -700,13 +687,12 @@ private constructor(
 
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
-                additionalProperties.put(key, value)
+              additionalProperties.put(key, value)
             }
 
             @JsonAnyGetter
             @ExcludeMissing
-            fun _additionalProperties(): Map<String, JsonValue> =
-                Collections.unmodifiableMap(additionalProperties)
+            fun _additionalProperties(): Map<String, JsonValue> = Collections.unmodifiableMap(additionalProperties)
 
             fun toBuilder() = Builder().from(this)
 
@@ -716,6 +702,7 @@ private constructor(
                  * Returns a mutable builder for constructing an instance of [Player].
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .characterId()
                  * .jerseyNumber()
@@ -741,18 +728,19 @@ private constructor(
                 private var memberType: JsonField<MemberType> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                internal fun from(player: Player) = apply {
-                    characterId = player.characterId
-                    jerseyNumber = player.jerseyNumber
-                    position = player.position
-                    teamId = player.teamId
-                    yearsWithTeam = player.yearsWithTeam
-                    assists = player.assists
-                    goalsScored = player.goalsScored
-                    isCaptain = player.isCaptain
-                    memberType = player.memberType
-                    additionalProperties = player.additionalProperties.toMutableMap()
-                }
+                internal fun from(player: Player) =
+                    apply {
+                        characterId = player.characterId
+                        jerseyNumber = player.jerseyNumber
+                        position = player.position
+                        teamId = player.teamId
+                        yearsWithTeam = player.yearsWithTeam
+                        assists = player.assists
+                        goalsScored = player.goalsScored
+                        isCaptain = player.isCaptain
+                        memberType = player.memberType
+                        additionalProperties = player.additionalProperties.toMutableMap()
+                    }
 
                 /** ID of the character (references /characters/{id}) */
                 fun characterId(characterId: String) = characterId(JsonField.of(characterId))
@@ -760,13 +748,13 @@ private constructor(
                 /**
                  * Sets [Builder.characterId] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.characterId] with a well-typed [String] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.characterId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun characterId(characterId: JsonField<String>) = apply {
-                    this.characterId = characterId
-                }
+                fun characterId(characterId: JsonField<String>) =
+                    apply {
+                        this.characterId = characterId
+                    }
 
                 /** Jersey/shirt number */
                 fun jerseyNumber(jerseyNumber: Long) = jerseyNumber(JsonField.of(jerseyNumber))
@@ -774,13 +762,13 @@ private constructor(
                 /**
                  * Sets [Builder.jerseyNumber] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.jerseyNumber] with a well-typed [Long] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.jerseyNumber] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun jerseyNumber(jerseyNumber: JsonField<Long>) = apply {
-                    this.jerseyNumber = jerseyNumber
-                }
+                fun jerseyNumber(jerseyNumber: JsonField<Long>) =
+                    apply {
+                        this.jerseyNumber = jerseyNumber
+                    }
 
                 /** Playing position on the field */
                 fun position(position: Position) = position(JsonField.of(position))
@@ -788,11 +776,13 @@ private constructor(
                 /**
                  * Sets [Builder.position] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.position] with a well-typed [Position] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.position] with a well-typed [Position] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun position(position: JsonField<Position>) = apply { this.position = position }
+                fun position(position: JsonField<Position>) =
+                    apply {
+                        this.position = position
+                    }
 
                 /** ID of the team they belong to */
                 fun teamId(teamId: String) = teamId(JsonField.of(teamId))
@@ -800,11 +790,13 @@ private constructor(
                 /**
                  * Sets [Builder.teamId] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.teamId] with a well-typed [String] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.teamId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun teamId(teamId: JsonField<String>) = apply { this.teamId = teamId }
+                fun teamId(teamId: JsonField<String>) =
+                    apply {
+                        this.teamId = teamId
+                    }
 
                 /** Number of years with the current team */
                 fun yearsWithTeam(yearsWithTeam: Long) = yearsWithTeam(JsonField.of(yearsWithTeam))
@@ -812,13 +804,13 @@ private constructor(
                 /**
                  * Sets [Builder.yearsWithTeam] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.yearsWithTeam] with a well-typed [Long] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.yearsWithTeam] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun yearsWithTeam(yearsWithTeam: JsonField<Long>) = apply {
-                    this.yearsWithTeam = yearsWithTeam
-                }
+                fun yearsWithTeam(yearsWithTeam: JsonField<Long>) =
+                    apply {
+                        this.yearsWithTeam = yearsWithTeam
+                    }
 
                 /** Total assists for the team */
                 fun assists(assists: Long) = assists(JsonField.of(assists))
@@ -826,11 +818,13 @@ private constructor(
                 /**
                  * Sets [Builder.assists] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.assists] with a well-typed [Long] value instead.
-                 * This method is primarily for setting the field to an undocumented or not yet
+                 * You should usually call [Builder.assists] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
                  * supported value.
                  */
-                fun assists(assists: JsonField<Long>) = apply { this.assists = assists }
+                fun assists(assists: JsonField<Long>) =
+                    apply {
+                        this.assists = assists
+                    }
 
                 /** Total goals scored for the team */
                 fun goalsScored(goalsScored: Long) = goalsScored(JsonField.of(goalsScored))
@@ -838,13 +832,13 @@ private constructor(
                 /**
                  * Sets [Builder.goalsScored] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.goalsScored] with a well-typed [Long] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.goalsScored] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun goalsScored(goalsScored: JsonField<Long>) = apply {
-                    this.goalsScored = goalsScored
-                }
+                fun goalsScored(goalsScored: JsonField<Long>) =
+                    apply {
+                        this.goalsScored = goalsScored
+                    }
 
                 /** Whether this player is team captain */
                 fun isCaptain(isCaptain: Boolean) = isCaptain(JsonField.of(isCaptain))
@@ -852,11 +846,13 @@ private constructor(
                 /**
                  * Sets [Builder.isCaptain] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.isCaptain] with a well-typed [Boolean] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.isCaptain] with a well-typed [Boolean] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun isCaptain(isCaptain: JsonField<Boolean>) = apply { this.isCaptain = isCaptain }
+                fun isCaptain(isCaptain: JsonField<Boolean>) =
+                    apply {
+                        this.isCaptain = isCaptain
+                    }
 
                 /** Discriminator field indicating this is a player */
                 fun memberType(memberType: MemberType) = memberType(JsonField.of(memberType))
@@ -864,35 +860,39 @@ private constructor(
                 /**
                  * Sets [Builder.memberType] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.memberType] with a well-typed [MemberType] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.memberType] with a well-typed [MemberType] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun memberType(memberType: JsonField<MemberType>) = apply {
-                    this.memberType = memberType
-                }
+                fun memberType(memberType: JsonField<MemberType>) =
+                    apply {
+                        this.memberType = memberType
+                    }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    putAllAdditionalProperties(additionalProperties)
-                }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
 
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    additionalProperties.put(key, value)
-                }
+                fun putAdditionalProperty(key: String, value: JsonValue) =
+                    apply {
+                        additionalProperties.put(key, value)
+                    }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
                     apply {
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
-                fun removeAdditionalProperty(key: String) = apply {
-                    additionalProperties.remove(key)
-                }
+                fun removeAdditionalProperty(key: String) =
+                    apply {
+                        additionalProperties.remove(key)
+                    }
 
-                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                    keys.forEach(::removeAdditionalProperty)
-                }
+                fun removeAllAdditionalProperties(keys: Set<String>) =
+                    apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
 
                 /**
                  * Returns an immutable instance of [Player].
@@ -900,6 +900,7 @@ private constructor(
                  * Further updates to this [Builder] will not mutate the returned instance.
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .characterId()
                  * .jerseyNumber()
@@ -912,37 +913,48 @@ private constructor(
                  */
                 fun build(): Player =
                     Player(
-                        checkRequired("characterId", characterId),
-                        checkRequired("jerseyNumber", jerseyNumber),
-                        checkRequired("position", position),
-                        checkRequired("teamId", teamId),
-                        checkRequired("yearsWithTeam", yearsWithTeam),
-                        assists,
-                        goalsScored,
-                        isCaptain,
-                        memberType,
-                        additionalProperties.toMutableMap(),
+                      checkRequired(
+                        "characterId", characterId
+                      ),
+                      checkRequired(
+                        "jerseyNumber", jerseyNumber
+                      ),
+                      checkRequired(
+                        "position", position
+                      ),
+                      checkRequired(
+                        "teamId", teamId
+                      ),
+                      checkRequired(
+                        "yearsWithTeam", yearsWithTeam
+                      ),
+                      assists,
+                      goalsScored,
+                      isCaptain,
+                      memberType,
+                      additionalProperties.toMutableMap(),
                     )
             }
 
             private var validated: Boolean = false
 
-            fun validate(): Player = apply {
-                if (validated) {
-                    return@apply
-                }
+            fun validate(): Player =
+                apply {
+                    if (validated) {
+                      return@apply
+                    }
 
-                characterId()
-                jerseyNumber()
-                position().validate()
-                teamId()
-                yearsWithTeam()
-                assists()
-                goalsScored()
-                isCaptain()
-                memberType()?.validate()
-                validated = true
-            }
+                    characterId()
+                    jerseyNumber()
+                    position().validate()
+                    teamId()
+                    yearsWithTeam()
+                    assists()
+                    goalsScored()
+                    isCaptain()
+                    memberType()?.validate()
+                    validated = true
+                }
 
             fun isValid(): Boolean =
                 try {
@@ -953,36 +965,27 @@ private constructor(
                 }
 
             /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
+             * Returns a score indicating how many valid values are contained in this object recursively.
              *
              * Used for best match union deserialization.
              */
-            internal fun validity(): Int =
-                (if (characterId.asKnown() == null) 0 else 1) +
-                    (if (jerseyNumber.asKnown() == null) 0 else 1) +
-                    (position.asKnown()?.validity() ?: 0) +
-                    (if (teamId.asKnown() == null) 0 else 1) +
-                    (if (yearsWithTeam.asKnown() == null) 0 else 1) +
-                    (if (assists.asKnown() == null) 0 else 1) +
-                    (if (goalsScored.asKnown() == null) 0 else 1) +
-                    (if (isCaptain.asKnown() == null) 0 else 1) +
-                    (memberType.asKnown()?.validity() ?: 0)
+            internal fun validity(): Int = (if (characterId.asKnown() == null) 0 else 1) + (if (jerseyNumber.asKnown() == null) 0 else 1) + (position.asKnown()?.validity() ?: 0) + (if (teamId.asKnown() == null) 0 else 1) + (if (yearsWithTeam.asKnown() == null) 0 else 1) + (if (assists.asKnown() == null) 0 else 1) + (if (goalsScored.asKnown() == null) 0 else 1) + (if (isCaptain.asKnown() == null) 0 else 1) + (memberType.asKnown()?.validity() ?: 0)
 
             /** Discriminator field indicating this is a player */
-            class MemberType
-            @JsonCreator
-            private constructor(private val value: JsonField<String>) : Enum {
+            class MemberType @JsonCreator private constructor(
+                private val value: JsonField<String>,
+
+            ) : Enum {
 
                 /**
                  * Returns this class instance's raw value.
                  *
-                 * This is usually only useful if this instance was deserialized from data that
-                 * doesn't match any known member, and you want to know that value. For example, if
-                 * the SDK is on an older version than the API, then the API may respond with new
-                 * members that the SDK is unaware of.
+                 * This is usually only useful if this instance was deserialized from data that doesn't match any known
+                 * member, and you want to know that value. For example, if the SDK is on an older version than the
+                 * API, then the API may respond with new members that the SDK is unaware of.
                  */
-                @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+                @com.fasterxml.jackson.annotation.JsonValue
+                fun _value(): JsonField<String> = value
 
                 companion object {
 
@@ -993,33 +996,32 @@ private constructor(
 
                 /** An enum containing [MemberType]'s known values. */
                 enum class Known {
-                    PLAYER
+                    PLAYER,
                 }
 
                 /**
                  * An enum containing [MemberType]'s known values, as well as an [_UNKNOWN] member.
                  *
                  * An instance of [MemberType] can contain an unknown value in a couple of cases:
-                 * - It was deserialized from data that doesn't match any known member. For example,
-                 *   if the SDK is on an older version than the API, then the API may respond with
-                 *   new members that the SDK is unaware of.
+                 *
+                 * - It was deserialized from data that doesn't match any known member. For example, if the SDK is on
+                 *   an older version than the API, then the API may respond with new members that the SDK is unaware
+                 *   of.
+                 *
                  * - It was constructed with an arbitrary value using the [of] method.
                  */
                 enum class Value {
                     PLAYER,
-                    /**
-                     * An enum member indicating that [MemberType] was instantiated with an unknown
-                     * value.
-                     */
+                    /** An enum member indicating that [MemberType] was instantiated with an unknown value. */
                     _UNKNOWN,
                 }
 
                 /**
-                 * Returns an enum member corresponding to this class instance's value, or
-                 * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                 * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN] if the
+                 * class was instantiated with an unknown value.
                  *
-                 * Use the [known] method instead if you're certain the value is always known or if
-                 * you want to throw for the unknown case.
+                 * Use the [known] method instead if you're certain the value is always known or if you want to throw
+                 * for the unknown case.
                  */
                 fun value(): Value =
                     when (this) {
@@ -1030,11 +1032,10 @@ private constructor(
                 /**
                  * Returns an enum member corresponding to this class instance's value.
                  *
-                 * Use the [value] method instead if you're uncertain the value is always known and
-                 * don't want to throw for the unknown case.
+                 * Use the [value] method instead if you're uncertain the value is always known and don't want to throw
+                 * for the unknown case.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value is a not a
-                 *   known member.
+                 * @throws BelieveInvalidDataException if this class instance's value is a not a known member.
                  */
                 fun known(): Known =
                     when (this) {
@@ -1045,26 +1046,25 @@ private constructor(
                 /**
                  * Returns this class instance's primitive wire representation.
                  *
-                 * This differs from the [toString] method because that method is primarily for
-                 * debugging and generally doesn't throw.
+                 * This differs from the [toString] method because that method is primarily for debugging and generally
+                 * doesn't throw.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value does not have
-                 *   the expected primitive type.
+                 * @throws BelieveInvalidDataException if this class instance's value does not have the expected
+                 *   primitive type.
                  */
-                fun asString(): String =
-                    _value().asString()
-                        ?: throw BelieveInvalidDataException("Value is not a String")
+                fun asString(): String = _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
 
                 private var validated: Boolean = false
 
-                fun validate(): MemberType = apply {
-                    if (validated) {
-                        return@apply
-                    }
+                fun validate(): MemberType =
+                    apply {
+                        if (validated) {
+                          return@apply
+                        }
 
-                    known()
-                    validated = true
-                }
+                        known()
+                        validated = true
+                    }
 
                 fun isValid(): Boolean =
                     try {
@@ -1075,19 +1075,18 @@ private constructor(
                     }
 
                 /**
-                 * Returns a score indicating how many valid values are contained in this object
-                 * recursively.
+                 * Returns a score indicating how many valid values are contained in this object recursively.
                  *
                  * Used for best match union deserialization.
                  */
                 internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
 
                 override fun equals(other: Any?): Boolean {
-                    if (this === other) {
-                        return true
-                    }
+                  if (this === other) {
+                      return true
+                  }
 
-                    return other is MemberType && value == other.value
+                  return other is MemberType && value == other.value
                 }
 
                 override fun hashCode() = value.hashCode()
@@ -1096,48 +1095,22 @@ private constructor(
             }
 
             override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
+              if (this === other) {
+                  return true
+              }
 
-                return other is Player &&
-                    characterId == other.characterId &&
-                    jerseyNumber == other.jerseyNumber &&
-                    position == other.position &&
-                    teamId == other.teamId &&
-                    yearsWithTeam == other.yearsWithTeam &&
-                    assists == other.assists &&
-                    goalsScored == other.goalsScored &&
-                    isCaptain == other.isCaptain &&
-                    memberType == other.memberType &&
-                    additionalProperties == other.additionalProperties
+              return other is Player && characterId == other.characterId && jerseyNumber == other.jerseyNumber && position == other.position && teamId == other.teamId && yearsWithTeam == other.yearsWithTeam && assists == other.assists && goalsScored == other.goalsScored && isCaptain == other.isCaptain && memberType == other.memberType && additionalProperties == other.additionalProperties
             }
 
-            private val hashCode: Int by lazy {
-                Objects.hash(
-                    characterId,
-                    jerseyNumber,
-                    position,
-                    teamId,
-                    yearsWithTeam,
-                    assists,
-                    goalsScored,
-                    isCaptain,
-                    memberType,
-                    additionalProperties,
-                )
-            }
+            private val hashCode: Int by lazy { Objects.hash(characterId, jerseyNumber, position, teamId, yearsWithTeam, assists, goalsScored, isCaptain, memberType, additionalProperties) }
 
             override fun hashCode(): Int = hashCode
 
-            override fun toString() =
-                "Player{characterId=$characterId, jerseyNumber=$jerseyNumber, position=$position, teamId=$teamId, yearsWithTeam=$yearsWithTeam, assists=$assists, goalsScored=$goalsScored, isCaptain=$isCaptain, memberType=$memberType, additionalProperties=$additionalProperties}"
+            override fun toString() = "Player{characterId=$characterId, jerseyNumber=$jerseyNumber, position=$position, teamId=$teamId, yearsWithTeam=$yearsWithTeam, assists=$assists, goalsScored=$goalsScored, isCaptain=$isCaptain, memberType=$memberType, additionalProperties=$additionalProperties}"
         }
 
         /** A coach or coaching staff member. */
-        class Coach
-        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-        private constructor(
+        class Coach @JsonCreator(mode = JsonCreator.Mode.DISABLED) private constructor(
             private val characterId: JsonField<String>,
             private val specialty: JsonField<CoachSpecialty>,
             private val teamId: JsonField<String>,
@@ -1146,107 +1119,82 @@ private constructor(
             private val memberType: JsonField<MemberType>,
             private val winRate: JsonField<Double>,
             private val additionalProperties: MutableMap<String, JsonValue>,
+
         ) {
 
             @JsonCreator
             private constructor(
-                @JsonProperty("character_id")
-                @ExcludeMissing
-                characterId: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("specialty")
-                @ExcludeMissing
-                specialty: JsonField<CoachSpecialty> = JsonMissing.of(),
-                @JsonProperty("team_id")
-                @ExcludeMissing
-                teamId: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("years_with_team")
-                @ExcludeMissing
-                yearsWithTeam: JsonField<Long> = JsonMissing.of(),
-                @JsonProperty("certifications")
-                @ExcludeMissing
-                certifications: JsonField<List<String>> = JsonMissing.of(),
-                @JsonProperty("member_type")
-                @ExcludeMissing
-                memberType: JsonField<MemberType> = JsonMissing.of(),
-                @JsonProperty("win_rate")
-                @ExcludeMissing
-                winRate: JsonField<Double> = JsonMissing.of(),
+                @JsonProperty("character_id") @ExcludeMissing characterId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("specialty") @ExcludeMissing specialty: JsonField<CoachSpecialty> = JsonMissing.of(),
+                @JsonProperty("team_id") @ExcludeMissing teamId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("years_with_team") @ExcludeMissing yearsWithTeam: JsonField<Long> = JsonMissing.of(),
+                @JsonProperty("certifications") @ExcludeMissing certifications: JsonField<List<String>> = JsonMissing.of(),
+                @JsonProperty("member_type") @ExcludeMissing memberType: JsonField<MemberType> = JsonMissing.of(),
+                @JsonProperty("win_rate") @ExcludeMissing winRate: JsonField<Double> = JsonMissing.of()
             ) : this(
-                characterId,
-                specialty,
-                teamId,
-                yearsWithTeam,
-                certifications,
-                memberType,
-                winRate,
-                mutableMapOf(),
+              characterId,
+              specialty,
+              teamId,
+              yearsWithTeam,
+              certifications,
+              memberType,
+              winRate,
+              mutableMapOf(),
             )
 
             /**
              * ID of the character (references /characters/{id})
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun characterId(): String = characterId.getRequired("character_id")
 
             /**
              * Coaching specialty/role
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun specialty(): CoachSpecialty = specialty.getRequired("specialty")
 
             /**
              * ID of the team they belong to
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun teamId(): String = teamId.getRequired("team_id")
 
             /**
              * Number of years with the current team
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun yearsWithTeam(): Long = yearsWithTeam.getRequired("years_with_team")
 
             /**
              * Coaching certifications and licenses
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun certifications(): List<String>? = certifications.getNullable("certifications")
 
             /**
              * Discriminator field indicating this is a coach
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun memberType(): MemberType? = memberType.getNullable("member_type")
 
             /**
              * Career win rate (0.0 to 1.0)
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun winRate(): Double? = winRate.getNullable("win_rate")
 
             /**
              * Returns the raw JSON value of [characterId].
              *
-             * Unlike [characterId], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [characterId], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("character_id")
             @ExcludeMissing
@@ -1255,8 +1203,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [specialty].
              *
-             * Unlike [specialty], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [specialty], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("specialty")
             @ExcludeMissing
@@ -1267,13 +1214,14 @@ private constructor(
              *
              * Unlike [teamId], this method doesn't throw if the JSON field has an unexpected type.
              */
-            @JsonProperty("team_id") @ExcludeMissing fun _teamId(): JsonField<String> = teamId
+            @JsonProperty("team_id")
+            @ExcludeMissing
+            fun _teamId(): JsonField<String> = teamId
 
             /**
              * Returns the raw JSON value of [yearsWithTeam].
              *
-             * Unlike [yearsWithTeam], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [yearsWithTeam], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("years_with_team")
             @ExcludeMissing
@@ -1282,8 +1230,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [certifications].
              *
-             * Unlike [certifications], this method doesn't throw if the JSON field has an
-             * unexpected type.
+             * Unlike [certifications], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("certifications")
             @ExcludeMissing
@@ -1292,8 +1239,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [memberType].
              *
-             * Unlike [memberType], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [memberType], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("member_type")
             @ExcludeMissing
@@ -1304,17 +1250,18 @@ private constructor(
              *
              * Unlike [winRate], this method doesn't throw if the JSON field has an unexpected type.
              */
-            @JsonProperty("win_rate") @ExcludeMissing fun _winRate(): JsonField<Double> = winRate
+            @JsonProperty("win_rate")
+            @ExcludeMissing
+            fun _winRate(): JsonField<Double> = winRate
 
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
-                additionalProperties.put(key, value)
+              additionalProperties.put(key, value)
             }
 
             @JsonAnyGetter
             @ExcludeMissing
-            fun _additionalProperties(): Map<String, JsonValue> =
-                Collections.unmodifiableMap(additionalProperties)
+            fun _additionalProperties(): Map<String, JsonValue> = Collections.unmodifiableMap(additionalProperties)
 
             fun toBuilder() = Builder().from(this)
 
@@ -1324,6 +1271,7 @@ private constructor(
                  * Returns a mutable builder for constructing an instance of [Coach].
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .characterId()
                  * .specialty()
@@ -1346,16 +1294,17 @@ private constructor(
                 private var winRate: JsonField<Double> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                internal fun from(coach: Coach) = apply {
-                    characterId = coach.characterId
-                    specialty = coach.specialty
-                    teamId = coach.teamId
-                    yearsWithTeam = coach.yearsWithTeam
-                    certifications = coach.certifications.map { it.toMutableList() }
-                    memberType = coach.memberType
-                    winRate = coach.winRate
-                    additionalProperties = coach.additionalProperties.toMutableMap()
-                }
+                internal fun from(coach: Coach) =
+                    apply {
+                        characterId = coach.characterId
+                        specialty = coach.specialty
+                        teamId = coach.teamId
+                        yearsWithTeam = coach.yearsWithTeam
+                        certifications = coach.certifications.map { it.toMutableList() }
+                        memberType = coach.memberType
+                        winRate = coach.winRate
+                        additionalProperties = coach.additionalProperties.toMutableMap()
+                    }
 
                 /** ID of the character (references /characters/{id}) */
                 fun characterId(characterId: String) = characterId(JsonField.of(characterId))
@@ -1363,13 +1312,13 @@ private constructor(
                 /**
                  * Sets [Builder.characterId] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.characterId] with a well-typed [String] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.characterId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun characterId(characterId: JsonField<String>) = apply {
-                    this.characterId = characterId
-                }
+                fun characterId(characterId: JsonField<String>) =
+                    apply {
+                        this.characterId = characterId
+                    }
 
                 /** Coaching specialty/role */
                 fun specialty(specialty: CoachSpecialty) = specialty(JsonField.of(specialty))
@@ -1377,13 +1326,13 @@ private constructor(
                 /**
                  * Sets [Builder.specialty] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.specialty] with a well-typed [CoachSpecialty]
-                 * value instead. This method is primarily for setting the field to an undocumented
-                 * or not yet supported value.
+                 * You should usually call [Builder.specialty] with a well-typed [CoachSpecialty] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun specialty(specialty: JsonField<CoachSpecialty>) = apply {
-                    this.specialty = specialty
-                }
+                fun specialty(specialty: JsonField<CoachSpecialty>) =
+                    apply {
+                        this.specialty = specialty
+                    }
 
                 /** ID of the team they belong to */
                 fun teamId(teamId: String) = teamId(JsonField.of(teamId))
@@ -1391,11 +1340,13 @@ private constructor(
                 /**
                  * Sets [Builder.teamId] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.teamId] with a well-typed [String] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.teamId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun teamId(teamId: JsonField<String>) = apply { this.teamId = teamId }
+                fun teamId(teamId: JsonField<String>) =
+                    apply {
+                        this.teamId = teamId
+                    }
 
                 /** Number of years with the current team */
                 fun yearsWithTeam(yearsWithTeam: Long) = yearsWithTeam(JsonField.of(yearsWithTeam))
@@ -1403,40 +1354,39 @@ private constructor(
                 /**
                  * Sets [Builder.yearsWithTeam] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.yearsWithTeam] with a well-typed [Long] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.yearsWithTeam] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun yearsWithTeam(yearsWithTeam: JsonField<Long>) = apply {
-                    this.yearsWithTeam = yearsWithTeam
-                }
+                fun yearsWithTeam(yearsWithTeam: JsonField<Long>) =
+                    apply {
+                        this.yearsWithTeam = yearsWithTeam
+                    }
 
                 /** Coaching certifications and licenses */
-                fun certifications(certifications: List<String>) =
-                    certifications(JsonField.of(certifications))
+                fun certifications(certifications: List<String>) = certifications(JsonField.of(certifications))
 
                 /**
                  * Sets [Builder.certifications] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.certifications] with a well-typed `List<String>`
-                 * value instead. This method is primarily for setting the field to an undocumented
-                 * or not yet supported value.
+                 * You should usually call [Builder.certifications] with a well-typed `List<String>` value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun certifications(certifications: JsonField<List<String>>) = apply {
-                    this.certifications = certifications.map { it.toMutableList() }
-                }
+                fun certifications(certifications: JsonField<List<String>>) =
+                    apply {
+                        this.certifications = certifications.map { it.toMutableList() }
+                    }
 
                 /**
                  * Adds a single [String] to [certifications].
                  *
                  * @throws IllegalStateException if the field was previously set to a non-list.
                  */
-                fun addCertification(certification: String) = apply {
-                    certifications =
-                        (certifications ?: JsonField.of(mutableListOf())).also {
+                fun addCertification(certification: String) =
+                    apply {
+                        certifications = (certifications ?: JsonField.of(mutableListOf())).also {
                             checkKnown("certifications", it).add(certification)
                         }
-                }
+                    }
 
                 /** Discriminator field indicating this is a coach */
                 fun memberType(memberType: MemberType) = memberType(JsonField.of(memberType))
@@ -1444,13 +1394,13 @@ private constructor(
                 /**
                  * Sets [Builder.memberType] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.memberType] with a well-typed [MemberType] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.memberType] with a well-typed [MemberType] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun memberType(memberType: JsonField<MemberType>) = apply {
-                    this.memberType = memberType
-                }
+                fun memberType(memberType: JsonField<MemberType>) =
+                    apply {
+                        this.memberType = memberType
+                    }
 
                 /** Career win rate (0.0 to 1.0) */
                 fun winRate(winRate: Double?) = winRate(JsonField.ofNullable(winRate))
@@ -1465,33 +1415,39 @@ private constructor(
                 /**
                  * Sets [Builder.winRate] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.winRate] with a well-typed [Double] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.winRate] with a well-typed [Double] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun winRate(winRate: JsonField<Double>) = apply { this.winRate = winRate }
+                fun winRate(winRate: JsonField<Double>) =
+                    apply {
+                        this.winRate = winRate
+                    }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    putAllAdditionalProperties(additionalProperties)
-                }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
 
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    additionalProperties.put(key, value)
-                }
+                fun putAdditionalProperty(key: String, value: JsonValue) =
+                    apply {
+                        additionalProperties.put(key, value)
+                    }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
                     apply {
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
-                fun removeAdditionalProperty(key: String) = apply {
-                    additionalProperties.remove(key)
-                }
+                fun removeAdditionalProperty(key: String) =
+                    apply {
+                        additionalProperties.remove(key)
+                    }
 
-                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                    keys.forEach(::removeAdditionalProperty)
-                }
+                fun removeAllAdditionalProperties(keys: Set<String>) =
+                    apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
 
                 /**
                  * Returns an immutable instance of [Coach].
@@ -1499,6 +1455,7 @@ private constructor(
                  * Further updates to this [Builder] will not mutate the returned instance.
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .characterId()
                  * .specialty()
@@ -1510,33 +1467,42 @@ private constructor(
                  */
                 fun build(): Coach =
                     Coach(
-                        checkRequired("characterId", characterId),
-                        checkRequired("specialty", specialty),
-                        checkRequired("teamId", teamId),
-                        checkRequired("yearsWithTeam", yearsWithTeam),
-                        (certifications ?: JsonMissing.of()).map { it.toImmutable() },
-                        memberType,
-                        winRate,
-                        additionalProperties.toMutableMap(),
+                      checkRequired(
+                        "characterId", characterId
+                      ),
+                      checkRequired(
+                        "specialty", specialty
+                      ),
+                      checkRequired(
+                        "teamId", teamId
+                      ),
+                      checkRequired(
+                        "yearsWithTeam", yearsWithTeam
+                      ),
+                      (certifications?: JsonMissing.of()).map { it.toImmutable() },
+                      memberType,
+                      winRate,
+                      additionalProperties.toMutableMap(),
                     )
             }
 
             private var validated: Boolean = false
 
-            fun validate(): Coach = apply {
-                if (validated) {
-                    return@apply
-                }
+            fun validate(): Coach =
+                apply {
+                    if (validated) {
+                      return@apply
+                    }
 
-                characterId()
-                specialty().validate()
-                teamId()
-                yearsWithTeam()
-                certifications()
-                memberType()?.validate()
-                winRate()
-                validated = true
-            }
+                    characterId()
+                    specialty().validate()
+                    teamId()
+                    yearsWithTeam()
+                    certifications()
+                    memberType()?.validate()
+                    winRate()
+                    validated = true
+                }
 
             fun isValid(): Boolean =
                 try {
@@ -1547,34 +1513,27 @@ private constructor(
                 }
 
             /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
+             * Returns a score indicating how many valid values are contained in this object recursively.
              *
              * Used for best match union deserialization.
              */
-            internal fun validity(): Int =
-                (if (characterId.asKnown() == null) 0 else 1) +
-                    (specialty.asKnown()?.validity() ?: 0) +
-                    (if (teamId.asKnown() == null) 0 else 1) +
-                    (if (yearsWithTeam.asKnown() == null) 0 else 1) +
-                    (certifications.asKnown()?.size ?: 0) +
-                    (memberType.asKnown()?.validity() ?: 0) +
-                    (if (winRate.asKnown() == null) 0 else 1)
+            internal fun validity(): Int = (if (characterId.asKnown() == null) 0 else 1) + (specialty.asKnown()?.validity() ?: 0) + (if (teamId.asKnown() == null) 0 else 1) + (if (yearsWithTeam.asKnown() == null) 0 else 1) + (certifications.asKnown()?.size ?: 0) + (memberType.asKnown()?.validity() ?: 0) + (if (winRate.asKnown() == null) 0 else 1)
 
             /** Discriminator field indicating this is a coach */
-            class MemberType
-            @JsonCreator
-            private constructor(private val value: JsonField<String>) : Enum {
+            class MemberType @JsonCreator private constructor(
+                private val value: JsonField<String>,
+
+            ) : Enum {
 
                 /**
                  * Returns this class instance's raw value.
                  *
-                 * This is usually only useful if this instance was deserialized from data that
-                 * doesn't match any known member, and you want to know that value. For example, if
-                 * the SDK is on an older version than the API, then the API may respond with new
-                 * members that the SDK is unaware of.
+                 * This is usually only useful if this instance was deserialized from data that doesn't match any known
+                 * member, and you want to know that value. For example, if the SDK is on an older version than the
+                 * API, then the API may respond with new members that the SDK is unaware of.
                  */
-                @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+                @com.fasterxml.jackson.annotation.JsonValue
+                fun _value(): JsonField<String> = value
 
                 companion object {
 
@@ -1585,33 +1544,32 @@ private constructor(
 
                 /** An enum containing [MemberType]'s known values. */
                 enum class Known {
-                    COACH
+                    COACH,
                 }
 
                 /**
                  * An enum containing [MemberType]'s known values, as well as an [_UNKNOWN] member.
                  *
                  * An instance of [MemberType] can contain an unknown value in a couple of cases:
-                 * - It was deserialized from data that doesn't match any known member. For example,
-                 *   if the SDK is on an older version than the API, then the API may respond with
-                 *   new members that the SDK is unaware of.
+                 *
+                 * - It was deserialized from data that doesn't match any known member. For example, if the SDK is on
+                 *   an older version than the API, then the API may respond with new members that the SDK is unaware
+                 *   of.
+                 *
                  * - It was constructed with an arbitrary value using the [of] method.
                  */
                 enum class Value {
                     COACH,
-                    /**
-                     * An enum member indicating that [MemberType] was instantiated with an unknown
-                     * value.
-                     */
+                    /** An enum member indicating that [MemberType] was instantiated with an unknown value. */
                     _UNKNOWN,
                 }
 
                 /**
-                 * Returns an enum member corresponding to this class instance's value, or
-                 * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                 * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN] if the
+                 * class was instantiated with an unknown value.
                  *
-                 * Use the [known] method instead if you're certain the value is always known or if
-                 * you want to throw for the unknown case.
+                 * Use the [known] method instead if you're certain the value is always known or if you want to throw
+                 * for the unknown case.
                  */
                 fun value(): Value =
                     when (this) {
@@ -1622,11 +1580,10 @@ private constructor(
                 /**
                  * Returns an enum member corresponding to this class instance's value.
                  *
-                 * Use the [value] method instead if you're uncertain the value is always known and
-                 * don't want to throw for the unknown case.
+                 * Use the [value] method instead if you're uncertain the value is always known and don't want to throw
+                 * for the unknown case.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value is a not a
-                 *   known member.
+                 * @throws BelieveInvalidDataException if this class instance's value is a not a known member.
                  */
                 fun known(): Known =
                     when (this) {
@@ -1637,26 +1594,25 @@ private constructor(
                 /**
                  * Returns this class instance's primitive wire representation.
                  *
-                 * This differs from the [toString] method because that method is primarily for
-                 * debugging and generally doesn't throw.
+                 * This differs from the [toString] method because that method is primarily for debugging and generally
+                 * doesn't throw.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value does not have
-                 *   the expected primitive type.
+                 * @throws BelieveInvalidDataException if this class instance's value does not have the expected
+                 *   primitive type.
                  */
-                fun asString(): String =
-                    _value().asString()
-                        ?: throw BelieveInvalidDataException("Value is not a String")
+                fun asString(): String = _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
 
                 private var validated: Boolean = false
 
-                fun validate(): MemberType = apply {
-                    if (validated) {
-                        return@apply
-                    }
+                fun validate(): MemberType =
+                    apply {
+                        if (validated) {
+                          return@apply
+                        }
 
-                    known()
-                    validated = true
-                }
+                        known()
+                        validated = true
+                    }
 
                 fun isValid(): Boolean =
                     try {
@@ -1667,19 +1623,18 @@ private constructor(
                     }
 
                 /**
-                 * Returns a score indicating how many valid values are contained in this object
-                 * recursively.
+                 * Returns a score indicating how many valid values are contained in this object recursively.
                  *
                  * Used for best match union deserialization.
                  */
                 internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
 
                 override fun equals(other: Any?): Boolean {
-                    if (this === other) {
-                        return true
-                    }
+                  if (this === other) {
+                      return true
+                  }
 
-                    return other is MemberType && value == other.value
+                  return other is MemberType && value == other.value
                 }
 
                 override fun hashCode() = value.hashCode()
@@ -1688,44 +1643,22 @@ private constructor(
             }
 
             override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
+              if (this === other) {
+                  return true
+              }
 
-                return other is Coach &&
-                    characterId == other.characterId &&
-                    specialty == other.specialty &&
-                    teamId == other.teamId &&
-                    yearsWithTeam == other.yearsWithTeam &&
-                    certifications == other.certifications &&
-                    memberType == other.memberType &&
-                    winRate == other.winRate &&
-                    additionalProperties == other.additionalProperties
+              return other is Coach && characterId == other.characterId && specialty == other.specialty && teamId == other.teamId && yearsWithTeam == other.yearsWithTeam && certifications == other.certifications && memberType == other.memberType && winRate == other.winRate && additionalProperties == other.additionalProperties
             }
 
-            private val hashCode: Int by lazy {
-                Objects.hash(
-                    characterId,
-                    specialty,
-                    teamId,
-                    yearsWithTeam,
-                    certifications,
-                    memberType,
-                    winRate,
-                    additionalProperties,
-                )
-            }
+            private val hashCode: Int by lazy { Objects.hash(characterId, specialty, teamId, yearsWithTeam, certifications, memberType, winRate, additionalProperties) }
 
             override fun hashCode(): Int = hashCode
 
-            override fun toString() =
-                "Coach{characterId=$characterId, specialty=$specialty, teamId=$teamId, yearsWithTeam=$yearsWithTeam, certifications=$certifications, memberType=$memberType, winRate=$winRate, additionalProperties=$additionalProperties}"
+            override fun toString() = "Coach{characterId=$characterId, specialty=$specialty, teamId=$teamId, yearsWithTeam=$yearsWithTeam, certifications=$certifications, memberType=$memberType, winRate=$winRate, additionalProperties=$additionalProperties}"
         }
 
         /** Medical and wellness staff member. */
-        class MedicalStaff
-        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-        private constructor(
+        class MedicalStaff @JsonCreator(mode = JsonCreator.Mode.DISABLED) private constructor(
             private val characterId: JsonField<String>,
             private val specialty: JsonField<MedicalSpecialty>,
             private val teamId: JsonField<String>,
@@ -1734,107 +1667,82 @@ private constructor(
             private val memberType: JsonField<MemberType>,
             private val qualifications: JsonField<List<String>>,
             private val additionalProperties: MutableMap<String, JsonValue>,
+
         ) {
 
             @JsonCreator
             private constructor(
-                @JsonProperty("character_id")
-                @ExcludeMissing
-                characterId: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("specialty")
-                @ExcludeMissing
-                specialty: JsonField<MedicalSpecialty> = JsonMissing.of(),
-                @JsonProperty("team_id")
-                @ExcludeMissing
-                teamId: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("years_with_team")
-                @ExcludeMissing
-                yearsWithTeam: JsonField<Long> = JsonMissing.of(),
-                @JsonProperty("license_number")
-                @ExcludeMissing
-                licenseNumber: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("member_type")
-                @ExcludeMissing
-                memberType: JsonField<MemberType> = JsonMissing.of(),
-                @JsonProperty("qualifications")
-                @ExcludeMissing
-                qualifications: JsonField<List<String>> = JsonMissing.of(),
+                @JsonProperty("character_id") @ExcludeMissing characterId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("specialty") @ExcludeMissing specialty: JsonField<MedicalSpecialty> = JsonMissing.of(),
+                @JsonProperty("team_id") @ExcludeMissing teamId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("years_with_team") @ExcludeMissing yearsWithTeam: JsonField<Long> = JsonMissing.of(),
+                @JsonProperty("license_number") @ExcludeMissing licenseNumber: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("member_type") @ExcludeMissing memberType: JsonField<MemberType> = JsonMissing.of(),
+                @JsonProperty("qualifications") @ExcludeMissing qualifications: JsonField<List<String>> = JsonMissing.of()
             ) : this(
-                characterId,
-                specialty,
-                teamId,
-                yearsWithTeam,
-                licenseNumber,
-                memberType,
-                qualifications,
-                mutableMapOf(),
+              characterId,
+              specialty,
+              teamId,
+              yearsWithTeam,
+              licenseNumber,
+              memberType,
+              qualifications,
+              mutableMapOf(),
             )
 
             /**
              * ID of the character (references /characters/{id})
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun characterId(): String = characterId.getRequired("character_id")
 
             /**
              * Medical specialty
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun specialty(): MedicalSpecialty = specialty.getRequired("specialty")
 
             /**
              * ID of the team they belong to
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun teamId(): String = teamId.getRequired("team_id")
 
             /**
              * Number of years with the current team
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun yearsWithTeam(): Long = yearsWithTeam.getRequired("years_with_team")
 
             /**
              * Professional license number
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun licenseNumber(): String? = licenseNumber.getNullable("license_number")
 
             /**
              * Discriminator field indicating this is medical staff
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun memberType(): MemberType? = memberType.getNullable("member_type")
 
             /**
              * Medical qualifications and degrees
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun qualifications(): List<String>? = qualifications.getNullable("qualifications")
 
             /**
              * Returns the raw JSON value of [characterId].
              *
-             * Unlike [characterId], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [characterId], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("character_id")
             @ExcludeMissing
@@ -1843,8 +1751,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [specialty].
              *
-             * Unlike [specialty], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [specialty], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("specialty")
             @ExcludeMissing
@@ -1855,13 +1762,14 @@ private constructor(
              *
              * Unlike [teamId], this method doesn't throw if the JSON field has an unexpected type.
              */
-            @JsonProperty("team_id") @ExcludeMissing fun _teamId(): JsonField<String> = teamId
+            @JsonProperty("team_id")
+            @ExcludeMissing
+            fun _teamId(): JsonField<String> = teamId
 
             /**
              * Returns the raw JSON value of [yearsWithTeam].
              *
-             * Unlike [yearsWithTeam], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [yearsWithTeam], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("years_with_team")
             @ExcludeMissing
@@ -1870,8 +1778,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [licenseNumber].
              *
-             * Unlike [licenseNumber], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [licenseNumber], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("license_number")
             @ExcludeMissing
@@ -1880,8 +1787,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [memberType].
              *
-             * Unlike [memberType], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [memberType], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("member_type")
             @ExcludeMissing
@@ -1890,8 +1796,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [qualifications].
              *
-             * Unlike [qualifications], this method doesn't throw if the JSON field has an
-             * unexpected type.
+             * Unlike [qualifications], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("qualifications")
             @ExcludeMissing
@@ -1899,13 +1804,12 @@ private constructor(
 
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
-                additionalProperties.put(key, value)
+              additionalProperties.put(key, value)
             }
 
             @JsonAnyGetter
             @ExcludeMissing
-            fun _additionalProperties(): Map<String, JsonValue> =
-                Collections.unmodifiableMap(additionalProperties)
+            fun _additionalProperties(): Map<String, JsonValue> = Collections.unmodifiableMap(additionalProperties)
 
             fun toBuilder() = Builder().from(this)
 
@@ -1915,6 +1819,7 @@ private constructor(
                  * Returns a mutable builder for constructing an instance of [MedicalStaff].
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .characterId()
                  * .specialty()
@@ -1937,16 +1842,17 @@ private constructor(
                 private var qualifications: JsonField<MutableList<String>>? = null
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                internal fun from(medicalStaff: MedicalStaff) = apply {
-                    characterId = medicalStaff.characterId
-                    specialty = medicalStaff.specialty
-                    teamId = medicalStaff.teamId
-                    yearsWithTeam = medicalStaff.yearsWithTeam
-                    licenseNumber = medicalStaff.licenseNumber
-                    memberType = medicalStaff.memberType
-                    qualifications = medicalStaff.qualifications.map { it.toMutableList() }
-                    additionalProperties = medicalStaff.additionalProperties.toMutableMap()
-                }
+                internal fun from(medicalStaff: MedicalStaff) =
+                    apply {
+                        characterId = medicalStaff.characterId
+                        specialty = medicalStaff.specialty
+                        teamId = medicalStaff.teamId
+                        yearsWithTeam = medicalStaff.yearsWithTeam
+                        licenseNumber = medicalStaff.licenseNumber
+                        memberType = medicalStaff.memberType
+                        qualifications = medicalStaff.qualifications.map { it.toMutableList() }
+                        additionalProperties = medicalStaff.additionalProperties.toMutableMap()
+                    }
 
                 /** ID of the character (references /characters/{id}) */
                 fun characterId(characterId: String) = characterId(JsonField.of(characterId))
@@ -1954,13 +1860,13 @@ private constructor(
                 /**
                  * Sets [Builder.characterId] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.characterId] with a well-typed [String] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.characterId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun characterId(characterId: JsonField<String>) = apply {
-                    this.characterId = characterId
-                }
+                fun characterId(characterId: JsonField<String>) =
+                    apply {
+                        this.characterId = characterId
+                    }
 
                 /** Medical specialty */
                 fun specialty(specialty: MedicalSpecialty) = specialty(JsonField.of(specialty))
@@ -1968,13 +1874,13 @@ private constructor(
                 /**
                  * Sets [Builder.specialty] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.specialty] with a well-typed [MedicalSpecialty]
-                 * value instead. This method is primarily for setting the field to an undocumented
-                 * or not yet supported value.
+                 * You should usually call [Builder.specialty] with a well-typed [MedicalSpecialty] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun specialty(specialty: JsonField<MedicalSpecialty>) = apply {
-                    this.specialty = specialty
-                }
+                fun specialty(specialty: JsonField<MedicalSpecialty>) =
+                    apply {
+                        this.specialty = specialty
+                    }
 
                 /** ID of the team they belong to */
                 fun teamId(teamId: String) = teamId(JsonField.of(teamId))
@@ -1982,11 +1888,13 @@ private constructor(
                 /**
                  * Sets [Builder.teamId] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.teamId] with a well-typed [String] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.teamId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun teamId(teamId: JsonField<String>) = apply { this.teamId = teamId }
+                fun teamId(teamId: JsonField<String>) =
+                    apply {
+                        this.teamId = teamId
+                    }
 
                 /** Number of years with the current team */
                 fun yearsWithTeam(yearsWithTeam: Long) = yearsWithTeam(JsonField.of(yearsWithTeam))
@@ -1994,28 +1902,27 @@ private constructor(
                 /**
                  * Sets [Builder.yearsWithTeam] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.yearsWithTeam] with a well-typed [Long] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.yearsWithTeam] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun yearsWithTeam(yearsWithTeam: JsonField<Long>) = apply {
-                    this.yearsWithTeam = yearsWithTeam
-                }
+                fun yearsWithTeam(yearsWithTeam: JsonField<Long>) =
+                    apply {
+                        this.yearsWithTeam = yearsWithTeam
+                    }
 
                 /** Professional license number */
-                fun licenseNumber(licenseNumber: String?) =
-                    licenseNumber(JsonField.ofNullable(licenseNumber))
+                fun licenseNumber(licenseNumber: String?) = licenseNumber(JsonField.ofNullable(licenseNumber))
 
                 /**
                  * Sets [Builder.licenseNumber] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.licenseNumber] with a well-typed [String] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.licenseNumber] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun licenseNumber(licenseNumber: JsonField<String>) = apply {
-                    this.licenseNumber = licenseNumber
-                }
+                fun licenseNumber(licenseNumber: JsonField<String>) =
+                    apply {
+                        this.licenseNumber = licenseNumber
+                    }
 
                 /** Discriminator field indicating this is medical staff */
                 fun memberType(memberType: MemberType) = memberType(JsonField.of(memberType))
@@ -2023,62 +1930,65 @@ private constructor(
                 /**
                  * Sets [Builder.memberType] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.memberType] with a well-typed [MemberType] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.memberType] with a well-typed [MemberType] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun memberType(memberType: JsonField<MemberType>) = apply {
-                    this.memberType = memberType
-                }
+                fun memberType(memberType: JsonField<MemberType>) =
+                    apply {
+                        this.memberType = memberType
+                    }
 
                 /** Medical qualifications and degrees */
-                fun qualifications(qualifications: List<String>) =
-                    qualifications(JsonField.of(qualifications))
+                fun qualifications(qualifications: List<String>) = qualifications(JsonField.of(qualifications))
 
                 /**
                  * Sets [Builder.qualifications] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.qualifications] with a well-typed `List<String>`
-                 * value instead. This method is primarily for setting the field to an undocumented
-                 * or not yet supported value.
+                 * You should usually call [Builder.qualifications] with a well-typed `List<String>` value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun qualifications(qualifications: JsonField<List<String>>) = apply {
-                    this.qualifications = qualifications.map { it.toMutableList() }
-                }
+                fun qualifications(qualifications: JsonField<List<String>>) =
+                    apply {
+                        this.qualifications = qualifications.map { it.toMutableList() }
+                    }
 
                 /**
                  * Adds a single [String] to [qualifications].
                  *
                  * @throws IllegalStateException if the field was previously set to a non-list.
                  */
-                fun addQualification(qualification: String) = apply {
-                    qualifications =
-                        (qualifications ?: JsonField.of(mutableListOf())).also {
+                fun addQualification(qualification: String) =
+                    apply {
+                        qualifications = (qualifications ?: JsonField.of(mutableListOf())).also {
                             checkKnown("qualifications", it).add(qualification)
                         }
-                }
+                    }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    putAllAdditionalProperties(additionalProperties)
-                }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
 
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    additionalProperties.put(key, value)
-                }
+                fun putAdditionalProperty(key: String, value: JsonValue) =
+                    apply {
+                        additionalProperties.put(key, value)
+                    }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
                     apply {
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
-                fun removeAdditionalProperty(key: String) = apply {
-                    additionalProperties.remove(key)
-                }
+                fun removeAdditionalProperty(key: String) =
+                    apply {
+                        additionalProperties.remove(key)
+                    }
 
-                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                    keys.forEach(::removeAdditionalProperty)
-                }
+                fun removeAllAdditionalProperties(keys: Set<String>) =
+                    apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
 
                 /**
                  * Returns an immutable instance of [MedicalStaff].
@@ -2086,6 +1996,7 @@ private constructor(
                  * Further updates to this [Builder] will not mutate the returned instance.
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .characterId()
                  * .specialty()
@@ -2097,33 +2008,42 @@ private constructor(
                  */
                 fun build(): MedicalStaff =
                     MedicalStaff(
-                        checkRequired("characterId", characterId),
-                        checkRequired("specialty", specialty),
-                        checkRequired("teamId", teamId),
-                        checkRequired("yearsWithTeam", yearsWithTeam),
-                        licenseNumber,
-                        memberType,
-                        (qualifications ?: JsonMissing.of()).map { it.toImmutable() },
-                        additionalProperties.toMutableMap(),
+                      checkRequired(
+                        "characterId", characterId
+                      ),
+                      checkRequired(
+                        "specialty", specialty
+                      ),
+                      checkRequired(
+                        "teamId", teamId
+                      ),
+                      checkRequired(
+                        "yearsWithTeam", yearsWithTeam
+                      ),
+                      licenseNumber,
+                      memberType,
+                      (qualifications?: JsonMissing.of()).map { it.toImmutable() },
+                      additionalProperties.toMutableMap(),
                     )
             }
 
             private var validated: Boolean = false
 
-            fun validate(): MedicalStaff = apply {
-                if (validated) {
-                    return@apply
-                }
+            fun validate(): MedicalStaff =
+                apply {
+                    if (validated) {
+                      return@apply
+                    }
 
-                characterId()
-                specialty().validate()
-                teamId()
-                yearsWithTeam()
-                licenseNumber()
-                memberType()?.validate()
-                qualifications()
-                validated = true
-            }
+                    characterId()
+                    specialty().validate()
+                    teamId()
+                    yearsWithTeam()
+                    licenseNumber()
+                    memberType()?.validate()
+                    qualifications()
+                    validated = true
+                }
 
             fun isValid(): Boolean =
                 try {
@@ -2134,34 +2054,27 @@ private constructor(
                 }
 
             /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
+             * Returns a score indicating how many valid values are contained in this object recursively.
              *
              * Used for best match union deserialization.
              */
-            internal fun validity(): Int =
-                (if (characterId.asKnown() == null) 0 else 1) +
-                    (specialty.asKnown()?.validity() ?: 0) +
-                    (if (teamId.asKnown() == null) 0 else 1) +
-                    (if (yearsWithTeam.asKnown() == null) 0 else 1) +
-                    (if (licenseNumber.asKnown() == null) 0 else 1) +
-                    (memberType.asKnown()?.validity() ?: 0) +
-                    (qualifications.asKnown()?.size ?: 0)
+            internal fun validity(): Int = (if (characterId.asKnown() == null) 0 else 1) + (specialty.asKnown()?.validity() ?: 0) + (if (teamId.asKnown() == null) 0 else 1) + (if (yearsWithTeam.asKnown() == null) 0 else 1) + (if (licenseNumber.asKnown() == null) 0 else 1) + (memberType.asKnown()?.validity() ?: 0) + (qualifications.asKnown()?.size ?: 0)
 
             /** Discriminator field indicating this is medical staff */
-            class MemberType
-            @JsonCreator
-            private constructor(private val value: JsonField<String>) : Enum {
+            class MemberType @JsonCreator private constructor(
+                private val value: JsonField<String>,
+
+            ) : Enum {
 
                 /**
                  * Returns this class instance's raw value.
                  *
-                 * This is usually only useful if this instance was deserialized from data that
-                 * doesn't match any known member, and you want to know that value. For example, if
-                 * the SDK is on an older version than the API, then the API may respond with new
-                 * members that the SDK is unaware of.
+                 * This is usually only useful if this instance was deserialized from data that doesn't match any known
+                 * member, and you want to know that value. For example, if the SDK is on an older version than the
+                 * API, then the API may respond with new members that the SDK is unaware of.
                  */
-                @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+                @com.fasterxml.jackson.annotation.JsonValue
+                fun _value(): JsonField<String> = value
 
                 companion object {
 
@@ -2172,33 +2085,32 @@ private constructor(
 
                 /** An enum containing [MemberType]'s known values. */
                 enum class Known {
-                    MEDICAL_STAFF
+                    MEDICAL_STAFF,
                 }
 
                 /**
                  * An enum containing [MemberType]'s known values, as well as an [_UNKNOWN] member.
                  *
                  * An instance of [MemberType] can contain an unknown value in a couple of cases:
-                 * - It was deserialized from data that doesn't match any known member. For example,
-                 *   if the SDK is on an older version than the API, then the API may respond with
-                 *   new members that the SDK is unaware of.
+                 *
+                 * - It was deserialized from data that doesn't match any known member. For example, if the SDK is on
+                 *   an older version than the API, then the API may respond with new members that the SDK is unaware
+                 *   of.
+                 *
                  * - It was constructed with an arbitrary value using the [of] method.
                  */
                 enum class Value {
                     MEDICAL_STAFF,
-                    /**
-                     * An enum member indicating that [MemberType] was instantiated with an unknown
-                     * value.
-                     */
+                    /** An enum member indicating that [MemberType] was instantiated with an unknown value. */
                     _UNKNOWN,
                 }
 
                 /**
-                 * Returns an enum member corresponding to this class instance's value, or
-                 * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                 * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN] if the
+                 * class was instantiated with an unknown value.
                  *
-                 * Use the [known] method instead if you're certain the value is always known or if
-                 * you want to throw for the unknown case.
+                 * Use the [known] method instead if you're certain the value is always known or if you want to throw
+                 * for the unknown case.
                  */
                 fun value(): Value =
                     when (this) {
@@ -2209,11 +2121,10 @@ private constructor(
                 /**
                  * Returns an enum member corresponding to this class instance's value.
                  *
-                 * Use the [value] method instead if you're uncertain the value is always known and
-                 * don't want to throw for the unknown case.
+                 * Use the [value] method instead if you're uncertain the value is always known and don't want to throw
+                 * for the unknown case.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value is a not a
-                 *   known member.
+                 * @throws BelieveInvalidDataException if this class instance's value is a not a known member.
                  */
                 fun known(): Known =
                     when (this) {
@@ -2224,26 +2135,25 @@ private constructor(
                 /**
                  * Returns this class instance's primitive wire representation.
                  *
-                 * This differs from the [toString] method because that method is primarily for
-                 * debugging and generally doesn't throw.
+                 * This differs from the [toString] method because that method is primarily for debugging and generally
+                 * doesn't throw.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value does not have
-                 *   the expected primitive type.
+                 * @throws BelieveInvalidDataException if this class instance's value does not have the expected
+                 *   primitive type.
                  */
-                fun asString(): String =
-                    _value().asString()
-                        ?: throw BelieveInvalidDataException("Value is not a String")
+                fun asString(): String = _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
 
                 private var validated: Boolean = false
 
-                fun validate(): MemberType = apply {
-                    if (validated) {
-                        return@apply
-                    }
+                fun validate(): MemberType =
+                    apply {
+                        if (validated) {
+                          return@apply
+                        }
 
-                    known()
-                    validated = true
-                }
+                        known()
+                        validated = true
+                    }
 
                 fun isValid(): Boolean =
                     try {
@@ -2254,19 +2164,18 @@ private constructor(
                     }
 
                 /**
-                 * Returns a score indicating how many valid values are contained in this object
-                 * recursively.
+                 * Returns a score indicating how many valid values are contained in this object recursively.
                  *
                  * Used for best match union deserialization.
                  */
                 internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
 
                 override fun equals(other: Any?): Boolean {
-                    if (this === other) {
-                        return true
-                    }
+                  if (this === other) {
+                      return true
+                  }
 
-                    return other is MemberType && value == other.value
+                  return other is MemberType && value == other.value
                 }
 
                 override fun hashCode() = value.hashCode()
@@ -2275,44 +2184,22 @@ private constructor(
             }
 
             override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
+              if (this === other) {
+                  return true
+              }
 
-                return other is MedicalStaff &&
-                    characterId == other.characterId &&
-                    specialty == other.specialty &&
-                    teamId == other.teamId &&
-                    yearsWithTeam == other.yearsWithTeam &&
-                    licenseNumber == other.licenseNumber &&
-                    memberType == other.memberType &&
-                    qualifications == other.qualifications &&
-                    additionalProperties == other.additionalProperties
+              return other is MedicalStaff && characterId == other.characterId && specialty == other.specialty && teamId == other.teamId && yearsWithTeam == other.yearsWithTeam && licenseNumber == other.licenseNumber && memberType == other.memberType && qualifications == other.qualifications && additionalProperties == other.additionalProperties
             }
 
-            private val hashCode: Int by lazy {
-                Objects.hash(
-                    characterId,
-                    specialty,
-                    teamId,
-                    yearsWithTeam,
-                    licenseNumber,
-                    memberType,
-                    qualifications,
-                    additionalProperties,
-                )
-            }
+            private val hashCode: Int by lazy { Objects.hash(characterId, specialty, teamId, yearsWithTeam, licenseNumber, memberType, qualifications, additionalProperties) }
 
             override fun hashCode(): Int = hashCode
 
-            override fun toString() =
-                "MedicalStaff{characterId=$characterId, specialty=$specialty, teamId=$teamId, yearsWithTeam=$yearsWithTeam, licenseNumber=$licenseNumber, memberType=$memberType, qualifications=$qualifications, additionalProperties=$additionalProperties}"
+            override fun toString() = "MedicalStaff{characterId=$characterId, specialty=$specialty, teamId=$teamId, yearsWithTeam=$yearsWithTeam, licenseNumber=$licenseNumber, memberType=$memberType, qualifications=$qualifications, additionalProperties=$additionalProperties}"
         }
 
         /** Equipment and kit management staff. */
-        class EquipmentManager
-        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-        private constructor(
+        class EquipmentManager @JsonCreator(mode = JsonCreator.Mode.DISABLED) private constructor(
             private val characterId: JsonField<String>,
             private val teamId: JsonField<String>,
             private val yearsWithTeam: JsonField<Long>,
@@ -2320,94 +2207,73 @@ private constructor(
             private val memberType: JsonField<MemberType>,
             private val responsibilities: JsonField<List<String>>,
             private val additionalProperties: MutableMap<String, JsonValue>,
+
         ) {
 
             @JsonCreator
             private constructor(
-                @JsonProperty("character_id")
-                @ExcludeMissing
-                characterId: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("team_id")
-                @ExcludeMissing
-                teamId: JsonField<String> = JsonMissing.of(),
-                @JsonProperty("years_with_team")
-                @ExcludeMissing
-                yearsWithTeam: JsonField<Long> = JsonMissing.of(),
-                @JsonProperty("is_head_kitman")
-                @ExcludeMissing
-                isHeadKitman: JsonField<Boolean> = JsonMissing.of(),
-                @JsonProperty("member_type")
-                @ExcludeMissing
-                memberType: JsonField<MemberType> = JsonMissing.of(),
-                @JsonProperty("responsibilities")
-                @ExcludeMissing
-                responsibilities: JsonField<List<String>> = JsonMissing.of(),
+                @JsonProperty("character_id") @ExcludeMissing characterId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("team_id") @ExcludeMissing teamId: JsonField<String> = JsonMissing.of(),
+                @JsonProperty("years_with_team") @ExcludeMissing yearsWithTeam: JsonField<Long> = JsonMissing.of(),
+                @JsonProperty("is_head_kitman") @ExcludeMissing isHeadKitman: JsonField<Boolean> = JsonMissing.of(),
+                @JsonProperty("member_type") @ExcludeMissing memberType: JsonField<MemberType> = JsonMissing.of(),
+                @JsonProperty("responsibilities") @ExcludeMissing responsibilities: JsonField<List<String>> = JsonMissing.of()
             ) : this(
-                characterId,
-                teamId,
-                yearsWithTeam,
-                isHeadKitman,
-                memberType,
-                responsibilities,
-                mutableMapOf(),
+              characterId,
+              teamId,
+              yearsWithTeam,
+              isHeadKitman,
+              memberType,
+              responsibilities,
+              mutableMapOf(),
             )
 
             /**
              * ID of the character (references /characters/{id})
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun characterId(): String = characterId.getRequired("character_id")
 
             /**
              * ID of the team they belong to
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun teamId(): String = teamId.getRequired("team_id")
 
             /**
              * Number of years with the current team
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun yearsWithTeam(): Long = yearsWithTeam.getRequired("years_with_team")
 
             /**
              * Whether this is the head equipment manager
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun isHeadKitman(): Boolean? = isHeadKitman.getNullable("is_head_kitman")
 
             /**
              * Discriminator field indicating this is an equipment manager
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun memberType(): MemberType? = memberType.getNullable("member_type")
 
             /**
              * List of responsibilities
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun responsibilities(): List<String>? = responsibilities.getNullable("responsibilities")
 
             /**
              * Returns the raw JSON value of [characterId].
              *
-             * Unlike [characterId], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [characterId], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("character_id")
             @ExcludeMissing
@@ -2418,13 +2284,14 @@ private constructor(
              *
              * Unlike [teamId], this method doesn't throw if the JSON field has an unexpected type.
              */
-            @JsonProperty("team_id") @ExcludeMissing fun _teamId(): JsonField<String> = teamId
+            @JsonProperty("team_id")
+            @ExcludeMissing
+            fun _teamId(): JsonField<String> = teamId
 
             /**
              * Returns the raw JSON value of [yearsWithTeam].
              *
-             * Unlike [yearsWithTeam], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [yearsWithTeam], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("years_with_team")
             @ExcludeMissing
@@ -2433,8 +2300,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [isHeadKitman].
              *
-             * Unlike [isHeadKitman], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [isHeadKitman], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("is_head_kitman")
             @ExcludeMissing
@@ -2443,8 +2309,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [memberType].
              *
-             * Unlike [memberType], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [memberType], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("member_type")
             @ExcludeMissing
@@ -2453,8 +2318,7 @@ private constructor(
             /**
              * Returns the raw JSON value of [responsibilities].
              *
-             * Unlike [responsibilities], this method doesn't throw if the JSON field has an
-             * unexpected type.
+             * Unlike [responsibilities], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("responsibilities")
             @ExcludeMissing
@@ -2462,13 +2326,12 @@ private constructor(
 
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
-                additionalProperties.put(key, value)
+              additionalProperties.put(key, value)
             }
 
             @JsonAnyGetter
             @ExcludeMissing
-            fun _additionalProperties(): Map<String, JsonValue> =
-                Collections.unmodifiableMap(additionalProperties)
+            fun _additionalProperties(): Map<String, JsonValue> = Collections.unmodifiableMap(additionalProperties)
 
             fun toBuilder() = Builder().from(this)
 
@@ -2478,6 +2341,7 @@ private constructor(
                  * Returns a mutable builder for constructing an instance of [EquipmentManager].
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .characterId()
                  * .teamId()
@@ -2498,15 +2362,16 @@ private constructor(
                 private var responsibilities: JsonField<MutableList<String>>? = null
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                internal fun from(equipmentManager: EquipmentManager) = apply {
-                    characterId = equipmentManager.characterId
-                    teamId = equipmentManager.teamId
-                    yearsWithTeam = equipmentManager.yearsWithTeam
-                    isHeadKitman = equipmentManager.isHeadKitman
-                    memberType = equipmentManager.memberType
-                    responsibilities = equipmentManager.responsibilities.map { it.toMutableList() }
-                    additionalProperties = equipmentManager.additionalProperties.toMutableMap()
-                }
+                internal fun from(equipmentManager: EquipmentManager) =
+                    apply {
+                        characterId = equipmentManager.characterId
+                        teamId = equipmentManager.teamId
+                        yearsWithTeam = equipmentManager.yearsWithTeam
+                        isHeadKitman = equipmentManager.isHeadKitman
+                        memberType = equipmentManager.memberType
+                        responsibilities = equipmentManager.responsibilities.map { it.toMutableList() }
+                        additionalProperties = equipmentManager.additionalProperties.toMutableMap()
+                    }
 
                 /** ID of the character (references /characters/{id}) */
                 fun characterId(characterId: String) = characterId(JsonField.of(characterId))
@@ -2514,13 +2379,13 @@ private constructor(
                 /**
                  * Sets [Builder.characterId] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.characterId] with a well-typed [String] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.characterId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun characterId(characterId: JsonField<String>) = apply {
-                    this.characterId = characterId
-                }
+                fun characterId(characterId: JsonField<String>) =
+                    apply {
+                        this.characterId = characterId
+                    }
 
                 /** ID of the team they belong to */
                 fun teamId(teamId: String) = teamId(JsonField.of(teamId))
@@ -2528,11 +2393,13 @@ private constructor(
                 /**
                  * Sets [Builder.teamId] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.teamId] with a well-typed [String] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.teamId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun teamId(teamId: JsonField<String>) = apply { this.teamId = teamId }
+                fun teamId(teamId: JsonField<String>) =
+                    apply {
+                        this.teamId = teamId
+                    }
 
                 /** Number of years with the current team */
                 fun yearsWithTeam(yearsWithTeam: Long) = yearsWithTeam(JsonField.of(yearsWithTeam))
@@ -2540,13 +2407,13 @@ private constructor(
                 /**
                  * Sets [Builder.yearsWithTeam] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.yearsWithTeam] with a well-typed [Long] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.yearsWithTeam] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun yearsWithTeam(yearsWithTeam: JsonField<Long>) = apply {
-                    this.yearsWithTeam = yearsWithTeam
-                }
+                fun yearsWithTeam(yearsWithTeam: JsonField<Long>) =
+                    apply {
+                        this.yearsWithTeam = yearsWithTeam
+                    }
 
                 /** Whether this is the head equipment manager */
                 fun isHeadKitman(isHeadKitman: Boolean) = isHeadKitman(JsonField.of(isHeadKitman))
@@ -2554,13 +2421,13 @@ private constructor(
                 /**
                  * Sets [Builder.isHeadKitman] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.isHeadKitman] with a well-typed [Boolean] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.isHeadKitman] with a well-typed [Boolean] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun isHeadKitman(isHeadKitman: JsonField<Boolean>) = apply {
-                    this.isHeadKitman = isHeadKitman
-                }
+                fun isHeadKitman(isHeadKitman: JsonField<Boolean>) =
+                    apply {
+                        this.isHeadKitman = isHeadKitman
+                    }
 
                 /** Discriminator field indicating this is an equipment manager */
                 fun memberType(memberType: MemberType) = memberType(JsonField.of(memberType))
@@ -2568,62 +2435,65 @@ private constructor(
                 /**
                  * Sets [Builder.memberType] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.memberType] with a well-typed [MemberType] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.memberType] with a well-typed [MemberType] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun memberType(memberType: JsonField<MemberType>) = apply {
-                    this.memberType = memberType
-                }
+                fun memberType(memberType: JsonField<MemberType>) =
+                    apply {
+                        this.memberType = memberType
+                    }
 
                 /** List of responsibilities */
-                fun responsibilities(responsibilities: List<String>) =
-                    responsibilities(JsonField.of(responsibilities))
+                fun responsibilities(responsibilities: List<String>) = responsibilities(JsonField.of(responsibilities))
 
                 /**
                  * Sets [Builder.responsibilities] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.responsibilities] with a well-typed
-                 * `List<String>` value instead. This method is primarily for setting the field to
-                 * an undocumented or not yet supported value.
+                 * You should usually call [Builder.responsibilities] with a well-typed `List<String>` value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun responsibilities(responsibilities: JsonField<List<String>>) = apply {
-                    this.responsibilities = responsibilities.map { it.toMutableList() }
-                }
+                fun responsibilities(responsibilities: JsonField<List<String>>) =
+                    apply {
+                        this.responsibilities = responsibilities.map { it.toMutableList() }
+                    }
 
                 /**
                  * Adds a single [String] to [responsibilities].
                  *
                  * @throws IllegalStateException if the field was previously set to a non-list.
                  */
-                fun addResponsibility(responsibility: String) = apply {
-                    responsibilities =
-                        (responsibilities ?: JsonField.of(mutableListOf())).also {
+                fun addResponsibility(responsibility: String) =
+                    apply {
+                        responsibilities = (responsibilities ?: JsonField.of(mutableListOf())).also {
                             checkKnown("responsibilities", it).add(responsibility)
                         }
-                }
+                    }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    putAllAdditionalProperties(additionalProperties)
-                }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
 
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    additionalProperties.put(key, value)
-                }
+                fun putAdditionalProperty(key: String, value: JsonValue) =
+                    apply {
+                        additionalProperties.put(key, value)
+                    }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
                     apply {
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
-                fun removeAdditionalProperty(key: String) = apply {
-                    additionalProperties.remove(key)
-                }
+                fun removeAdditionalProperty(key: String) =
+                    apply {
+                        additionalProperties.remove(key)
+                    }
 
-                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                    keys.forEach(::removeAdditionalProperty)
-                }
+                fun removeAllAdditionalProperties(keys: Set<String>) =
+                    apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
 
                 /**
                  * Returns an immutable instance of [EquipmentManager].
@@ -2631,6 +2501,7 @@ private constructor(
                  * Further updates to this [Builder] will not mutate the returned instance.
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .characterId()
                  * .teamId()
@@ -2641,31 +2512,38 @@ private constructor(
                  */
                 fun build(): EquipmentManager =
                     EquipmentManager(
-                        checkRequired("characterId", characterId),
-                        checkRequired("teamId", teamId),
-                        checkRequired("yearsWithTeam", yearsWithTeam),
-                        isHeadKitman,
-                        memberType,
-                        (responsibilities ?: JsonMissing.of()).map { it.toImmutable() },
-                        additionalProperties.toMutableMap(),
+                      checkRequired(
+                        "characterId", characterId
+                      ),
+                      checkRequired(
+                        "teamId", teamId
+                      ),
+                      checkRequired(
+                        "yearsWithTeam", yearsWithTeam
+                      ),
+                      isHeadKitman,
+                      memberType,
+                      (responsibilities?: JsonMissing.of()).map { it.toImmutable() },
+                      additionalProperties.toMutableMap(),
                     )
             }
 
             private var validated: Boolean = false
 
-            fun validate(): EquipmentManager = apply {
-                if (validated) {
-                    return@apply
-                }
+            fun validate(): EquipmentManager =
+                apply {
+                    if (validated) {
+                      return@apply
+                    }
 
-                characterId()
-                teamId()
-                yearsWithTeam()
-                isHeadKitman()
-                memberType()?.validate()
-                responsibilities()
-                validated = true
-            }
+                    characterId()
+                    teamId()
+                    yearsWithTeam()
+                    isHeadKitman()
+                    memberType()?.validate()
+                    responsibilities()
+                    validated = true
+                }
 
             fun isValid(): Boolean =
                 try {
@@ -2676,33 +2554,27 @@ private constructor(
                 }
 
             /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
+             * Returns a score indicating how many valid values are contained in this object recursively.
              *
              * Used for best match union deserialization.
              */
-            internal fun validity(): Int =
-                (if (characterId.asKnown() == null) 0 else 1) +
-                    (if (teamId.asKnown() == null) 0 else 1) +
-                    (if (yearsWithTeam.asKnown() == null) 0 else 1) +
-                    (if (isHeadKitman.asKnown() == null) 0 else 1) +
-                    (memberType.asKnown()?.validity() ?: 0) +
-                    (responsibilities.asKnown()?.size ?: 0)
+            internal fun validity(): Int = (if (characterId.asKnown() == null) 0 else 1) + (if (teamId.asKnown() == null) 0 else 1) + (if (yearsWithTeam.asKnown() == null) 0 else 1) + (if (isHeadKitman.asKnown() == null) 0 else 1) + (memberType.asKnown()?.validity() ?: 0) + (responsibilities.asKnown()?.size ?: 0)
 
             /** Discriminator field indicating this is an equipment manager */
-            class MemberType
-            @JsonCreator
-            private constructor(private val value: JsonField<String>) : Enum {
+            class MemberType @JsonCreator private constructor(
+                private val value: JsonField<String>,
+
+            ) : Enum {
 
                 /**
                  * Returns this class instance's raw value.
                  *
-                 * This is usually only useful if this instance was deserialized from data that
-                 * doesn't match any known member, and you want to know that value. For example, if
-                 * the SDK is on an older version than the API, then the API may respond with new
-                 * members that the SDK is unaware of.
+                 * This is usually only useful if this instance was deserialized from data that doesn't match any known
+                 * member, and you want to know that value. For example, if the SDK is on an older version than the
+                 * API, then the API may respond with new members that the SDK is unaware of.
                  */
-                @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+                @com.fasterxml.jackson.annotation.JsonValue
+                fun _value(): JsonField<String> = value
 
                 companion object {
 
@@ -2713,33 +2585,32 @@ private constructor(
 
                 /** An enum containing [MemberType]'s known values. */
                 enum class Known {
-                    EQUIPMENT_MANAGER
+                    EQUIPMENT_MANAGER,
                 }
 
                 /**
                  * An enum containing [MemberType]'s known values, as well as an [_UNKNOWN] member.
                  *
                  * An instance of [MemberType] can contain an unknown value in a couple of cases:
-                 * - It was deserialized from data that doesn't match any known member. For example,
-                 *   if the SDK is on an older version than the API, then the API may respond with
-                 *   new members that the SDK is unaware of.
+                 *
+                 * - It was deserialized from data that doesn't match any known member. For example, if the SDK is on
+                 *   an older version than the API, then the API may respond with new members that the SDK is unaware
+                 *   of.
+                 *
                  * - It was constructed with an arbitrary value using the [of] method.
                  */
                 enum class Value {
                     EQUIPMENT_MANAGER,
-                    /**
-                     * An enum member indicating that [MemberType] was instantiated with an unknown
-                     * value.
-                     */
+                    /** An enum member indicating that [MemberType] was instantiated with an unknown value. */
                     _UNKNOWN,
                 }
 
                 /**
-                 * Returns an enum member corresponding to this class instance's value, or
-                 * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                 * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN] if the
+                 * class was instantiated with an unknown value.
                  *
-                 * Use the [known] method instead if you're certain the value is always known or if
-                 * you want to throw for the unknown case.
+                 * Use the [known] method instead if you're certain the value is always known or if you want to throw
+                 * for the unknown case.
                  */
                 fun value(): Value =
                     when (this) {
@@ -2750,11 +2621,10 @@ private constructor(
                 /**
                  * Returns an enum member corresponding to this class instance's value.
                  *
-                 * Use the [value] method instead if you're uncertain the value is always known and
-                 * don't want to throw for the unknown case.
+                 * Use the [value] method instead if you're uncertain the value is always known and don't want to throw
+                 * for the unknown case.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value is a not a
-                 *   known member.
+                 * @throws BelieveInvalidDataException if this class instance's value is a not a known member.
                  */
                 fun known(): Known =
                     when (this) {
@@ -2765,26 +2635,25 @@ private constructor(
                 /**
                  * Returns this class instance's primitive wire representation.
                  *
-                 * This differs from the [toString] method because that method is primarily for
-                 * debugging and generally doesn't throw.
+                 * This differs from the [toString] method because that method is primarily for debugging and generally
+                 * doesn't throw.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value does not have
-                 *   the expected primitive type.
+                 * @throws BelieveInvalidDataException if this class instance's value does not have the expected
+                 *   primitive type.
                  */
-                fun asString(): String =
-                    _value().asString()
-                        ?: throw BelieveInvalidDataException("Value is not a String")
+                fun asString(): String = _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
 
                 private var validated: Boolean = false
 
-                fun validate(): MemberType = apply {
-                    if (validated) {
-                        return@apply
-                    }
+                fun validate(): MemberType =
+                    apply {
+                        if (validated) {
+                          return@apply
+                        }
 
-                    known()
-                    validated = true
-                }
+                        known()
+                        validated = true
+                    }
 
                 fun isValid(): Boolean =
                     try {
@@ -2795,19 +2664,18 @@ private constructor(
                     }
 
                 /**
-                 * Returns a score indicating how many valid values are contained in this object
-                 * recursively.
+                 * Returns a score indicating how many valid values are contained in this object recursively.
                  *
                  * Used for best match union deserialization.
                  */
                 internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
 
                 override fun equals(other: Any?): Boolean {
-                    if (this === other) {
-                        return true
-                    }
+                  if (this === other) {
+                      return true
+                  }
 
-                    return other is MemberType && value == other.value
+                  return other is MemberType && value == other.value
                 }
 
                 override fun hashCode() = value.hashCode()
@@ -2816,52 +2684,30 @@ private constructor(
             }
 
             override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
+              if (this === other) {
+                  return true
+              }
 
-                return other is EquipmentManager &&
-                    characterId == other.characterId &&
-                    teamId == other.teamId &&
-                    yearsWithTeam == other.yearsWithTeam &&
-                    isHeadKitman == other.isHeadKitman &&
-                    memberType == other.memberType &&
-                    responsibilities == other.responsibilities &&
-                    additionalProperties == other.additionalProperties
+              return other is EquipmentManager && characterId == other.characterId && teamId == other.teamId && yearsWithTeam == other.yearsWithTeam && isHeadKitman == other.isHeadKitman && memberType == other.memberType && responsibilities == other.responsibilities && additionalProperties == other.additionalProperties
             }
 
-            private val hashCode: Int by lazy {
-                Objects.hash(
-                    characterId,
-                    teamId,
-                    yearsWithTeam,
-                    isHeadKitman,
-                    memberType,
-                    responsibilities,
-                    additionalProperties,
-                )
-            }
+            private val hashCode: Int by lazy { Objects.hash(characterId, teamId, yearsWithTeam, isHeadKitman, memberType, responsibilities, additionalProperties) }
 
             override fun hashCode(): Int = hashCode
 
-            override fun toString() =
-                "EquipmentManager{characterId=$characterId, teamId=$teamId, yearsWithTeam=$yearsWithTeam, isHeadKitman=$isHeadKitman, memberType=$memberType, responsibilities=$responsibilities, additionalProperties=$additionalProperties}"
+            override fun toString() = "EquipmentManager{characterId=$characterId, teamId=$teamId, yearsWithTeam=$yearsWithTeam, isHeadKitman=$isHeadKitman, memberType=$memberType, responsibilities=$responsibilities, additionalProperties=$additionalProperties}"
         }
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is TeamMemberCreateParams &&
-            member == other.member &&
-            additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams
+      return other is TeamMemberCreateParams && member == other.member && additionalHeaders == other.additionalHeaders && additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int = Objects.hash(member, additionalHeaders, additionalQueryParams)
 
-    override fun toString() =
-        "TeamMemberCreateParams{member=$member, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+    override fun toString() = "TeamMemberCreateParams{member=$member, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

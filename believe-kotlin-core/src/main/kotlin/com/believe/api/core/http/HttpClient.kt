@@ -1,7 +1,7 @@
 package com.believe.api.core.http
 
-import com.believe.api.core.RequestOptions
 import java.lang.AutoCloseable
+import com.believe.api.core.RequestOptions
 
 interface HttpClient : AutoCloseable {
 

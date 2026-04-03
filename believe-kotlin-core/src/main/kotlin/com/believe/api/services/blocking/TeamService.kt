@@ -18,15 +18,14 @@ import com.believe.api.models.teams.TeamListParams
 import com.believe.api.models.teams.TeamRetrieveParams
 import com.believe.api.models.teams.TeamUpdateParams
 import com.believe.api.models.teams.logo.FileUpload
+import com.believe.api.services.blocking.TeamService
 import com.believe.api.services.blocking.teams.LogoService
 import com.google.errorprone.annotations.MustBeClosed
 
 /** Operations related to football teams */
 interface TeamService {
 
-    /**
-     * Returns a view of this service that provides access to raw HTTP responses for each method.
-     */
+    /** Returns a view of this service that provides access to raw HTTP responses for each method. */
     fun withRawResponse(): WithRawResponse
 
     /**
@@ -40,120 +39,130 @@ interface TeamService {
     fun logo(): LogoService
 
     /** Add a new team to the league. */
-    fun create(
-        params: TeamCreateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): Team
+    fun create(params: TeamCreateParams, requestOptions: RequestOptions = RequestOptions.none()): Team
 
     /** Retrieve detailed information about a specific team. */
-    fun retrieve(
-        teamId: String,
-        params: TeamRetrieveParams = TeamRetrieveParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): Team = retrieve(params.toBuilder().teamId(teamId).build(), requestOptions)
+    fun retrieve(teamId: String, params: TeamRetrieveParams = TeamRetrieveParams.none(), requestOptions: RequestOptions = RequestOptions.none()): Team =
+        retrieve(
+          params.toBuilder()
+              .teamId(teamId)
+              .build(), requestOptions
+        )
 
     /** @see retrieve */
-    fun retrieve(
-        params: TeamRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): Team
+    fun retrieve(params: TeamRetrieveParams, requestOptions: RequestOptions = RequestOptions.none()): Team
 
     /** @see retrieve */
     fun retrieve(teamId: String, requestOptions: RequestOptions): Team =
-        retrieve(teamId, TeamRetrieveParams.none(), requestOptions)
+        retrieve(
+          teamId,
+          TeamRetrieveParams.none(),
+          requestOptions,
+        )
 
     /** Update specific fields of an existing team. */
-    fun update(
-        teamId: String,
-        params: TeamUpdateParams = TeamUpdateParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): Team = update(params.toBuilder().teamId(teamId).build(), requestOptions)
+    fun update(teamId: String, params: TeamUpdateParams = TeamUpdateParams.none(), requestOptions: RequestOptions = RequestOptions.none()): Team =
+        update(
+          params.toBuilder()
+              .teamId(teamId)
+              .build(), requestOptions
+        )
 
     /** @see update */
-    fun update(
-        params: TeamUpdateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): Team
+    fun update(params: TeamUpdateParams, requestOptions: RequestOptions = RequestOptions.none()): Team
 
     /** @see update */
     fun update(teamId: String, requestOptions: RequestOptions): Team =
-        update(teamId, TeamUpdateParams.none(), requestOptions)
+        update(
+          teamId,
+          TeamUpdateParams.none(),
+          requestOptions,
+        )
 
     /** Get a paginated list of all teams with optional filtering by league or culture score. */
-    fun list(
-        params: TeamListParams = TeamListParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamListPage
+    fun list(params: TeamListParams = TeamListParams.none(), requestOptions: RequestOptions = RequestOptions.none()): TeamListPage
 
     /** @see list */
     fun list(requestOptions: RequestOptions): TeamListPage =
-        list(TeamListParams.none(), requestOptions)
+        list(
+          TeamListParams.none(), requestOptions
+        )
 
     /** Remove a team from the database (relegation to oblivion). */
-    fun delete(
-        teamId: String,
-        params: TeamDeleteParams = TeamDeleteParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ) = delete(params.toBuilder().teamId(teamId).build(), requestOptions)
+    fun delete(teamId: String, params: TeamDeleteParams = TeamDeleteParams.none(), requestOptions: RequestOptions = RequestOptions.none()) =
+        delete(
+          params.toBuilder()
+              .teamId(teamId)
+              .build(), requestOptions
+        )
 
     /** @see delete */
     fun delete(params: TeamDeleteParams, requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see delete */
     fun delete(teamId: String, requestOptions: RequestOptions) =
-        delete(teamId, TeamDeleteParams.none(), requestOptions)
+        delete(
+          teamId,
+          TeamDeleteParams.none(),
+          requestOptions,
+        )
 
     /** Get detailed culture and values information for a team. */
-    fun getCulture(
-        teamId: String,
-        params: TeamGetCultureParams = TeamGetCultureParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamGetCultureResponse =
-        getCulture(params.toBuilder().teamId(teamId).build(), requestOptions)
+    fun getCulture(teamId: String, params: TeamGetCultureParams = TeamGetCultureParams.none(), requestOptions: RequestOptions = RequestOptions.none()): TeamGetCultureResponse =
+        getCulture(
+          params.toBuilder()
+              .teamId(teamId)
+              .build(), requestOptions
+        )
 
     /** @see getCulture */
-    fun getCulture(
-        params: TeamGetCultureParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): TeamGetCultureResponse
+    fun getCulture(params: TeamGetCultureParams, requestOptions: RequestOptions = RequestOptions.none()): TeamGetCultureResponse
 
     /** @see getCulture */
     fun getCulture(teamId: String, requestOptions: RequestOptions): TeamGetCultureResponse =
-        getCulture(teamId, TeamGetCultureParams.none(), requestOptions)
+        getCulture(
+          teamId,
+          TeamGetCultureParams.none(),
+          requestOptions,
+        )
 
     /** Get all rival teams for a specific team. */
-    fun getRivals(
-        teamId: String,
-        params: TeamGetRivalsParams = TeamGetRivalsParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<Team> = getRivals(params.toBuilder().teamId(teamId).build(), requestOptions)
+    fun getRivals(teamId: String, params: TeamGetRivalsParams = TeamGetRivalsParams.none(), requestOptions: RequestOptions = RequestOptions.none()): List<Team> =
+        getRivals(
+          params.toBuilder()
+              .teamId(teamId)
+              .build(), requestOptions
+        )
 
     /** @see getRivals */
-    fun getRivals(
-        params: TeamGetRivalsParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<Team>
+    fun getRivals(params: TeamGetRivalsParams, requestOptions: RequestOptions = RequestOptions.none()): List<Team>
 
     /** @see getRivals */
     fun getRivals(teamId: String, requestOptions: RequestOptions): List<Team> =
-        getRivals(teamId, TeamGetRivalsParams.none(), requestOptions)
+        getRivals(
+          teamId,
+          TeamGetRivalsParams.none(),
+          requestOptions,
+        )
 
     /** List all uploaded logos for a team. */
-    fun listLogos(
-        teamId: String,
-        params: TeamListLogosParams = TeamListLogosParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<FileUpload> = listLogos(params.toBuilder().teamId(teamId).build(), requestOptions)
+    fun listLogos(teamId: String, params: TeamListLogosParams = TeamListLogosParams.none(), requestOptions: RequestOptions = RequestOptions.none()): List<FileUpload> =
+        listLogos(
+          params.toBuilder()
+              .teamId(teamId)
+              .build(), requestOptions
+        )
 
     /** @see listLogos */
-    fun listLogos(
-        params: TeamListLogosParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<FileUpload>
+    fun listLogos(params: TeamListLogosParams, requestOptions: RequestOptions = RequestOptions.none()): List<FileUpload>
 
     /** @see listLogos */
     fun listLogos(teamId: String, requestOptions: RequestOptions): List<FileUpload> =
-        listLogos(teamId, TeamListLogosParams.none(), requestOptions)
+        listLogos(
+          teamId,
+          TeamListLogosParams.none(),
+          requestOptions,
+        )
 
     /** A view of [TeamService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -168,177 +177,151 @@ interface TeamService {
         /** Operations related to football teams */
         fun logo(): LogoService.WithRawResponse
 
-        /**
-         * Returns a raw HTTP response for `post /teams`, but is otherwise the same as
-         * [TeamService.create].
-         */
+        /** Returns a raw HTTP response for `post /teams`, but is otherwise the             same as [TeamService.create]. */
         @MustBeClosed
-        fun create(
-            params: TeamCreateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Team>
+        fun create(params: TeamCreateParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<Team>
 
-        /**
-         * Returns a raw HTTP response for `get /teams/{team_id}`, but is otherwise the same as
-         * [TeamService.retrieve].
-         */
+        /** Returns a raw HTTP response for `get /teams/{team_id}`, but is otherwise the             same as [TeamService.retrieve]. */
         @MustBeClosed
-        fun retrieve(
-            teamId: String,
-            params: TeamRetrieveParams = TeamRetrieveParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Team> =
-            retrieve(params.toBuilder().teamId(teamId).build(), requestOptions)
+        fun retrieve(teamId: String, params: TeamRetrieveParams = TeamRetrieveParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<Team> =
+            retrieve(
+              params.toBuilder()
+                  .teamId(teamId)
+                  .build(), requestOptions
+            )
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(
-            params: TeamRetrieveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Team>
+        fun retrieve(params: TeamRetrieveParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<Team>
 
         /** @see retrieve */
         @MustBeClosed
         fun retrieve(teamId: String, requestOptions: RequestOptions): HttpResponseFor<Team> =
-            retrieve(teamId, TeamRetrieveParams.none(), requestOptions)
+            retrieve(
+              teamId,
+              TeamRetrieveParams.none(),
+              requestOptions,
+            )
 
-        /**
-         * Returns a raw HTTP response for `patch /teams/{team_id}`, but is otherwise the same as
-         * [TeamService.update].
-         */
+        /** Returns a raw HTTP response for `patch /teams/{team_id}`, but is otherwise the             same as [TeamService.update]. */
         @MustBeClosed
-        fun update(
-            teamId: String,
-            params: TeamUpdateParams = TeamUpdateParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Team> = update(params.toBuilder().teamId(teamId).build(), requestOptions)
+        fun update(teamId: String, params: TeamUpdateParams = TeamUpdateParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<Team> =
+            update(
+              params.toBuilder()
+                  .teamId(teamId)
+                  .build(), requestOptions
+            )
 
         /** @see update */
         @MustBeClosed
-        fun update(
-            params: TeamUpdateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Team>
+        fun update(params: TeamUpdateParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<Team>
 
         /** @see update */
         @MustBeClosed
         fun update(teamId: String, requestOptions: RequestOptions): HttpResponseFor<Team> =
-            update(teamId, TeamUpdateParams.none(), requestOptions)
+            update(
+              teamId,
+              TeamUpdateParams.none(),
+              requestOptions,
+            )
 
-        /**
-         * Returns a raw HTTP response for `get /teams`, but is otherwise the same as
-         * [TeamService.list].
-         */
+        /** Returns a raw HTTP response for `get /teams`, but is otherwise the             same as [TeamService.list]. */
         @MustBeClosed
-        fun list(
-            params: TeamListParams = TeamListParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamListPage>
+        fun list(params: TeamListParams = TeamListParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamListPage>
 
         /** @see list */
         @MustBeClosed
         fun list(requestOptions: RequestOptions): HttpResponseFor<TeamListPage> =
-            list(TeamListParams.none(), requestOptions)
+            list(
+              TeamListParams.none(), requestOptions
+            )
 
-        /**
-         * Returns a raw HTTP response for `delete /teams/{team_id}`, but is otherwise the same as
-         * [TeamService.delete].
-         */
+        /** Returns a raw HTTP response for `delete /teams/{team_id}`, but is otherwise the             same as [TeamService.delete]. */
         @MustBeClosed
-        fun delete(
-            teamId: String,
-            params: TeamDeleteParams = TeamDeleteParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse = delete(params.toBuilder().teamId(teamId).build(), requestOptions)
+        fun delete(teamId: String, params: TeamDeleteParams = TeamDeleteParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponse =
+            delete(
+              params.toBuilder()
+                  .teamId(teamId)
+                  .build(), requestOptions
+            )
 
         /** @see delete */
         @MustBeClosed
-        fun delete(
-            params: TeamDeleteParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        fun delete(params: TeamDeleteParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponse
 
         /** @see delete */
         @MustBeClosed
         fun delete(teamId: String, requestOptions: RequestOptions): HttpResponse =
-            delete(teamId, TeamDeleteParams.none(), requestOptions)
+            delete(
+              teamId,
+              TeamDeleteParams.none(),
+              requestOptions,
+            )
 
-        /**
-         * Returns a raw HTTP response for `get /teams/{team_id}/culture`, but is otherwise the same
-         * as [TeamService.getCulture].
-         */
+        /** Returns a raw HTTP response for `get /teams/{team_id}/culture`, but is otherwise the             same as [TeamService.getCulture]. */
         @MustBeClosed
-        fun getCulture(
-            teamId: String,
-            params: TeamGetCultureParams = TeamGetCultureParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamGetCultureResponse> =
-            getCulture(params.toBuilder().teamId(teamId).build(), requestOptions)
-
-        /** @see getCulture */
-        @MustBeClosed
-        fun getCulture(
-            params: TeamGetCultureParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<TeamGetCultureResponse>
+        fun getCulture(teamId: String, params: TeamGetCultureParams = TeamGetCultureParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamGetCultureResponse> =
+            getCulture(
+              params.toBuilder()
+                  .teamId(teamId)
+                  .build(), requestOptions
+            )
 
         /** @see getCulture */
         @MustBeClosed
-        fun getCulture(
-            teamId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<TeamGetCultureResponse> =
-            getCulture(teamId, TeamGetCultureParams.none(), requestOptions)
+        fun getCulture(params: TeamGetCultureParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<TeamGetCultureResponse>
 
-        /**
-         * Returns a raw HTTP response for `get /teams/{team_id}/rivals`, but is otherwise the same
-         * as [TeamService.getRivals].
-         */
+        /** @see getCulture */
         @MustBeClosed
-        fun getRivals(
-            teamId: String,
-            params: TeamGetRivalsParams = TeamGetRivalsParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<Team>> =
-            getRivals(params.toBuilder().teamId(teamId).build(), requestOptions)
+        fun getCulture(teamId: String, requestOptions: RequestOptions): HttpResponseFor<TeamGetCultureResponse> =
+            getCulture(
+              teamId,
+              TeamGetCultureParams.none(),
+              requestOptions,
+            )
+
+        /** Returns a raw HTTP response for `get /teams/{team_id}/rivals`, but is otherwise the             same as [TeamService.getRivals]. */
+        @MustBeClosed
+        fun getRivals(teamId: String, params: TeamGetRivalsParams = TeamGetRivalsParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<List<Team>> =
+            getRivals(
+              params.toBuilder()
+                  .teamId(teamId)
+                  .build(), requestOptions
+            )
 
         /** @see getRivals */
         @MustBeClosed
-        fun getRivals(
-            params: TeamGetRivalsParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<Team>>
+        fun getRivals(params: TeamGetRivalsParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<List<Team>>
 
         /** @see getRivals */
         @MustBeClosed
         fun getRivals(teamId: String, requestOptions: RequestOptions): HttpResponseFor<List<Team>> =
-            getRivals(teamId, TeamGetRivalsParams.none(), requestOptions)
+            getRivals(
+              teamId,
+              TeamGetRivalsParams.none(),
+              requestOptions,
+            )
 
-        /**
-         * Returns a raw HTTP response for `get /teams/{team_id}/logos`, but is otherwise the same
-         * as [TeamService.listLogos].
-         */
+        /** Returns a raw HTTP response for `get /teams/{team_id}/logos`, but is otherwise the             same as [TeamService.listLogos]. */
         @MustBeClosed
-        fun listLogos(
-            teamId: String,
-            params: TeamListLogosParams = TeamListLogosParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<FileUpload>> =
-            listLogos(params.toBuilder().teamId(teamId).build(), requestOptions)
-
-        /** @see listLogos */
-        @MustBeClosed
-        fun listLogos(
-            params: TeamListLogosParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<FileUpload>>
+        fun listLogos(teamId: String, params: TeamListLogosParams = TeamListLogosParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<List<FileUpload>> =
+            listLogos(
+              params.toBuilder()
+                  .teamId(teamId)
+                  .build(), requestOptions
+            )
 
         /** @see listLogos */
         @MustBeClosed
-        fun listLogos(
-            teamId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<List<FileUpload>> =
-            listLogos(teamId, TeamListLogosParams.none(), requestOptions)
+        fun listLogos(params: TeamListLogosParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<List<FileUpload>>
+
+        /** @see listLogos */
+        @MustBeClosed
+        fun listLogos(teamId: String, requestOptions: RequestOptions): HttpResponseFor<List<FileUpload>> =
+            listLogos(
+              teamId,
+              TeamListLogosParams.none(),
+              requestOptions,
+            )
     }
 }

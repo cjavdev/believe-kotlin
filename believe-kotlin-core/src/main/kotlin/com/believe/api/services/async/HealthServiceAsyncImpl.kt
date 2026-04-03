@@ -16,64 +16,59 @@ import com.believe.api.core.http.parseable
 import com.believe.api.core.prepareAsync
 import com.believe.api.models.health.HealthCheckParams
 import com.believe.api.models.health.HealthCheckResponse
+import com.believe.api.services.async.HealthServiceAsync
+import com.believe.api.services.async.HealthServiceAsyncImpl
 
-class HealthServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
-    HealthServiceAsync {
+class HealthServiceAsyncImpl internal constructor(
+    private val clientOptions: ClientOptions,
 
-    private val withRawResponse: HealthServiceAsync.WithRawResponse by lazy {
-        WithRawResponseImpl(clientOptions)
-    }
+) : HealthServiceAsync {
+
+    private val withRawResponse: HealthServiceAsync.WithRawResponse by lazy { WithRawResponseImpl(clientOptions) }
 
     override fun withRawResponse(): HealthServiceAsync.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): HealthServiceAsync =
-        HealthServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
+    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): HealthServiceAsync = HealthServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
-    override suspend fun check(
-        params: HealthCheckParams,
-        requestOptions: RequestOptions,
-    ): HealthCheckResponse =
+    override suspend fun check(params: HealthCheckParams, requestOptions: RequestOptions): HealthCheckResponse =
         // get /health
         withRawResponse().check(params, requestOptions).parse()
 
-    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        HealthServiceAsync.WithRawResponse {
+    class WithRawResponseImpl internal constructor(
+        private val clientOptions: ClientOptions,
 
-        private val errorHandler: Handler<HttpResponse> =
-            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+    ) : HealthServiceAsync.WithRawResponse {
 
-        override fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): HealthServiceAsync.WithRawResponse =
-            HealthServiceAsyncImpl.WithRawResponseImpl(
-                clientOptions.toBuilder().apply(modifier).build()
+        private val errorHandler: Handler<HttpResponse> = errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): HealthServiceAsync.WithRawResponse = HealthServiceAsyncImpl.WithRawResponseImpl(clientOptions.toBuilder().apply(modifier).build())
+
+        private val checkHandler: Handler<HealthCheckResponse> = jsonHandler<HealthCheckResponse>(clientOptions.jsonMapper)
+
+        override suspend fun check(params: HealthCheckParams, requestOptions: RequestOptions): HttpResponseFor<HealthCheckResponse> {
+          val request = HttpRequest.builder()
+            .method(HttpMethod.GET)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("health")
+            .build()
+            .prepareAsync(
+              clientOptions, params
             )
-
-        private val checkHandler: Handler<HealthCheckResponse> =
-            jsonHandler<HealthCheckResponse>(clientOptions.jsonMapper)
-
-        override suspend fun check(
-            params: HealthCheckParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<HealthCheckResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("health")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { checkHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  checkHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
     }
 }

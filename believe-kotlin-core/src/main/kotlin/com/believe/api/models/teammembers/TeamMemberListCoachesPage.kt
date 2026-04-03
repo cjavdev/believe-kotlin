@@ -5,15 +5,18 @@ package com.believe.api.models.teammembers
 import com.believe.api.core.AutoPager
 import com.believe.api.core.Page
 import com.believe.api.core.checkRequired
+import com.believe.api.models.teammembers.Coach
+import com.believe.api.models.teammembers.TeamMemberListCoachesPageResponse
+import com.believe.api.models.teammembers.TeamMemberListCoachesParams
 import com.believe.api.services.blocking.TeamMemberService
 import java.util.Objects
 
 /** @see TeamMemberService.listCoaches */
-class TeamMemberListCoachesPage
-private constructor(
+class TeamMemberListCoachesPage private constructor(
     private val service: TeamMemberService,
     private val params: TeamMemberListCoachesParams,
     private val response: TeamMemberListCoachesPageResponse,
+
 ) : Page<Coach> {
 
     /**
@@ -40,18 +43,20 @@ private constructor(
     override fun items(): List<Coach> = data()
 
     override fun hasNextPage(): Boolean {
-        if (items().isEmpty()) {
-            return false
-        }
+      if (items().isEmpty()) {
+          return false
+      }
 
-        val offset = skip() ?: 0
-        val totalCount = total()
-        return totalCount == null || offset + items().size < totalCount
+      val offset = skip() ?: 0
+      val totalCount = total()
+      return totalCount == null || offset + items().size < totalCount;
     }
 
     fun nextPageParams(): TeamMemberListCoachesParams {
-        val offset = skip() ?: 0
-        return params.toBuilder().skip(offset + items().size).build()
+      val offset = skip() ?: 0
+      return params.toBuilder()
+          .skip(offset + items().size)
+          .build()
     }
 
     override fun nextPage(): TeamMemberListCoachesPage = service.listCoaches(nextPageParams())
@@ -72,6 +77,7 @@ private constructor(
          * Returns a mutable builder for constructing an instance of [TeamMemberListCoachesPage].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -88,21 +94,29 @@ private constructor(
         private var params: TeamMemberListCoachesParams? = null
         private var response: TeamMemberListCoachesPageResponse? = null
 
-        internal fun from(teamMemberListCoachesPage: TeamMemberListCoachesPage) = apply {
-            service = teamMemberListCoachesPage.service
-            params = teamMemberListCoachesPage.params
-            response = teamMemberListCoachesPage.response
-        }
+        internal fun from(teamMemberListCoachesPage: TeamMemberListCoachesPage) =
+            apply {
+                service = teamMemberListCoachesPage.service
+                params = teamMemberListCoachesPage.params
+                response = teamMemberListCoachesPage.response
+            }
 
-        fun service(service: TeamMemberService) = apply { this.service = service }
+        fun service(service: TeamMemberService) =
+            apply {
+                this.service = service
+            }
 
         /** The parameters that were used to request this page. */
-        fun params(params: TeamMemberListCoachesParams) = apply { this.params = params }
+        fun params(params: TeamMemberListCoachesParams) =
+            apply {
+                this.params = params
+            }
 
         /** The response that this page was parsed from. */
-        fun response(response: TeamMemberListCoachesPageResponse) = apply {
-            this.response = response
-        }
+        fun response(response: TeamMemberListCoachesPageResponse) =
+            apply {
+                this.response = response
+            }
 
         /**
          * Returns an immutable instance of [TeamMemberListCoachesPage].
@@ -110,6 +124,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -120,25 +135,27 @@ private constructor(
          */
         fun build(): TeamMemberListCoachesPage =
             TeamMemberListCoachesPage(
-                checkRequired("service", service),
-                checkRequired("params", params),
-                checkRequired("response", response),
+              checkRequired(
+                "service", service
+              ),
+              checkRequired(
+                "params", params
+              ),
+              checkRequired(
+                "response", response
+              ),
             )
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is TeamMemberListCoachesPage &&
-            service == other.service &&
-            params == other.params &&
-            response == other.response
+      return other is TeamMemberListCoachesPage && service == other.service && params == other.params && response == other.response
     }
 
     override fun hashCode(): Int = Objects.hash(service, params, response)
 
-    override fun toString() =
-        "TeamMemberListCoachesPage{service=$service, params=$params, response=$response}"
+    override fun toString() = "TeamMemberListCoachesPage{service=$service, params=$params, response=$response}"
 }

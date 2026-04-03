@@ -16,14 +16,13 @@ import com.believe.api.models.webhooks.WebhookListParams
 import com.believe.api.models.webhooks.WebhookRetrieveParams
 import com.believe.api.models.webhooks.WebhookTriggerEventParams
 import com.believe.api.models.webhooks.WebhookTriggerEventResponse
+import com.believe.api.services.async.WebhookServiceAsync
 import com.google.errorprone.annotations.MustBeClosed
 
 /** Register webhook endpoints and trigger events for testing */
 interface WebhookServiceAsync {
 
-    /**
-     * Returns a view of this service that provides access to raw HTTP responses for each method.
-     */
+    /** Returns a view of this service that provides access to raw HTTP responses for each method. */
     fun withRawResponse(): WithRawResponse
 
     /**
@@ -53,55 +52,54 @@ interface WebhookServiceAsync {
      *
      * Store the returned `secret` securely - you'll need it to verify webhook signatures.
      */
-    suspend fun create(
-        params: WebhookCreateParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookCreateResponse
+    suspend fun create(params: WebhookCreateParams, requestOptions: RequestOptions = RequestOptions.none()): WebhookCreateResponse
 
     /** Get details of a specific webhook endpoint. */
-    suspend fun retrieve(
-        webhookId: String,
-        params: WebhookRetrieveParams = WebhookRetrieveParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): RegisteredWebhook = retrieve(params.toBuilder().webhookId(webhookId).build(), requestOptions)
+    suspend fun retrieve(webhookId: String, params: WebhookRetrieveParams = WebhookRetrieveParams.none(), requestOptions: RequestOptions = RequestOptions.none()): RegisteredWebhook =
+        retrieve(
+          params.toBuilder()
+              .webhookId(webhookId)
+              .build(), requestOptions
+        )
 
     /** @see retrieve */
-    suspend fun retrieve(
-        params: WebhookRetrieveParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): RegisteredWebhook
+    suspend fun retrieve(params: WebhookRetrieveParams, requestOptions: RequestOptions = RequestOptions.none()): RegisteredWebhook
 
     /** @see retrieve */
     suspend fun retrieve(webhookId: String, requestOptions: RequestOptions): RegisteredWebhook =
-        retrieve(webhookId, WebhookRetrieveParams.none(), requestOptions)
+        retrieve(
+          webhookId,
+          WebhookRetrieveParams.none(),
+          requestOptions,
+        )
 
     /** Get a list of all registered webhook endpoints. */
-    suspend fun list(
-        params: WebhookListParams = WebhookListParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): List<RegisteredWebhook>
+    suspend fun list(params: WebhookListParams = WebhookListParams.none(), requestOptions: RequestOptions = RequestOptions.none()): List<RegisteredWebhook>
 
     /** @see list */
     suspend fun list(requestOptions: RequestOptions): List<RegisteredWebhook> =
-        list(WebhookListParams.none(), requestOptions)
+        list(
+          WebhookListParams.none(), requestOptions
+        )
 
     /** Unregister a webhook endpoint. It will no longer receive events. */
-    suspend fun delete(
-        webhookId: String,
-        params: WebhookDeleteParams = WebhookDeleteParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookDeleteResponse =
-        delete(params.toBuilder().webhookId(webhookId).build(), requestOptions)
+    suspend fun delete(webhookId: String, params: WebhookDeleteParams = WebhookDeleteParams.none(), requestOptions: RequestOptions = RequestOptions.none()): WebhookDeleteResponse =
+        delete(
+          params.toBuilder()
+              .webhookId(webhookId)
+              .build(), requestOptions
+        )
 
     /** @see delete */
-    suspend fun delete(
-        params: WebhookDeleteParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookDeleteResponse
+    suspend fun delete(params: WebhookDeleteParams, requestOptions: RequestOptions = RequestOptions.none()): WebhookDeleteResponse
 
     /** @see delete */
     suspend fun delete(webhookId: String, requestOptions: RequestOptions): WebhookDeleteResponse =
-        delete(webhookId, WebhookDeleteParams.none(), requestOptions)
+        delete(
+          webhookId,
+          WebhookDeleteParams.none(),
+          requestOptions,
+        )
 
     /**
      * Trigger a webhook event and deliver it to all subscribed endpoints.
@@ -131,10 +129,7 @@ interface WebhookServiceAsync {
      * )
      * ```
      */
-    suspend fun triggerEvent(
-        params: WebhookTriggerEventParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): WebhookTriggerEventResponse
+    suspend fun triggerEvent(params: WebhookTriggerEventParams, requestOptions: RequestOptions = RequestOptions.none()): WebhookTriggerEventResponse
 
     /**
      * Unwraps a webhook event from its JSON representation.
@@ -143,9 +138,7 @@ interface WebhookServiceAsync {
      */
     fun unwrap(body: String): UnwrapWebhookEvent
 
-    /**
-     * A view of [WebhookServiceAsync] that provides access to raw HTTP responses for each method.
-     */
+    /** A view of [WebhookServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
 
         /**
@@ -153,97 +146,69 @@ interface WebhookServiceAsync {
          *
          * The original service is not modified.
          */
-        fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): WebhookServiceAsync.WithRawResponse
+        fun withOptions(modifier: (ClientOptions.Builder) -> Unit): WebhookServiceAsync.WithRawResponse
 
-        /**
-         * Returns a raw HTTP response for `post /webhooks`, but is otherwise the same as
-         * [WebhookServiceAsync.create].
-         */
+        /** Returns a raw HTTP response for `post /webhooks`, but is otherwise the             same as [WebhookServiceAsync.create]. */
         @MustBeClosed
-        suspend fun create(
-            params: WebhookCreateParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookCreateResponse>
+        suspend fun create(params: WebhookCreateParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<WebhookCreateResponse>
 
-        /**
-         * Returns a raw HTTP response for `get /webhooks/{webhook_id}`, but is otherwise the same
-         * as [WebhookServiceAsync.retrieve].
-         */
+        /** Returns a raw HTTP response for `get /webhooks/{webhook_id}`, but is otherwise the             same as [WebhookServiceAsync.retrieve]. */
         @MustBeClosed
-        suspend fun retrieve(
-            webhookId: String,
-            params: WebhookRetrieveParams = WebhookRetrieveParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<RegisteredWebhook> =
-            retrieve(params.toBuilder().webhookId(webhookId).build(), requestOptions)
+        suspend fun retrieve(webhookId: String, params: WebhookRetrieveParams = WebhookRetrieveParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<RegisteredWebhook> =
+            retrieve(
+              params.toBuilder()
+                  .webhookId(webhookId)
+                  .build(), requestOptions
+            )
 
         /** @see retrieve */
         @MustBeClosed
-        suspend fun retrieve(
-            params: WebhookRetrieveParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<RegisteredWebhook>
+        suspend fun retrieve(params: WebhookRetrieveParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<RegisteredWebhook>
 
         /** @see retrieve */
         @MustBeClosed
-        suspend fun retrieve(
-            webhookId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<RegisteredWebhook> =
-            retrieve(webhookId, WebhookRetrieveParams.none(), requestOptions)
+        suspend fun retrieve(webhookId: String, requestOptions: RequestOptions): HttpResponseFor<RegisteredWebhook> =
+            retrieve(
+              webhookId,
+              WebhookRetrieveParams.none(),
+              requestOptions,
+            )
 
-        /**
-         * Returns a raw HTTP response for `get /webhooks`, but is otherwise the same as
-         * [WebhookServiceAsync.list].
-         */
+        /** Returns a raw HTTP response for `get /webhooks`, but is otherwise the             same as [WebhookServiceAsync.list]. */
         @MustBeClosed
-        suspend fun list(
-            params: WebhookListParams = WebhookListParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<List<RegisteredWebhook>>
+        suspend fun list(params: WebhookListParams = WebhookListParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<List<RegisteredWebhook>>
 
         /** @see list */
         @MustBeClosed
         suspend fun list(requestOptions: RequestOptions): HttpResponseFor<List<RegisteredWebhook>> =
-            list(WebhookListParams.none(), requestOptions)
+            list(
+              WebhookListParams.none(), requestOptions
+            )
 
-        /**
-         * Returns a raw HTTP response for `delete /webhooks/{webhook_id}`, but is otherwise the
-         * same as [WebhookServiceAsync.delete].
-         */
+        /** Returns a raw HTTP response for `delete /webhooks/{webhook_id}`, but is otherwise the             same as [WebhookServiceAsync.delete]. */
         @MustBeClosed
-        suspend fun delete(
-            webhookId: String,
-            params: WebhookDeleteParams = WebhookDeleteParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookDeleteResponse> =
-            delete(params.toBuilder().webhookId(webhookId).build(), requestOptions)
-
-        /** @see delete */
-        @MustBeClosed
-        suspend fun delete(
-            params: WebhookDeleteParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookDeleteResponse>
+        suspend fun delete(webhookId: String, params: WebhookDeleteParams = WebhookDeleteParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<WebhookDeleteResponse> =
+            delete(
+              params.toBuilder()
+                  .webhookId(webhookId)
+                  .build(), requestOptions
+            )
 
         /** @see delete */
         @MustBeClosed
-        suspend fun delete(
-            webhookId: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookDeleteResponse> =
-            delete(webhookId, WebhookDeleteParams.none(), requestOptions)
+        suspend fun delete(params: WebhookDeleteParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<WebhookDeleteResponse>
 
-        /**
-         * Returns a raw HTTP response for `post /webhooks/trigger`, but is otherwise the same as
-         * [WebhookServiceAsync.triggerEvent].
-         */
+        /** @see delete */
         @MustBeClosed
-        suspend fun triggerEvent(
-            params: WebhookTriggerEventParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<WebhookTriggerEventResponse>
+        suspend fun delete(webhookId: String, requestOptions: RequestOptions): HttpResponseFor<WebhookDeleteResponse> =
+            delete(
+              webhookId,
+              WebhookDeleteParams.none(),
+              requestOptions,
+            )
+
+        /** Returns a raw HTTP response for `post /webhooks/trigger`, but is otherwise the             same as [WebhookServiceAsync.triggerEvent]. */
+        @MustBeClosed
+        suspend fun triggerEvent(params: WebhookTriggerEventParams, requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<WebhookTriggerEventResponse>
     }
 }

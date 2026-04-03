@@ -3,6 +3,7 @@
 package com.believe.api.services.async
 
 import com.believe.api.client.okhttp.BelieveOkHttpClientAsync
+import com.believe.api.models.health.HealthCheckParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
@@ -11,11 +12,13 @@ internal class HealthServiceAsyncTest {
     @Disabled("Mock server tests are disabled")
     @Test
     suspend fun check() {
-        val client = BelieveOkHttpClientAsync.builder().apiKey("My API Key").build()
-        val healthServiceAsync = client.health()
+      val client = BelieveOkHttpClientAsync.builder()
+          .apiKey("My API Key")
+          .build()
+      val healthServiceAsync = client.health()
 
-        val response = healthServiceAsync.check()
+      val response = healthServiceAsync.check()
 
-        response.validate()
+      response.validate()
     }
 }

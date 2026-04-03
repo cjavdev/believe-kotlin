@@ -16,64 +16,59 @@ import com.believe.api.core.http.parseable
 import com.believe.api.core.prepareAsync
 import com.believe.api.models.version.VersionRetrieveParams
 import com.believe.api.models.version.VersionRetrieveResponse
+import com.believe.api.services.async.VersionServiceAsync
+import com.believe.api.services.async.VersionServiceAsyncImpl
 
-class VersionServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
-    VersionServiceAsync {
+class VersionServiceAsyncImpl internal constructor(
+    private val clientOptions: ClientOptions,
 
-    private val withRawResponse: VersionServiceAsync.WithRawResponse by lazy {
-        WithRawResponseImpl(clientOptions)
-    }
+) : VersionServiceAsync {
+
+    private val withRawResponse: VersionServiceAsync.WithRawResponse by lazy { WithRawResponseImpl(clientOptions) }
 
     override fun withRawResponse(): VersionServiceAsync.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): VersionServiceAsync =
-        VersionServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
+    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): VersionServiceAsync = VersionServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
-    override suspend fun retrieve(
-        params: VersionRetrieveParams,
-        requestOptions: RequestOptions,
-    ): VersionRetrieveResponse =
+    override suspend fun retrieve(params: VersionRetrieveParams, requestOptions: RequestOptions): VersionRetrieveResponse =
         // get /version
         withRawResponse().retrieve(params, requestOptions).parse()
 
-    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        VersionServiceAsync.WithRawResponse {
+    class WithRawResponseImpl internal constructor(
+        private val clientOptions: ClientOptions,
 
-        private val errorHandler: Handler<HttpResponse> =
-            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+    ) : VersionServiceAsync.WithRawResponse {
 
-        override fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): VersionServiceAsync.WithRawResponse =
-            VersionServiceAsyncImpl.WithRawResponseImpl(
-                clientOptions.toBuilder().apply(modifier).build()
+        private val errorHandler: Handler<HttpResponse> = errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): VersionServiceAsync.WithRawResponse = VersionServiceAsyncImpl.WithRawResponseImpl(clientOptions.toBuilder().apply(modifier).build())
+
+        private val retrieveHandler: Handler<VersionRetrieveResponse> = jsonHandler<VersionRetrieveResponse>(clientOptions.jsonMapper)
+
+        override suspend fun retrieve(params: VersionRetrieveParams, requestOptions: RequestOptions): HttpResponseFor<VersionRetrieveResponse> {
+          val request = HttpRequest.builder()
+            .method(HttpMethod.GET)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("version")
+            .build()
+            .prepareAsync(
+              clientOptions, params
             )
-
-        private val retrieveHandler: Handler<VersionRetrieveResponse> =
-            jsonHandler<VersionRetrieveResponse>(clientOptions.jsonMapper)
-
-        override suspend fun retrieve(
-            params: VersionRetrieveParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<VersionRetrieveResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("version")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { retrieveHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  retrieveHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
     }
 }

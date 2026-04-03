@@ -39,15 +39,16 @@ import java.util.Objects
  * - `{"action": "resume"}` - Resume a paused simulation
  * - `{"action": "set_speed", "speed": 2.0}` - Change playback speed (0.1-10.0)
  * - `{"action": "get_status"}` - Request current match status
+ *
  */
-class MatchStreamLiveParams
-private constructor(
+class MatchStreamLiveParams private constructor(
     private val awayTeam: String?,
     private val excitementLevel: Long?,
     private val homeTeam: String?,
     private val speed: Double?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
+
 ) : Params {
 
     /** Away team name */
@@ -88,22 +89,27 @@ private constructor(
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
-        internal fun from(matchStreamLiveParams: MatchStreamLiveParams) = apply {
-            awayTeam = matchStreamLiveParams.awayTeam
-            excitementLevel = matchStreamLiveParams.excitementLevel
-            homeTeam = matchStreamLiveParams.homeTeam
-            speed = matchStreamLiveParams.speed
-            additionalHeaders = matchStreamLiveParams.additionalHeaders.toBuilder()
-            additionalQueryParams = matchStreamLiveParams.additionalQueryParams.toBuilder()
-        }
+        internal fun from(matchStreamLiveParams: MatchStreamLiveParams) =
+            apply {
+                awayTeam = matchStreamLiveParams.awayTeam
+                excitementLevel = matchStreamLiveParams.excitementLevel
+                homeTeam = matchStreamLiveParams.homeTeam
+                speed = matchStreamLiveParams.speed
+                additionalHeaders = matchStreamLiveParams.additionalHeaders.toBuilder()
+                additionalQueryParams = matchStreamLiveParams.additionalQueryParams.toBuilder()
+            }
 
         /** Away team name */
-        fun awayTeam(awayTeam: String?) = apply { this.awayTeam = awayTeam }
+        fun awayTeam(awayTeam: String?) =
+            apply {
+                this.awayTeam = awayTeam
+            }
 
         /** How eventful the match should be (1=boring, 10=chaos) */
-        fun excitementLevel(excitementLevel: Long?) = apply {
-            this.excitementLevel = excitementLevel
-        }
+        fun excitementLevel(excitementLevel: Long?) =
+            apply {
+                this.excitementLevel = excitementLevel
+            }
 
         /**
          * Alias for [Builder.excitementLevel].
@@ -113,10 +119,16 @@ private constructor(
         fun excitementLevel(excitementLevel: Long) = excitementLevel(excitementLevel as Long?)
 
         /** Home team name */
-        fun homeTeam(homeTeam: String?) = apply { this.homeTeam = homeTeam }
+        fun homeTeam(homeTeam: String?) =
+            apply {
+                this.homeTeam = homeTeam
+            }
 
         /** Simulation speed multiplier (1.0 = real-time) */
-        fun speed(speed: Double?) = apply { this.speed = speed }
+        fun speed(speed: Double?) =
+            apply {
+                this.speed = speed
+            }
 
         /**
          * Alias for [Builder.speed].
@@ -125,103 +137,129 @@ private constructor(
          */
         fun speed(speed: Double) = speed(speed as Double?)
 
-        fun additionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.clear()
-            putAllAdditionalHeaders(additionalHeaders)
-        }
+        fun additionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.clear()
+                putAllAdditionalHeaders(additionalHeaders)
+            }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.clear()
-            putAllAdditionalHeaders(additionalHeaders)
-        }
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.clear()
+                putAllAdditionalHeaders(additionalHeaders)
+            }
 
-        fun putAdditionalHeader(name: String, value: String) = apply {
-            additionalHeaders.put(name, value)
-        }
+        fun putAdditionalHeader(name: String, value: String) =
+            apply {
+                additionalHeaders.put(name, value)
+            }
 
-        fun putAdditionalHeaders(name: String, values: Iterable<String>) = apply {
-            additionalHeaders.put(name, values)
-        }
+        fun putAdditionalHeaders(name: String, values: Iterable<String>) =
+            apply {
+                additionalHeaders.put(name, values)
+            }
 
-        fun putAllAdditionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.putAll(additionalHeaders)
-        }
+        fun putAllAdditionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.putAll(additionalHeaders)
+            }
 
-        fun putAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.putAll(additionalHeaders)
-        }
+        fun putAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.putAll(additionalHeaders)
+            }
 
-        fun replaceAdditionalHeaders(name: String, value: String) = apply {
-            additionalHeaders.replace(name, value)
-        }
+        fun replaceAdditionalHeaders(name: String, value: String) =
+            apply {
+                additionalHeaders.replace(name, value)
+            }
 
-        fun replaceAdditionalHeaders(name: String, values: Iterable<String>) = apply {
-            additionalHeaders.replace(name, values)
-        }
+        fun replaceAdditionalHeaders(name: String, values: Iterable<String>) =
+            apply {
+                additionalHeaders.replace(name, values)
+            }
 
-        fun replaceAllAdditionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.replaceAll(additionalHeaders)
-        }
+        fun replaceAllAdditionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.replaceAll(additionalHeaders)
+            }
 
-        fun replaceAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.replaceAll(additionalHeaders)
-        }
+        fun replaceAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.replaceAll(additionalHeaders)
+            }
 
-        fun removeAdditionalHeaders(name: String) = apply { additionalHeaders.remove(name) }
+        fun removeAdditionalHeaders(name: String) =
+            apply {
+                additionalHeaders.remove(name)
+            }
 
-        fun removeAllAdditionalHeaders(names: Set<String>) = apply {
-            additionalHeaders.removeAll(names)
-        }
+        fun removeAllAdditionalHeaders(names: Set<String>) =
+            apply {
+                additionalHeaders.removeAll(names)
+            }
 
-        fun additionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.clear()
-            putAllAdditionalQueryParams(additionalQueryParams)
-        }
+        fun additionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.clear()
+                putAllAdditionalQueryParams(additionalQueryParams)
+            }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
-            this.additionalQueryParams.clear()
-            putAllAdditionalQueryParams(additionalQueryParams)
-        }
+        fun additionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalQueryParams.clear()
+                putAllAdditionalQueryParams(additionalQueryParams)
+            }
 
-        fun putAdditionalQueryParam(key: String, value: String) = apply {
-            additionalQueryParams.put(key, value)
-        }
+        fun putAdditionalQueryParam(key: String, value: String) =
+            apply {
+                additionalQueryParams.put(key, value)
+            }
 
-        fun putAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
-            additionalQueryParams.put(key, values)
-        }
+        fun putAdditionalQueryParams(key: String, values: Iterable<String>) =
+            apply {
+                additionalQueryParams.put(key, values)
+            }
 
-        fun putAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.putAll(additionalQueryParams)
-        }
+        fun putAllAdditionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.putAll(additionalQueryParams)
+            }
 
         fun putAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
             apply {
                 this.additionalQueryParams.putAll(additionalQueryParams)
             }
 
-        fun replaceAdditionalQueryParams(key: String, value: String) = apply {
-            additionalQueryParams.replace(key, value)
-        }
+        fun replaceAdditionalQueryParams(key: String, value: String) =
+            apply {
+                additionalQueryParams.replace(key, value)
+            }
 
-        fun replaceAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
-            additionalQueryParams.replace(key, values)
-        }
+        fun replaceAdditionalQueryParams(key: String, values: Iterable<String>) =
+            apply {
+                additionalQueryParams.replace(key, values)
+            }
 
-        fun replaceAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.replaceAll(additionalQueryParams)
-        }
+        fun replaceAllAdditionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.replaceAll(additionalQueryParams)
+            }
 
         fun replaceAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
             apply {
                 this.additionalQueryParams.replaceAll(additionalQueryParams)
             }
 
-        fun removeAdditionalQueryParams(key: String) = apply { additionalQueryParams.remove(key) }
+        fun removeAdditionalQueryParams(key: String) =
+            apply {
+                additionalQueryParams.remove(key)
+            }
 
-        fun removeAllAdditionalQueryParams(keys: Set<String>) = apply {
-            additionalQueryParams.removeAll(keys)
-        }
+        fun removeAllAdditionalQueryParams(keys: Set<String>) =
+            apply {
+                additionalQueryParams.removeAll(keys)
+            }
 
         /**
          * Returns an immutable instance of [MatchStreamLiveParams].
@@ -230,12 +268,12 @@ private constructor(
          */
         fun build(): MatchStreamLiveParams =
             MatchStreamLiveParams(
-                awayTeam,
-                excitementLevel,
-                homeTeam,
-                speed,
-                additionalHeaders.build(),
-                additionalQueryParams.build(),
+              awayTeam,
+              excitementLevel,
+              homeTeam,
+              speed,
+              additionalHeaders.build(),
+              additionalQueryParams.build(),
             )
     }
 
@@ -253,29 +291,14 @@ private constructor(
             .build()
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is MatchStreamLiveParams &&
-            awayTeam == other.awayTeam &&
-            excitementLevel == other.excitementLevel &&
-            homeTeam == other.homeTeam &&
-            speed == other.speed &&
-            additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams
+      return other is MatchStreamLiveParams && awayTeam == other.awayTeam && excitementLevel == other.excitementLevel && homeTeam == other.homeTeam && speed == other.speed && additionalHeaders == other.additionalHeaders && additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int =
-        Objects.hash(
-            awayTeam,
-            excitementLevel,
-            homeTeam,
-            speed,
-            additionalHeaders,
-            additionalQueryParams,
-        )
+    override fun hashCode(): Int = Objects.hash(awayTeam, excitementLevel, homeTeam, speed, additionalHeaders, additionalQueryParams)
 
-    override fun toString() =
-        "MatchStreamLiveParams{awayTeam=$awayTeam, excitementLevel=$excitementLevel, homeTeam=$homeTeam, speed=$speed, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+    override fun toString() = "MatchStreamLiveParams{awayTeam=$awayTeam, excitementLevel=$excitementLevel, homeTeam=$homeTeam, speed=$speed, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

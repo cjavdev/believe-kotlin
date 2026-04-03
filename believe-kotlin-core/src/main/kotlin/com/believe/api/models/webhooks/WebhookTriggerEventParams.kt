@@ -15,6 +15,7 @@ import com.believe.api.core.getOrThrow
 import com.believe.api.core.http.Headers
 import com.believe.api.core.http.QueryParams
 import com.believe.api.errors.BelieveInvalidDataException
+import com.believe.api.models.webhooks.WebhookTriggerEventParams
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
@@ -29,6 +30,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import java.time.OffsetDateTime
 import java.util.Collections
 import java.util.Objects
+import java.util.Optional
 
 /**
  * Trigger a webhook event and deliver it to all subscribed endpoints.
@@ -58,26 +60,24 @@ import java.util.Objects
  * )
  * ```
  */
-class WebhookTriggerEventParams
-private constructor(
+class WebhookTriggerEventParams private constructor(
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
+
 ) : Params {
 
     /**
      * The type of event to trigger
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun eventType(): EventType = body.eventType()
 
     /**
      * Optional event payload. If not provided, a sample payload will be generated.
      *
-     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
+     * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
      */
     fun payload(): Payload? = body.payload()
 
@@ -111,6 +111,7 @@ private constructor(
          * Returns a mutable builder for constructing an instance of [WebhookTriggerEventParams].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .eventType()
          * ```
@@ -125,47 +126,65 @@ private constructor(
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
-        internal fun from(webhookTriggerEventParams: WebhookTriggerEventParams) = apply {
-            body = webhookTriggerEventParams.body.toBuilder()
-            additionalHeaders = webhookTriggerEventParams.additionalHeaders.toBuilder()
-            additionalQueryParams = webhookTriggerEventParams.additionalQueryParams.toBuilder()
-        }
+        internal fun from(webhookTriggerEventParams: WebhookTriggerEventParams) =
+            apply {
+                body = webhookTriggerEventParams.body.toBuilder()
+                additionalHeaders = webhookTriggerEventParams.additionalHeaders.toBuilder()
+                additionalQueryParams = webhookTriggerEventParams.additionalQueryParams.toBuilder()
+            }
 
         /**
          * Sets the entire request body.
          *
-         * This is generally only useful if you are already constructing the body separately.
-         * Otherwise, it's more convenient to use the top-level setters instead:
+         * This is generally only useful if you are already constructing the body separately. Otherwise,
+         * it's more convenient to use the top-level setters instead:
          * - [eventType]
          * - [payload]
          */
-        fun body(body: Body) = apply { this.body = body.toBuilder() }
+        fun body(body: Body) =
+            apply {
+                this.body = body.toBuilder()
+            }
 
         /** The type of event to trigger */
-        fun eventType(eventType: EventType) = apply { body.eventType(eventType) }
+        fun eventType(eventType: EventType) =
+            apply {
+                body.eventType(eventType)
+            }
 
         /**
          * Sets [Builder.eventType] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.eventType] with a well-typed [EventType] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
+         * You should usually call [Builder.eventType] with a well-typed [EventType] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun eventType(eventType: JsonField<EventType>) = apply { body.eventType(eventType) }
+        fun eventType(eventType: JsonField<EventType>) =
+            apply {
+                body.eventType(eventType)
+            }
 
         /** Optional event payload. If not provided, a sample payload will be generated. */
-        fun payload(payload: Payload?) = apply { body.payload(payload) }
+        fun payload(payload: Payload?) =
+            apply {
+                body.payload(payload)
+            }
 
         /**
          * Sets [Builder.payload] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.payload] with a well-typed [Payload] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.payload] with a well-typed [Payload] value instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
          */
-        fun payload(payload: JsonField<Payload>) = apply { body.payload(payload) }
+        fun payload(payload: JsonField<Payload>) =
+            apply {
+                body.payload(payload)
+            }
 
         /** Alias for calling [payload] with `Payload.ofMatchCompleted(matchCompleted)`. */
-        fun payload(matchCompleted: Payload.MatchCompleted) = apply { body.payload(matchCompleted) }
+        fun payload(matchCompleted: Payload.MatchCompleted) =
+            apply {
+                body.payload(matchCompleted)
+            }
 
         /**
          * Alias for calling [payload] with the following:
@@ -176,17 +195,16 @@ private constructor(
          *     .build()
          * ```
          */
-        fun matchCompletedPayload(data: Payload.MatchCompleted.Data) = apply {
-            body.matchCompletedPayload(data)
-        }
+        fun matchCompletedPayload(data: Payload.MatchCompleted.Data) =
+            apply {
+                body.matchCompletedPayload(data)
+            }
 
-        /**
-         * Alias for calling [payload] with
-         * `Payload.ofTeamMemberTransferred(teamMemberTransferred)`.
-         */
-        fun payload(teamMemberTransferred: Payload.TeamMemberTransferred) = apply {
-            body.payload(teamMemberTransferred)
-        }
+        /** Alias for calling [payload] with `Payload.ofTeamMemberTransferred(teamMemberTransferred)`. */
+        fun payload(teamMemberTransferred: Payload.TeamMemberTransferred) =
+            apply {
+                body.payload(teamMemberTransferred)
+            }
 
         /**
          * Alias for calling [payload] with the following:
@@ -197,126 +215,161 @@ private constructor(
          *     .build()
          * ```
          */
-        fun teamMemberTransferredPayload(data: Payload.TeamMemberTransferred.Data) = apply {
-            body.teamMemberTransferredPayload(data)
-        }
+        fun teamMemberTransferredPayload(data: Payload.TeamMemberTransferred.Data) =
+            apply {
+                body.teamMemberTransferredPayload(data)
+            }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            body.additionalProperties(additionalBodyProperties)
-        }
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
+            apply {
+                body.additionalProperties(additionalBodyProperties)
+            }
 
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            body.putAdditionalProperty(key, value)
-        }
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) =
+            apply {
+                body.putAdditionalProperty(
+                  key, value
+                )
+            }
 
         fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
             apply {
                 body.putAllAdditionalProperties(additionalBodyProperties)
             }
 
-        fun removeAdditionalBodyProperty(key: String) = apply { body.removeAdditionalProperty(key) }
+        fun removeAdditionalBodyProperty(key: String) =
+            apply {
+                body.removeAdditionalProperty(key)
+            }
 
-        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
-            body.removeAllAdditionalProperties(keys)
-        }
+        fun removeAllAdditionalBodyProperties(keys: Set<String>) =
+            apply {
+                body.removeAllAdditionalProperties(keys)
+            }
 
-        fun additionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.clear()
-            putAllAdditionalHeaders(additionalHeaders)
-        }
+        fun additionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.clear()
+                putAllAdditionalHeaders(additionalHeaders)
+            }
 
-        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.clear()
-            putAllAdditionalHeaders(additionalHeaders)
-        }
+        fun additionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.clear()
+                putAllAdditionalHeaders(additionalHeaders)
+            }
 
-        fun putAdditionalHeader(name: String, value: String) = apply {
-            additionalHeaders.put(name, value)
-        }
+        fun putAdditionalHeader(name: String, value: String) =
+            apply {
+                additionalHeaders.put(name, value)
+            }
 
-        fun putAdditionalHeaders(name: String, values: Iterable<String>) = apply {
-            additionalHeaders.put(name, values)
-        }
+        fun putAdditionalHeaders(name: String, values: Iterable<String>) =
+            apply {
+                additionalHeaders.put(name, values)
+            }
 
-        fun putAllAdditionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.putAll(additionalHeaders)
-        }
+        fun putAllAdditionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.putAll(additionalHeaders)
+            }
 
-        fun putAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.putAll(additionalHeaders)
-        }
+        fun putAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.putAll(additionalHeaders)
+            }
 
-        fun replaceAdditionalHeaders(name: String, value: String) = apply {
-            additionalHeaders.replace(name, value)
-        }
+        fun replaceAdditionalHeaders(name: String, value: String) =
+            apply {
+                additionalHeaders.replace(name, value)
+            }
 
-        fun replaceAdditionalHeaders(name: String, values: Iterable<String>) = apply {
-            additionalHeaders.replace(name, values)
-        }
+        fun replaceAdditionalHeaders(name: String, values: Iterable<String>) =
+            apply {
+                additionalHeaders.replace(name, values)
+            }
 
-        fun replaceAllAdditionalHeaders(additionalHeaders: Headers) = apply {
-            this.additionalHeaders.replaceAll(additionalHeaders)
-        }
+        fun replaceAllAdditionalHeaders(additionalHeaders: Headers) =
+            apply {
+                this.additionalHeaders.replaceAll(additionalHeaders)
+            }
 
-        fun replaceAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) = apply {
-            this.additionalHeaders.replaceAll(additionalHeaders)
-        }
+        fun replaceAllAdditionalHeaders(additionalHeaders: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalHeaders.replaceAll(additionalHeaders)
+            }
 
-        fun removeAdditionalHeaders(name: String) = apply { additionalHeaders.remove(name) }
+        fun removeAdditionalHeaders(name: String) =
+            apply {
+                additionalHeaders.remove(name)
+            }
 
-        fun removeAllAdditionalHeaders(names: Set<String>) = apply {
-            additionalHeaders.removeAll(names)
-        }
+        fun removeAllAdditionalHeaders(names: Set<String>) =
+            apply {
+                additionalHeaders.removeAll(names)
+            }
 
-        fun additionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.clear()
-            putAllAdditionalQueryParams(additionalQueryParams)
-        }
+        fun additionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.clear()
+                putAllAdditionalQueryParams(additionalQueryParams)
+            }
 
-        fun additionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) = apply {
-            this.additionalQueryParams.clear()
-            putAllAdditionalQueryParams(additionalQueryParams)
-        }
+        fun additionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
+            apply {
+                this.additionalQueryParams.clear()
+                putAllAdditionalQueryParams(additionalQueryParams)
+            }
 
-        fun putAdditionalQueryParam(key: String, value: String) = apply {
-            additionalQueryParams.put(key, value)
-        }
+        fun putAdditionalQueryParam(key: String, value: String) =
+            apply {
+                additionalQueryParams.put(key, value)
+            }
 
-        fun putAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
-            additionalQueryParams.put(key, values)
-        }
+        fun putAdditionalQueryParams(key: String, values: Iterable<String>) =
+            apply {
+                additionalQueryParams.put(key, values)
+            }
 
-        fun putAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.putAll(additionalQueryParams)
-        }
+        fun putAllAdditionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.putAll(additionalQueryParams)
+            }
 
         fun putAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
             apply {
                 this.additionalQueryParams.putAll(additionalQueryParams)
             }
 
-        fun replaceAdditionalQueryParams(key: String, value: String) = apply {
-            additionalQueryParams.replace(key, value)
-        }
+        fun replaceAdditionalQueryParams(key: String, value: String) =
+            apply {
+                additionalQueryParams.replace(key, value)
+            }
 
-        fun replaceAdditionalQueryParams(key: String, values: Iterable<String>) = apply {
-            additionalQueryParams.replace(key, values)
-        }
+        fun replaceAdditionalQueryParams(key: String, values: Iterable<String>) =
+            apply {
+                additionalQueryParams.replace(key, values)
+            }
 
-        fun replaceAllAdditionalQueryParams(additionalQueryParams: QueryParams) = apply {
-            this.additionalQueryParams.replaceAll(additionalQueryParams)
-        }
+        fun replaceAllAdditionalQueryParams(additionalQueryParams: QueryParams) =
+            apply {
+                this.additionalQueryParams.replaceAll(additionalQueryParams)
+            }
 
         fun replaceAllAdditionalQueryParams(additionalQueryParams: Map<String, Iterable<String>>) =
             apply {
                 this.additionalQueryParams.replaceAll(additionalQueryParams)
             }
 
-        fun removeAdditionalQueryParams(key: String) = apply { additionalQueryParams.remove(key) }
+        fun removeAdditionalQueryParams(key: String) =
+            apply {
+                additionalQueryParams.remove(key)
+            }
 
-        fun removeAllAdditionalQueryParams(keys: Set<String>) = apply {
-            additionalQueryParams.removeAll(keys)
-        }
+        fun removeAllAdditionalQueryParams(keys: Set<String>) =
+            apply {
+                additionalQueryParams.removeAll(keys)
+            }
 
         /**
          * Returns an immutable instance of [WebhookTriggerEventParams].
@@ -324,6 +377,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .eventType()
          * ```
@@ -332,9 +386,9 @@ private constructor(
          */
         fun build(): WebhookTriggerEventParams =
             WebhookTriggerEventParams(
-                body.build(),
-                additionalHeaders.build(),
-                additionalQueryParams.build(),
+              body.build(),
+              additionalHeaders.build(),
+              additionalQueryParams.build(),
             )
     }
 
@@ -345,35 +399,34 @@ private constructor(
     override fun _queryParams(): QueryParams = additionalQueryParams
 
     /** Request to trigger a webhook event. */
-    class Body
-    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-    private constructor(
+    class Body @JsonCreator(mode = JsonCreator.Mode.DISABLED) private constructor(
         private val eventType: JsonField<EventType>,
         private val payload: JsonField<Payload>,
         private val additionalProperties: MutableMap<String, JsonValue>,
+
     ) {
 
         @JsonCreator
         private constructor(
-            @JsonProperty("event_type")
-            @ExcludeMissing
-            eventType: JsonField<EventType> = JsonMissing.of(),
-            @JsonProperty("payload") @ExcludeMissing payload: JsonField<Payload> = JsonMissing.of(),
-        ) : this(eventType, payload, mutableMapOf())
+            @JsonProperty("event_type") @ExcludeMissing eventType: JsonField<EventType> = JsonMissing.of(),
+            @JsonProperty("payload") @ExcludeMissing payload: JsonField<Payload> = JsonMissing.of()
+        ) : this(
+          eventType,
+          payload,
+          mutableMapOf(),
+        )
 
         /**
          * The type of event to trigger
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun eventType(): EventType = eventType.getRequired("event_type")
 
         /**
          * Optional event payload. If not provided, a sample payload will be generated.
          *
-         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
          */
         fun payload(): Payload? = payload.getNullable("payload")
 
@@ -391,17 +444,18 @@ private constructor(
          *
          * Unlike [payload], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("payload") @ExcludeMissing fun _payload(): JsonField<Payload> = payload
+        @JsonProperty("payload")
+        @ExcludeMissing
+        fun _payload(): JsonField<Payload> = payload
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
-            additionalProperties.put(key, value)
+          additionalProperties.put(key, value)
         }
 
         @JsonAnyGetter
         @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> =
-            Collections.unmodifiableMap(additionalProperties)
+        fun _additionalProperties(): Map<String, JsonValue> = Collections.unmodifiableMap(additionalProperties)
 
         fun toBuilder() = Builder().from(this)
 
@@ -411,6 +465,7 @@ private constructor(
              * Returns a mutable builder for constructing an instance of [Body].
              *
              * The following fields are required:
+             *
              * ```kotlin
              * .eventType()
              * ```
@@ -425,11 +480,12 @@ private constructor(
             private var payload: JsonField<Payload> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-            internal fun from(body: Body) = apply {
-                eventType = body.eventType
-                payload = body.payload
-                additionalProperties = body.additionalProperties.toMutableMap()
-            }
+            internal fun from(body: Body) =
+                apply {
+                    eventType = body.eventType
+                    payload = body.payload
+                    additionalProperties = body.additionalProperties.toMutableMap()
+                }
 
             /** The type of event to trigger */
             fun eventType(eventType: EventType) = eventType(JsonField.of(eventType))
@@ -437,11 +493,13 @@ private constructor(
             /**
              * Sets [Builder.eventType] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.eventType] with a well-typed [EventType] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.eventType] with a well-typed [EventType] value instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun eventType(eventType: JsonField<EventType>) = apply { this.eventType = eventType }
+            fun eventType(eventType: JsonField<EventType>) =
+                apply {
+                    this.eventType = eventType
+                }
 
             /** Optional event payload. If not provided, a sample payload will be generated. */
             fun payload(payload: Payload?) = payload(JsonField.ofNullable(payload))
@@ -449,15 +507,16 @@ private constructor(
             /**
              * Sets [Builder.payload] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.payload] with a well-typed [Payload] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
+             * You should usually call [Builder.payload] with a well-typed [Payload] value instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun payload(payload: JsonField<Payload>) = apply { this.payload = payload }
+            fun payload(payload: JsonField<Payload>) =
+                apply {
+                    this.payload = payload
+                }
 
             /** Alias for calling [payload] with `Payload.ofMatchCompleted(matchCompleted)`. */
-            fun payload(matchCompleted: Payload.MatchCompleted) =
-                payload(Payload.ofMatchCompleted(matchCompleted))
+            fun payload(matchCompleted: Payload.MatchCompleted) = payload(Payload.ofMatchCompleted(matchCompleted))
 
             /**
              * Alias for calling [payload] with the following:
@@ -469,22 +528,13 @@ private constructor(
              * ```
              */
             fun matchCompletedPayload(data: Payload.MatchCompleted.Data) =
-                payload(
-                    Payload.MatchCompleted.builder()
-                        .eventType(
-                            WebhookTriggerEventParams.Payload.MatchCompleted.EventType
-                                .MATCH_COMPLETED
-                        )
-                        .data(data)
-                        .build()
-                )
+                payload(Payload.MatchCompleted.builder()
+                    .eventType(WebhookTriggerEventParams.Payload.MatchCompleted.EventType.MATCH_COMPLETED)
+                    .data(data)
+                    .build())
 
-            /**
-             * Alias for calling [payload] with
-             * `Payload.ofTeamMemberTransferred(teamMemberTransferred)`.
-             */
-            fun payload(teamMemberTransferred: Payload.TeamMemberTransferred) =
-                payload(Payload.ofTeamMemberTransferred(teamMemberTransferred))
+            /** Alias for calling [payload] with `Payload.ofTeamMemberTransferred(teamMemberTransferred)`. */
+            fun payload(teamMemberTransferred: Payload.TeamMemberTransferred) = payload(Payload.ofTeamMemberTransferred(teamMemberTransferred))
 
             /**
              * Alias for calling [payload] with the following:
@@ -496,34 +546,36 @@ private constructor(
              * ```
              */
             fun teamMemberTransferredPayload(data: Payload.TeamMemberTransferred.Data) =
-                payload(
-                    Payload.TeamMemberTransferred.builder()
-                        .eventType(
-                            WebhookTriggerEventParams.Payload.TeamMemberTransferred.EventType
-                                .TEAM_MEMBER_TRANSFERRED
-                        )
-                        .data(data)
-                        .build()
-                )
+                payload(Payload.TeamMemberTransferred.builder()
+                    .eventType(WebhookTriggerEventParams.Payload.TeamMemberTransferred.EventType.TEAM_MEMBER_TRANSFERRED)
+                    .data(data)
+                    .build())
 
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply {
+                    this.additionalProperties.clear()
+                    putAllAdditionalProperties(additionalProperties)
+                }
 
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
+            fun putAdditionalProperty(key: String, value: JsonValue) =
+                apply {
+                    additionalProperties.put(key, value)
+                }
 
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
+                apply {
+                    this.additionalProperties.putAll(additionalProperties)
+                }
 
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+            fun removeAdditionalProperty(key: String) =
+                apply {
+                    additionalProperties.remove(key)
+                }
 
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
+            fun removeAllAdditionalProperties(keys: Set<String>) =
+                apply {
+                    keys.forEach(::removeAdditionalProperty)
+                }
 
             /**
              * Returns an immutable instance of [Body].
@@ -531,6 +583,7 @@ private constructor(
              * Further updates to this [Builder] will not mutate the returned instance.
              *
              * The following fields are required:
+             *
              * ```kotlin
              * .eventType()
              * ```
@@ -539,23 +592,26 @@ private constructor(
              */
             fun build(): Body =
                 Body(
-                    checkRequired("eventType", eventType),
-                    payload,
-                    additionalProperties.toMutableMap(),
+                  checkRequired(
+                    "eventType", eventType
+                  ),
+                  payload,
+                  additionalProperties.toMutableMap(),
                 )
         }
 
         private var validated: Boolean = false
 
-        fun validate(): Body = apply {
-            if (validated) {
-                return@apply
-            }
+        fun validate(): Body =
+            apply {
+                if (validated) {
+                  return@apply
+                }
 
-            eventType().validate()
-            payload()?.validate()
-            validated = true
-        }
+                eventType().validate()
+                payload()?.validate()
+                validated = true
+            }
 
         fun isValid(): Boolean =
             try {
@@ -566,45 +622,42 @@ private constructor(
             }
 
         /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
+         * Returns a score indicating how many valid values are contained in this object recursively.
          *
          * Used for best match union deserialization.
          */
-        internal fun validity(): Int =
-            (eventType.asKnown()?.validity() ?: 0) + (payload.asKnown()?.validity() ?: 0)
+        internal fun validity(): Int = (eventType.asKnown()?.validity() ?: 0) + (payload.asKnown()?.validity() ?: 0)
 
         override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
+          if (this === other) {
+              return true
+          }
 
-            return other is Body &&
-                eventType == other.eventType &&
-                payload == other.payload &&
-                additionalProperties == other.additionalProperties
+          return other is Body && eventType == other.eventType && payload == other.payload && additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy { Objects.hash(eventType, payload, additionalProperties) }
 
         override fun hashCode(): Int = hashCode
 
-        override fun toString() =
-            "Body{eventType=$eventType, payload=$payload, additionalProperties=$additionalProperties}"
+        override fun toString() = "Body{eventType=$eventType, payload=$payload, additionalProperties=$additionalProperties}"
     }
 
     /** The type of event to trigger */
-    class EventType @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+    class EventType @JsonCreator private constructor(
+        private val value: JsonField<String>,
+
+    ) : Enum {
 
         /**
          * Returns this class instance's raw value.
          *
-         * This is usually only useful if this instance was deserialized from data that doesn't
-         * match any known member, and you want to know that value. For example, if the SDK is on an
-         * older version than the API, then the API may respond with new members that the SDK is
-         * unaware of.
+         * This is usually only useful if this instance was deserialized from data that doesn't match any known
+         * member, and you want to know that value. For example, if the SDK is on an older version than the
+         * API, then the API may respond with new members that the SDK is unaware of.
          */
-        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+        @com.fasterxml.jackson.annotation.JsonValue
+        fun _value(): JsonField<String> = value
 
         companion object {
 
@@ -625,26 +678,26 @@ private constructor(
          * An enum containing [EventType]'s known values, as well as an [_UNKNOWN] member.
          *
          * An instance of [EventType] can contain an unknown value in a couple of cases:
-         * - It was deserialized from data that doesn't match any known member. For example, if the
-         *   SDK is on an older version than the API, then the API may respond with new members that
-         *   the SDK is unaware of.
+         *
+         * - It was deserialized from data that doesn't match any known member. For example, if the SDK is on
+         *   an older version than the API, then the API may respond with new members that the SDK is unaware
+         *   of.
+         *
          * - It was constructed with an arbitrary value using the [of] method.
          */
         enum class Value {
             MATCH_COMPLETED,
             TEAM_MEMBER_TRANSFERRED,
-            /**
-             * An enum member indicating that [EventType] was instantiated with an unknown value.
-             */
+            /** An enum member indicating that [EventType] was instantiated with an unknown value. */
             _UNKNOWN,
         }
 
         /**
-         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
-         * if the class was instantiated with an unknown value.
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN] if the
+         * class was instantiated with an unknown value.
          *
-         * Use the [known] method instead if you're certain the value is always known or if you want
-         * to throw for the unknown case.
+         * Use the [known] method instead if you're certain the value is always known or if you want to throw
+         * for the unknown case.
          */
         fun value(): Value =
             when (this) {
@@ -656,11 +709,10 @@ private constructor(
         /**
          * Returns an enum member corresponding to this class instance's value.
          *
-         * Use the [value] method instead if you're uncertain the value is always known and don't
-         * want to throw for the unknown case.
+         * Use the [value] method instead if you're uncertain the value is always known and don't want to throw
+         * for the unknown case.
          *
-         * @throws BelieveInvalidDataException if this class instance's value is a not a known
-         *   member.
+         * @throws BelieveInvalidDataException if this class instance's value is a not a known member.
          */
         fun known(): Known =
             when (this) {
@@ -672,25 +724,25 @@ private constructor(
         /**
          * Returns this class instance's primitive wire representation.
          *
-         * This differs from the [toString] method because that method is primarily for debugging
-         * and generally doesn't throw.
+         * This differs from the [toString] method because that method is primarily for debugging and generally
+         * doesn't throw.
          *
-         * @throws BelieveInvalidDataException if this class instance's value does not have the
-         *   expected primitive type.
+         * @throws BelieveInvalidDataException if this class instance's value does not have the expected
+         *   primitive type.
          */
-        fun asString(): String =
-            _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
+        fun asString(): String = _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
 
         private var validated: Boolean = false
 
-        fun validate(): EventType = apply {
-            if (validated) {
-                return@apply
-            }
+        fun validate(): EventType =
+            apply {
+                if (validated) {
+                  return@apply
+                }
 
-            known()
-            validated = true
-        }
+                known()
+                validated = true
+            }
 
         fun isValid(): Boolean =
             try {
@@ -701,19 +753,18 @@ private constructor(
             }
 
         /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
+         * Returns a score indicating how many valid values are contained in this object recursively.
          *
          * Used for best match union deserialization.
          */
         internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
 
         override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
+          if (this === other) {
+              return true
+          }
 
-            return other is EventType && value == other.value
+          return other is EventType && value == other.value
         }
 
         override fun hashCode() = value.hashCode()
@@ -724,11 +775,11 @@ private constructor(
     /** Optional event payload. If not provided, a sample payload will be generated. */
     @JsonDeserialize(using = Payload.Deserializer::class)
     @JsonSerialize(using = Payload.Serializer::class)
-    class Payload
-    private constructor(
+    class Payload private constructor(
         private val matchCompleted: MatchCompleted? = null,
         private val teamMemberTransferred: TeamMemberTransferred? = null,
         private val _json: JsonValue? = null,
+
     ) {
 
         /** Payload for match.completed event. */
@@ -745,41 +796,36 @@ private constructor(
         fun asMatchCompleted(): MatchCompleted = matchCompleted.getOrThrow("matchCompleted")
 
         /** Payload for team_member.transferred event. */
-        fun asTeamMemberTransferred(): TeamMemberTransferred =
-            teamMemberTransferred.getOrThrow("teamMemberTransferred")
+        fun asTeamMemberTransferred(): TeamMemberTransferred = teamMemberTransferred.getOrThrow("teamMemberTransferred")
 
         fun _json(): JsonValue? = _json
 
         fun <T> accept(visitor: Visitor<T>): T =
             when {
                 matchCompleted != null -> visitor.visitMatchCompleted(matchCompleted)
-                teamMemberTransferred != null ->
-                    visitor.visitTeamMemberTransferred(teamMemberTransferred)
+                teamMemberTransferred != null -> visitor.visitTeamMemberTransferred(teamMemberTransferred)
                 else -> visitor.unknown(_json)
             }
 
         private var validated: Boolean = false
 
-        fun validate(): Payload = apply {
-            if (validated) {
-                return@apply
-            }
-
-            accept(
-                object : Visitor<Unit> {
-                    override fun visitMatchCompleted(matchCompleted: MatchCompleted) {
-                        matchCompleted.validate()
-                    }
-
-                    override fun visitTeamMemberTransferred(
-                        teamMemberTransferred: TeamMemberTransferred
-                    ) {
-                        teamMemberTransferred.validate()
-                    }
+        fun validate(): Payload =
+            apply {
+                if (validated) {
+                  return@apply
                 }
-            )
-            validated = true
-        }
+
+                accept(object : Visitor<Unit> {
+                    override fun visitMatchCompleted(matchCompleted: MatchCompleted) {
+                      matchCompleted.validate()
+                    }
+
+                    override fun visitTeamMemberTransferred(teamMemberTransferred: TeamMemberTransferred) {
+                      teamMemberTransferred.validate()
+                    }
+                })
+                validated = true
+            }
 
         fun isValid(): Boolean =
             try {
@@ -790,33 +836,25 @@ private constructor(
             }
 
         /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
+         * Returns a score indicating how many valid values are contained in this object recursively.
          *
          * Used for best match union deserialization.
          */
         internal fun validity(): Int =
-            accept(
-                object : Visitor<Int> {
-                    override fun visitMatchCompleted(matchCompleted: MatchCompleted) =
-                        matchCompleted.validity()
+            accept(object : Visitor<Int> {
+                override fun visitMatchCompleted(matchCompleted: MatchCompleted) = matchCompleted.validity()
 
-                    override fun visitTeamMemberTransferred(
-                        teamMemberTransferred: TeamMemberTransferred
-                    ) = teamMemberTransferred.validity()
+                override fun visitTeamMemberTransferred(teamMemberTransferred: TeamMemberTransferred) = teamMemberTransferred.validity()
 
-                    override fun unknown(json: JsonValue?) = 0
-                }
-            )
+                override fun unknown(json: JsonValue?) = 0
+            })
 
         override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
+          if (this === other) {
+              return true
+          }
 
-            return other is Payload &&
-                matchCompleted == other.matchCompleted &&
-                teamMemberTransferred == other.teamMemberTransferred
+          return other is Payload && matchCompleted == other.matchCompleted && teamMemberTransferred == other.teamMemberTransferred
         }
 
         override fun hashCode(): Int = Objects.hash(matchCompleted, teamMemberTransferred)
@@ -824,8 +862,7 @@ private constructor(
         override fun toString(): String =
             when {
                 matchCompleted != null -> "Payload{matchCompleted=$matchCompleted}"
-                teamMemberTransferred != null ->
-                    "Payload{teamMemberTransferred=$teamMemberTransferred}"
+                teamMemberTransferred != null -> "Payload{teamMemberTransferred=$teamMemberTransferred}"
                 _json != null -> "Payload{_unknown=$_json}"
                 else -> throw IllegalStateException("Invalid Payload")
             }
@@ -833,17 +870,13 @@ private constructor(
         companion object {
 
             /** Payload for match.completed event. */
-            fun ofMatchCompleted(matchCompleted: MatchCompleted) =
-                Payload(matchCompleted = matchCompleted)
+            fun ofMatchCompleted(matchCompleted: MatchCompleted) = Payload(matchCompleted = matchCompleted)
 
             /** Payload for team_member.transferred event. */
-            fun ofTeamMemberTransferred(teamMemberTransferred: TeamMemberTransferred) =
-                Payload(teamMemberTransferred = teamMemberTransferred)
+            fun ofTeamMemberTransferred(teamMemberTransferred: TeamMemberTransferred) = Payload(teamMemberTransferred = teamMemberTransferred)
         }
 
-        /**
-         * An interface that defines how to map each variant of [Payload] to a value of type [T].
-         */
+        /** An interface that defines how to map each variant of [Payload] to a value of type [T]. */
         interface Visitor<out T> {
 
             /** Payload for match.completed event. */
@@ -855,89 +888,83 @@ private constructor(
             /**
              * Maps an unknown variant of [Payload] to a value of type [T].
              *
-             * An instance of [Payload] can contain an unknown variant if it was deserialized from
-             * data that doesn't match any known variant. For example, if the SDK is on an older
-             * version than the API, then the API may respond with new variants that the SDK is
-             * unaware of.
+             * An instance of [Payload] can contain an unknown variant if it was deserialized from data
+             * that doesn't match any known variant. For example, if the SDK is on an older version than the
+             * API, then the API may respond with new variants that the SDK is unaware of.
              *
              * @throws BelieveInvalidDataException in the default implementation.
              */
             fun unknown(json: JsonValue?): T {
-                throw BelieveInvalidDataException("Unknown Payload: $json")
+              throw BelieveInvalidDataException("Unknown Payload: $json")
             }
         }
 
         internal class Deserializer : BaseDeserializer<Payload>(Payload::class) {
 
             override fun ObjectCodec.deserialize(node: JsonNode): Payload {
-                val json = JsonValue.fromJsonNode(node)
-                val eventType = json.asObject()?.get("event_type")?.asString()
+              val json = JsonValue.fromJsonNode(node)
+              val eventType = json.asObject()?.get("event_type")?.asString()
 
-                when (eventType) {
-                    "match.completed" -> {
-                        return tryDeserialize(node, jacksonTypeRef<MatchCompleted>())?.let {
-                            Payload(matchCompleted = it, _json = json)
-                        } ?: Payload(_json = json)
-                    }
-                    "team_member.transferred" -> {
-                        return tryDeserialize(node, jacksonTypeRef<TeamMemberTransferred>())?.let {
-                            Payload(teamMemberTransferred = it, _json = json)
-                        } ?: Payload(_json = json)
-                    }
-                }
+              when (eventType) {
+                  "match.completed" -> {
+                      return tryDeserialize(node, jacksonTypeRef<MatchCompleted>())
+                          ?.let {
+                              Payload(matchCompleted = it, _json = json)
+                          } ?: Payload(_json = json)
+                  }
+                  "team_member.transferred" -> {
+                      return tryDeserialize(node, jacksonTypeRef<TeamMemberTransferred>())
+                          ?.let {
+                              Payload(teamMemberTransferred = it, _json = json)
+                          } ?: Payload(_json = json)
+                  }
+              }
 
-                return Payload(_json = json)
+              return Payload(_json = json)
             }
         }
 
         internal class Serializer : BaseSerializer<Payload>(Payload::class) {
 
-            override fun serialize(
-                value: Payload,
-                generator: JsonGenerator,
-                provider: SerializerProvider,
-            ) {
-                when {
-                    value.matchCompleted != null -> generator.writeObject(value.matchCompleted)
-                    value.teamMemberTransferred != null ->
-                        generator.writeObject(value.teamMemberTransferred)
-                    value._json != null -> generator.writeObject(value._json)
-                    else -> throw IllegalStateException("Invalid Payload")
-                }
+            override fun serialize(value: Payload, generator: JsonGenerator, provider: SerializerProvider) {
+              when {
+                  value.matchCompleted != null -> generator.writeObject(value.matchCompleted)
+                  value.teamMemberTransferred != null -> generator.writeObject(value.teamMemberTransferred)
+                  value._json != null -> generator.writeObject(value._json)
+                  else -> throw IllegalStateException("Invalid Payload")
+              }
             }
         }
 
         /** Payload for match.completed event. */
-        class MatchCompleted
-        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-        private constructor(
+        class MatchCompleted @JsonCreator(mode = JsonCreator.Mode.DISABLED) private constructor(
             private val data: JsonField<Data>,
             private val eventType: JsonField<EventType>,
             private val additionalProperties: MutableMap<String, JsonValue>,
+
         ) {
 
             @JsonCreator
             private constructor(
                 @JsonProperty("data") @ExcludeMissing data: JsonField<Data> = JsonMissing.of(),
-                @JsonProperty("event_type")
-                @ExcludeMissing
-                eventType: JsonField<EventType> = JsonMissing.of(),
-            ) : this(data, eventType, mutableMapOf())
+                @JsonProperty("event_type") @ExcludeMissing eventType: JsonField<EventType> = JsonMissing.of()
+            ) : this(
+              data,
+              eventType,
+              mutableMapOf(),
+            )
 
             /**
              * Event data
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun data(): Data = data.getRequired("data")
 
             /**
              * The type of webhook event
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun eventType(): EventType? = eventType.getNullable("event_type")
 
@@ -946,13 +973,14 @@ private constructor(
              *
              * Unlike [data], this method doesn't throw if the JSON field has an unexpected type.
              */
-            @JsonProperty("data") @ExcludeMissing fun _data(): JsonField<Data> = data
+            @JsonProperty("data")
+            @ExcludeMissing
+            fun _data(): JsonField<Data> = data
 
             /**
              * Returns the raw JSON value of [eventType].
              *
-             * Unlike [eventType], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [eventType], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("event_type")
             @ExcludeMissing
@@ -960,13 +988,12 @@ private constructor(
 
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
-                additionalProperties.put(key, value)
+              additionalProperties.put(key, value)
             }
 
             @JsonAnyGetter
             @ExcludeMissing
-            fun _additionalProperties(): Map<String, JsonValue> =
-                Collections.unmodifiableMap(additionalProperties)
+            fun _additionalProperties(): Map<String, JsonValue> = Collections.unmodifiableMap(additionalProperties)
 
             fun toBuilder() = Builder().from(this)
 
@@ -976,6 +1003,7 @@ private constructor(
                  * Returns a mutable builder for constructing an instance of [MatchCompleted].
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .data()
                  * ```
@@ -990,11 +1018,12 @@ private constructor(
                 private var eventType: JsonField<EventType> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                internal fun from(matchCompleted: MatchCompleted) = apply {
-                    data = matchCompleted.data
-                    eventType = matchCompleted.eventType
-                    additionalProperties = matchCompleted.additionalProperties.toMutableMap()
-                }
+                internal fun from(matchCompleted: MatchCompleted) =
+                    apply {
+                        data = matchCompleted.data
+                        eventType = matchCompleted.eventType
+                        additionalProperties = matchCompleted.additionalProperties.toMutableMap()
+                    }
 
                 /** Event data */
                 fun data(data: Data) = data(JsonField.of(data))
@@ -1002,11 +1031,13 @@ private constructor(
                 /**
                  * Sets [Builder.data] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.data] with a well-typed [Data] value instead.
-                 * This method is primarily for setting the field to an undocumented or not yet
+                 * You should usually call [Builder.data] with a well-typed [Data] value instead. This method is primarily for setting the field to an undocumented or not yet
                  * supported value.
                  */
-                fun data(data: JsonField<Data>) = apply { this.data = data }
+                fun data(data: JsonField<Data>) =
+                    apply {
+                        this.data = data
+                    }
 
                 /** The type of webhook event */
                 fun eventType(eventType: EventType) = eventType(JsonField.of(eventType))
@@ -1014,35 +1045,39 @@ private constructor(
                 /**
                  * Sets [Builder.eventType] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.eventType] with a well-typed [EventType] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.eventType] with a well-typed [EventType] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun eventType(eventType: JsonField<EventType>) = apply {
-                    this.eventType = eventType
-                }
+                fun eventType(eventType: JsonField<EventType>) =
+                    apply {
+                        this.eventType = eventType
+                    }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    putAllAdditionalProperties(additionalProperties)
-                }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
 
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    additionalProperties.put(key, value)
-                }
+                fun putAdditionalProperty(key: String, value: JsonValue) =
+                    apply {
+                        additionalProperties.put(key, value)
+                    }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
                     apply {
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
-                fun removeAdditionalProperty(key: String) = apply {
-                    additionalProperties.remove(key)
-                }
+                fun removeAdditionalProperty(key: String) =
+                    apply {
+                        additionalProperties.remove(key)
+                    }
 
-                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                    keys.forEach(::removeAdditionalProperty)
-                }
+                fun removeAllAdditionalProperties(keys: Set<String>) =
+                    apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
 
                 /**
                  * Returns an immutable instance of [MatchCompleted].
@@ -1050,6 +1085,7 @@ private constructor(
                  * Further updates to this [Builder] will not mutate the returned instance.
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .data()
                  * ```
@@ -1058,23 +1094,26 @@ private constructor(
                  */
                 fun build(): MatchCompleted =
                     MatchCompleted(
-                        checkRequired("data", data),
-                        eventType,
-                        additionalProperties.toMutableMap(),
+                      checkRequired(
+                        "data", data
+                      ),
+                      eventType,
+                      additionalProperties.toMutableMap(),
                     )
             }
 
             private var validated: Boolean = false
 
-            fun validate(): MatchCompleted = apply {
-                if (validated) {
-                    return@apply
-                }
+            fun validate(): MatchCompleted =
+                apply {
+                    if (validated) {
+                      return@apply
+                    }
 
-                data().validate()
-                eventType()?.validate()
-                validated = true
-            }
+                    data().validate()
+                    eventType()?.validate()
+                    validated = true
+                }
 
             fun isValid(): Boolean =
                 try {
@@ -1085,18 +1124,14 @@ private constructor(
                 }
 
             /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
+             * Returns a score indicating how many valid values are contained in this object recursively.
              *
              * Used for best match union deserialization.
              */
-            internal fun validity(): Int =
-                (data.asKnown()?.validity() ?: 0) + (eventType.asKnown()?.validity() ?: 0)
+            internal fun validity(): Int = (data.asKnown()?.validity() ?: 0) + (eventType.asKnown()?.validity() ?: 0)
 
             /** Event data */
-            class Data
-            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-            private constructor(
+            class Data @JsonCreator(mode = JsonCreator.Mode.DISABLED) private constructor(
                 private val awayScore: JsonField<Long>,
                 private val awayTeamId: JsonField<String>,
                 private val completedAt: JsonField<OffsetDateTime>,
@@ -1109,161 +1144,118 @@ private constructor(
                 private val lessonLearned: JsonField<String>,
                 private val manOfTheMatch: JsonField<String>,
                 private val additionalProperties: MutableMap<String, JsonValue>,
+
             ) {
 
                 @JsonCreator
                 private constructor(
-                    @JsonProperty("away_score")
-                    @ExcludeMissing
-                    awayScore: JsonField<Long> = JsonMissing.of(),
-                    @JsonProperty("away_team_id")
-                    @ExcludeMissing
-                    awayTeamId: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("completed_at")
-                    @ExcludeMissing
-                    completedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
-                    @JsonProperty("home_score")
-                    @ExcludeMissing
-                    homeScore: JsonField<Long> = JsonMissing.of(),
-                    @JsonProperty("home_team_id")
-                    @ExcludeMissing
-                    homeTeamId: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("match_id")
-                    @ExcludeMissing
-                    matchId: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("match_type")
-                    @ExcludeMissing
-                    matchType: JsonField<MatchType> = JsonMissing.of(),
-                    @JsonProperty("result")
-                    @ExcludeMissing
-                    result: JsonField<Result> = JsonMissing.of(),
-                    @JsonProperty("ted_post_match_quote")
-                    @ExcludeMissing
-                    tedPostMatchQuote: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("lesson_learned")
-                    @ExcludeMissing
-                    lessonLearned: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("man_of_the_match")
-                    @ExcludeMissing
-                    manOfTheMatch: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("away_score") @ExcludeMissing awayScore: JsonField<Long> = JsonMissing.of(),
+                    @JsonProperty("away_team_id") @ExcludeMissing awayTeamId: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("completed_at") @ExcludeMissing completedAt: JsonField<OffsetDateTime> = JsonMissing.of(),
+                    @JsonProperty("home_score") @ExcludeMissing homeScore: JsonField<Long> = JsonMissing.of(),
+                    @JsonProperty("home_team_id") @ExcludeMissing homeTeamId: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("match_id") @ExcludeMissing matchId: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("match_type") @ExcludeMissing matchType: JsonField<MatchType> = JsonMissing.of(),
+                    @JsonProperty("result") @ExcludeMissing result: JsonField<Result> = JsonMissing.of(),
+                    @JsonProperty("ted_post_match_quote") @ExcludeMissing tedPostMatchQuote: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("lesson_learned") @ExcludeMissing lessonLearned: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("man_of_the_match") @ExcludeMissing manOfTheMatch: JsonField<String> = JsonMissing.of()
                 ) : this(
-                    awayScore,
-                    awayTeamId,
-                    completedAt,
-                    homeScore,
-                    homeTeamId,
-                    matchId,
-                    matchType,
-                    result,
-                    tedPostMatchQuote,
-                    lessonLearned,
-                    manOfTheMatch,
-                    mutableMapOf(),
+                  awayScore,
+                  awayTeamId,
+                  completedAt,
+                  homeScore,
+                  homeTeamId,
+                  matchId,
+                  matchType,
+                  result,
+                  tedPostMatchQuote,
+                  lessonLearned,
+                  manOfTheMatch,
+                  mutableMapOf(),
                 )
 
                 /**
                  * Final away team score
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun awayScore(): Long = awayScore.getRequired("away_score")
 
                 /**
                  * Away team ID
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun awayTeamId(): String = awayTeamId.getRequired("away_team_id")
 
                 /**
                  * When the match completed
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun completedAt(): OffsetDateTime = completedAt.getRequired("completed_at")
 
                 /**
                  * Final home team score
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun homeScore(): Long = homeScore.getRequired("home_score")
 
                 /**
                  * Home team ID
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun homeTeamId(): String = homeTeamId.getRequired("home_team_id")
 
                 /**
                  * Unique match identifier
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun matchId(): String = matchId.getRequired("match_id")
 
                 /**
                  * Type of match
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun matchType(): MatchType = matchType.getRequired("match_type")
 
                 /**
                  * Match result from home team perspective
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun result(): Result = result.getRequired("result")
 
                 /**
                  * Ted's post-match wisdom
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
-                fun tedPostMatchQuote(): String =
-                    tedPostMatchQuote.getRequired("ted_post_match_quote")
+                fun tedPostMatchQuote(): String = tedPostMatchQuote.getRequired("ted_post_match_quote")
 
                 /**
                  * Ted's lesson from the match
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type
-                 *   (e.g. if the server responded with an unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
                  */
                 fun lessonLearned(): String? = lessonLearned.getNullable("lesson_learned")
 
                 /**
                  * Player of the match (if awarded)
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type
-                 *   (e.g. if the server responded with an unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
                  */
                 fun manOfTheMatch(): String? = manOfTheMatch.getNullable("man_of_the_match")
 
                 /**
                  * Returns the raw JSON value of [awayScore].
                  *
-                 * Unlike [awayScore], this method doesn't throw if the JSON field has an unexpected
-                 * type.
+                 * Unlike [awayScore], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("away_score")
                 @ExcludeMissing
@@ -1272,8 +1264,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [awayTeamId].
                  *
-                 * Unlike [awayTeamId], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [awayTeamId], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("away_team_id")
                 @ExcludeMissing
@@ -1282,8 +1273,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [completedAt].
                  *
-                 * Unlike [completedAt], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [completedAt], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("completed_at")
                 @ExcludeMissing
@@ -1292,8 +1282,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [homeScore].
                  *
-                 * Unlike [homeScore], this method doesn't throw if the JSON field has an unexpected
-                 * type.
+                 * Unlike [homeScore], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("home_score")
                 @ExcludeMissing
@@ -1302,8 +1291,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [homeTeamId].
                  *
-                 * Unlike [homeTeamId], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [homeTeamId], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("home_team_id")
                 @ExcludeMissing
@@ -1312,8 +1300,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [matchId].
                  *
-                 * Unlike [matchId], this method doesn't throw if the JSON field has an unexpected
-                 * type.
+                 * Unlike [matchId], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("match_id")
                 @ExcludeMissing
@@ -1322,8 +1309,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [matchType].
                  *
-                 * Unlike [matchType], this method doesn't throw if the JSON field has an unexpected
-                 * type.
+                 * Unlike [matchType], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("match_type")
                 @ExcludeMissing
@@ -1332,16 +1318,16 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [result].
                  *
-                 * Unlike [result], this method doesn't throw if the JSON field has an unexpected
-                 * type.
+                 * Unlike [result], this method doesn't throw if the JSON field has an unexpected type.
                  */
-                @JsonProperty("result") @ExcludeMissing fun _result(): JsonField<Result> = result
+                @JsonProperty("result")
+                @ExcludeMissing
+                fun _result(): JsonField<Result> = result
 
                 /**
                  * Returns the raw JSON value of [tedPostMatchQuote].
                  *
-                 * Unlike [tedPostMatchQuote], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [tedPostMatchQuote], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("ted_post_match_quote")
                 @ExcludeMissing
@@ -1350,8 +1336,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [lessonLearned].
                  *
-                 * Unlike [lessonLearned], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [lessonLearned], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("lesson_learned")
                 @ExcludeMissing
@@ -1360,8 +1345,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [manOfTheMatch].
                  *
-                 * Unlike [manOfTheMatch], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [manOfTheMatch], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("man_of_the_match")
                 @ExcludeMissing
@@ -1369,13 +1353,12 @@ private constructor(
 
                 @JsonAnySetter
                 private fun putAdditionalProperty(key: String, value: JsonValue) {
-                    additionalProperties.put(key, value)
+                  additionalProperties.put(key, value)
                 }
 
                 @JsonAnyGetter
                 @ExcludeMissing
-                fun _additionalProperties(): Map<String, JsonValue> =
-                    Collections.unmodifiableMap(additionalProperties)
+                fun _additionalProperties(): Map<String, JsonValue> = Collections.unmodifiableMap(additionalProperties)
 
                 fun toBuilder() = Builder().from(this)
 
@@ -1385,6 +1368,7 @@ private constructor(
                      * Returns a mutable builder for constructing an instance of [Data].
                      *
                      * The following fields are required:
+                     *
                      * ```kotlin
                      * .awayScore()
                      * .awayTeamId()
@@ -1416,20 +1400,21 @@ private constructor(
                     private var manOfTheMatch: JsonField<String> = JsonMissing.of()
                     private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                    internal fun from(data: Data) = apply {
-                        awayScore = data.awayScore
-                        awayTeamId = data.awayTeamId
-                        completedAt = data.completedAt
-                        homeScore = data.homeScore
-                        homeTeamId = data.homeTeamId
-                        matchId = data.matchId
-                        matchType = data.matchType
-                        result = data.result
-                        tedPostMatchQuote = data.tedPostMatchQuote
-                        lessonLearned = data.lessonLearned
-                        manOfTheMatch = data.manOfTheMatch
-                        additionalProperties = data.additionalProperties.toMutableMap()
-                    }
+                    internal fun from(data: Data) =
+                        apply {
+                            awayScore = data.awayScore
+                            awayTeamId = data.awayTeamId
+                            completedAt = data.completedAt
+                            homeScore = data.homeScore
+                            homeTeamId = data.homeTeamId
+                            matchId = data.matchId
+                            matchType = data.matchType
+                            result = data.result
+                            tedPostMatchQuote = data.tedPostMatchQuote
+                            lessonLearned = data.lessonLearned
+                            manOfTheMatch = data.manOfTheMatch
+                            additionalProperties = data.additionalProperties.toMutableMap()
+                        }
 
                     /** Final away team score */
                     fun awayScore(awayScore: Long) = awayScore(JsonField.of(awayScore))
@@ -1437,11 +1422,13 @@ private constructor(
                     /**
                      * Sets [Builder.awayScore] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.awayScore] with a well-typed [Long] value
-                     * instead. This method is primarily for setting the field to an undocumented or
-                     * not yet supported value.
+                     * You should usually call [Builder.awayScore] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun awayScore(awayScore: JsonField<Long>) = apply { this.awayScore = awayScore }
+                    fun awayScore(awayScore: JsonField<Long>) =
+                        apply {
+                            this.awayScore = awayScore
+                        }
 
                     /** Away team ID */
                     fun awayTeamId(awayTeamId: String) = awayTeamId(JsonField.of(awayTeamId))
@@ -1449,28 +1436,27 @@ private constructor(
                     /**
                      * Sets [Builder.awayTeamId] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.awayTeamId] with a well-typed [String] value
-                     * instead. This method is primarily for setting the field to an undocumented or
-                     * not yet supported value.
+                     * You should usually call [Builder.awayTeamId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun awayTeamId(awayTeamId: JsonField<String>) = apply {
-                        this.awayTeamId = awayTeamId
-                    }
+                    fun awayTeamId(awayTeamId: JsonField<String>) =
+                        apply {
+                            this.awayTeamId = awayTeamId
+                        }
 
                     /** When the match completed */
-                    fun completedAt(completedAt: OffsetDateTime) =
-                        completedAt(JsonField.of(completedAt))
+                    fun completedAt(completedAt: OffsetDateTime) = completedAt(JsonField.of(completedAt))
 
                     /**
                      * Sets [Builder.completedAt] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.completedAt] with a well-typed
-                     * [OffsetDateTime] value instead. This method is primarily for setting the
-                     * field to an undocumented or not yet supported value.
+                     * You should usually call [Builder.completedAt] with a well-typed [OffsetDateTime] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun completedAt(completedAt: JsonField<OffsetDateTime>) = apply {
-                        this.completedAt = completedAt
-                    }
+                    fun completedAt(completedAt: JsonField<OffsetDateTime>) =
+                        apply {
+                            this.completedAt = completedAt
+                        }
 
                     /** Final home team score */
                     fun homeScore(homeScore: Long) = homeScore(JsonField.of(homeScore))
@@ -1478,11 +1464,13 @@ private constructor(
                     /**
                      * Sets [Builder.homeScore] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.homeScore] with a well-typed [Long] value
-                     * instead. This method is primarily for setting the field to an undocumented or
-                     * not yet supported value.
+                     * You should usually call [Builder.homeScore] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun homeScore(homeScore: JsonField<Long>) = apply { this.homeScore = homeScore }
+                    fun homeScore(homeScore: JsonField<Long>) =
+                        apply {
+                            this.homeScore = homeScore
+                        }
 
                     /** Home team ID */
                     fun homeTeamId(homeTeamId: String) = homeTeamId(JsonField.of(homeTeamId))
@@ -1490,13 +1478,13 @@ private constructor(
                     /**
                      * Sets [Builder.homeTeamId] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.homeTeamId] with a well-typed [String] value
-                     * instead. This method is primarily for setting the field to an undocumented or
-                     * not yet supported value.
+                     * You should usually call [Builder.homeTeamId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun homeTeamId(homeTeamId: JsonField<String>) = apply {
-                        this.homeTeamId = homeTeamId
-                    }
+                    fun homeTeamId(homeTeamId: JsonField<String>) =
+                        apply {
+                            this.homeTeamId = homeTeamId
+                        }
 
                     /** Unique match identifier */
                     fun matchId(matchId: String) = matchId(JsonField.of(matchId))
@@ -1504,11 +1492,13 @@ private constructor(
                     /**
                      * Sets [Builder.matchId] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.matchId] with a well-typed [String] value
-                     * instead. This method is primarily for setting the field to an undocumented or
-                     * not yet supported value.
+                     * You should usually call [Builder.matchId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun matchId(matchId: JsonField<String>) = apply { this.matchId = matchId }
+                    fun matchId(matchId: JsonField<String>) =
+                        apply {
+                            this.matchId = matchId
+                        }
 
                     /** Type of match */
                     fun matchType(matchType: MatchType) = matchType(JsonField.of(matchType))
@@ -1516,13 +1506,13 @@ private constructor(
                     /**
                      * Sets [Builder.matchType] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.matchType] with a well-typed [MatchType]
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.matchType] with a well-typed [MatchType] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun matchType(matchType: JsonField<MatchType>) = apply {
-                        this.matchType = matchType
-                    }
+                    fun matchType(matchType: JsonField<MatchType>) =
+                        apply {
+                            this.matchType = matchType
+                        }
 
                     /** Match result from home team perspective */
                     fun result(result: Result) = result(JsonField.of(result))
@@ -1530,78 +1520,81 @@ private constructor(
                     /**
                      * Sets [Builder.result] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.result] with a well-typed [Result] value
-                     * instead. This method is primarily for setting the field to an undocumented or
-                     * not yet supported value.
+                     * You should usually call [Builder.result] with a well-typed [Result] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun result(result: JsonField<Result>) = apply { this.result = result }
+                    fun result(result: JsonField<Result>) =
+                        apply {
+                            this.result = result
+                        }
 
                     /** Ted's post-match wisdom */
-                    fun tedPostMatchQuote(tedPostMatchQuote: String) =
-                        tedPostMatchQuote(JsonField.of(tedPostMatchQuote))
+                    fun tedPostMatchQuote(tedPostMatchQuote: String) = tedPostMatchQuote(JsonField.of(tedPostMatchQuote))
 
                     /**
                      * Sets [Builder.tedPostMatchQuote] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.tedPostMatchQuote] with a well-typed
-                     * [String] value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.tedPostMatchQuote] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun tedPostMatchQuote(tedPostMatchQuote: JsonField<String>) = apply {
-                        this.tedPostMatchQuote = tedPostMatchQuote
-                    }
+                    fun tedPostMatchQuote(tedPostMatchQuote: JsonField<String>) =
+                        apply {
+                            this.tedPostMatchQuote = tedPostMatchQuote
+                        }
 
                     /** Ted's lesson from the match */
-                    fun lessonLearned(lessonLearned: String?) =
-                        lessonLearned(JsonField.ofNullable(lessonLearned))
+                    fun lessonLearned(lessonLearned: String?) = lessonLearned(JsonField.ofNullable(lessonLearned))
 
                     /**
                      * Sets [Builder.lessonLearned] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.lessonLearned] with a well-typed [String]
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.lessonLearned] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun lessonLearned(lessonLearned: JsonField<String>) = apply {
-                        this.lessonLearned = lessonLearned
-                    }
+                    fun lessonLearned(lessonLearned: JsonField<String>) =
+                        apply {
+                            this.lessonLearned = lessonLearned
+                        }
 
                     /** Player of the match (if awarded) */
-                    fun manOfTheMatch(manOfTheMatch: String?) =
-                        manOfTheMatch(JsonField.ofNullable(manOfTheMatch))
+                    fun manOfTheMatch(manOfTheMatch: String?) = manOfTheMatch(JsonField.ofNullable(manOfTheMatch))
 
                     /**
                      * Sets [Builder.manOfTheMatch] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.manOfTheMatch] with a well-typed [String]
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.manOfTheMatch] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun manOfTheMatch(manOfTheMatch: JsonField<String>) = apply {
-                        this.manOfTheMatch = manOfTheMatch
-                    }
+                    fun manOfTheMatch(manOfTheMatch: JsonField<String>) =
+                        apply {
+                            this.manOfTheMatch = manOfTheMatch
+                        }
 
-                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                        this.additionalProperties.clear()
-                        putAllAdditionalProperties(additionalProperties)
-                    }
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.clear()
+                            putAllAdditionalProperties(additionalProperties)
+                        }
 
-                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                        additionalProperties.put(key, value)
-                    }
+                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                        apply {
+                            additionalProperties.put(key, value)
+                        }
 
                     fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
                         apply {
                             this.additionalProperties.putAll(additionalProperties)
                         }
 
-                    fun removeAdditionalProperty(key: String) = apply {
-                        additionalProperties.remove(key)
-                    }
+                    fun removeAdditionalProperty(key: String) =
+                        apply {
+                            additionalProperties.remove(key)
+                        }
 
-                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                        keys.forEach(::removeAdditionalProperty)
-                    }
+                    fun removeAllAdditionalProperties(keys: Set<String>) =
+                        apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
 
                     /**
                      * Returns an immutable instance of [Data].
@@ -1609,6 +1602,7 @@ private constructor(
                      * Further updates to this [Builder] will not mutate the returned instance.
                      *
                      * The following fields are required:
+                     *
                      * ```kotlin
                      * .awayScore()
                      * .awayTeamId()
@@ -1625,41 +1619,60 @@ private constructor(
                      */
                     fun build(): Data =
                         Data(
-                            checkRequired("awayScore", awayScore),
-                            checkRequired("awayTeamId", awayTeamId),
-                            checkRequired("completedAt", completedAt),
-                            checkRequired("homeScore", homeScore),
-                            checkRequired("homeTeamId", homeTeamId),
-                            checkRequired("matchId", matchId),
-                            checkRequired("matchType", matchType),
-                            checkRequired("result", result),
-                            checkRequired("tedPostMatchQuote", tedPostMatchQuote),
-                            lessonLearned,
-                            manOfTheMatch,
-                            additionalProperties.toMutableMap(),
+                          checkRequired(
+                            "awayScore", awayScore
+                          ),
+                          checkRequired(
+                            "awayTeamId", awayTeamId
+                          ),
+                          checkRequired(
+                            "completedAt", completedAt
+                          ),
+                          checkRequired(
+                            "homeScore", homeScore
+                          ),
+                          checkRequired(
+                            "homeTeamId", homeTeamId
+                          ),
+                          checkRequired(
+                            "matchId", matchId
+                          ),
+                          checkRequired(
+                            "matchType", matchType
+                          ),
+                          checkRequired(
+                            "result", result
+                          ),
+                          checkRequired(
+                            "tedPostMatchQuote", tedPostMatchQuote
+                          ),
+                          lessonLearned,
+                          manOfTheMatch,
+                          additionalProperties.toMutableMap(),
                         )
                 }
 
                 private var validated: Boolean = false
 
-                fun validate(): Data = apply {
-                    if (validated) {
-                        return@apply
-                    }
+                fun validate(): Data =
+                    apply {
+                        if (validated) {
+                          return@apply
+                        }
 
-                    awayScore()
-                    awayTeamId()
-                    completedAt()
-                    homeScore()
-                    homeTeamId()
-                    matchId()
-                    matchType().validate()
-                    result().validate()
-                    tedPostMatchQuote()
-                    lessonLearned()
-                    manOfTheMatch()
-                    validated = true
-                }
+                        awayScore()
+                        awayTeamId()
+                        completedAt()
+                        homeScore()
+                        homeTeamId()
+                        matchId()
+                        matchType().validate()
+                        result().validate()
+                        tedPostMatchQuote()
+                        lessonLearned()
+                        manOfTheMatch()
+                        validated = true
+                    }
 
                 fun isValid(): Boolean =
                     try {
@@ -1670,36 +1683,24 @@ private constructor(
                     }
 
                 /**
-                 * Returns a score indicating how many valid values are contained in this object
-                 * recursively.
+                 * Returns a score indicating how many valid values are contained in this object recursively.
                  *
                  * Used for best match union deserialization.
                  */
-                internal fun validity(): Int =
-                    (if (awayScore.asKnown() == null) 0 else 1) +
-                        (if (awayTeamId.asKnown() == null) 0 else 1) +
-                        (if (completedAt.asKnown() == null) 0 else 1) +
-                        (if (homeScore.asKnown() == null) 0 else 1) +
-                        (if (homeTeamId.asKnown() == null) 0 else 1) +
-                        (if (matchId.asKnown() == null) 0 else 1) +
-                        (matchType.asKnown()?.validity() ?: 0) +
-                        (result.asKnown()?.validity() ?: 0) +
-                        (if (tedPostMatchQuote.asKnown() == null) 0 else 1) +
-                        (if (lessonLearned.asKnown() == null) 0 else 1) +
-                        (if (manOfTheMatch.asKnown() == null) 0 else 1)
+                internal fun validity(): Int = (if (awayScore.asKnown() == null) 0 else 1) + (if (awayTeamId.asKnown() == null) 0 else 1) + (if (completedAt.asKnown() == null) 0 else 1) + (if (homeScore.asKnown() == null) 0 else 1) + (if (homeTeamId.asKnown() == null) 0 else 1) + (if (matchId.asKnown() == null) 0 else 1) + (matchType.asKnown()?.validity() ?: 0) + (result.asKnown()?.validity() ?: 0) + (if (tedPostMatchQuote.asKnown() == null) 0 else 1) + (if (lessonLearned.asKnown() == null) 0 else 1) + (if (manOfTheMatch.asKnown() == null) 0 else 1)
 
                 /** Type of match */
-                class MatchType
-                @JsonCreator
-                private constructor(private val value: JsonField<String>) : Enum {
+                class MatchType @JsonCreator private constructor(
+                    private val value: JsonField<String>,
+
+                ) : Enum {
 
                     /**
                      * Returns this class instance's raw value.
                      *
-                     * This is usually only useful if this instance was deserialized from data that
-                     * doesn't match any known member, and you want to know that value. For example,
-                     * if the SDK is on an older version than the API, then the API may respond with
-                     * new members that the SDK is unaware of.
+                     * This is usually only useful if this instance was deserialized from data that doesn't match any known
+                     * member, and you want to know that value. For example, if the SDK is on an older version than the
+                     * API, then the API may respond with new members that the SDK is unaware of.
                      */
                     @com.fasterxml.jackson.annotation.JsonValue
                     fun _value(): JsonField<String> = value
@@ -1729,13 +1730,14 @@ private constructor(
                     }
 
                     /**
-                     * An enum containing [MatchType]'s known values, as well as an [_UNKNOWN]
-                     * member.
+                     * An enum containing [MatchType]'s known values, as well as an [_UNKNOWN] member.
                      *
                      * An instance of [MatchType] can contain an unknown value in a couple of cases:
-                     * - It was deserialized from data that doesn't match any known member. For
-                     *   example, if the SDK is on an older version than the API, then the API may
-                     *   respond with new members that the SDK is unaware of.
+                     *
+                     * - It was deserialized from data that doesn't match any known member. For example, if the SDK is on
+                     *   an older version than the API, then the API may respond with new members that the SDK is unaware
+                     *   of.
+                     *
                      * - It was constructed with an arbitrary value using the [of] method.
                      */
                     enum class Value {
@@ -1744,19 +1746,16 @@ private constructor(
                         FRIENDLY,
                         PLAYOFF,
                         FINAL,
-                        /**
-                         * An enum member indicating that [MatchType] was instantiated with an
-                         * unknown value.
-                         */
+                        /** An enum member indicating that [MatchType] was instantiated with an unknown value. */
                         _UNKNOWN,
                     }
 
                     /**
-                     * Returns an enum member corresponding to this class instance's value, or
-                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                     * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN] if the
+                     * class was instantiated with an unknown value.
                      *
-                     * Use the [known] method instead if you're certain the value is always known or
-                     * if you want to throw for the unknown case.
+                     * Use the [known] method instead if you're certain the value is always known or if you want to throw
+                     * for the unknown case.
                      */
                     fun value(): Value =
                         when (this) {
@@ -1771,11 +1770,10 @@ private constructor(
                     /**
                      * Returns an enum member corresponding to this class instance's value.
                      *
-                     * Use the [value] method instead if you're uncertain the value is always known
-                     * and don't want to throw for the unknown case.
+                     * Use the [value] method instead if you're uncertain the value is always known and don't want to throw
+                     * for the unknown case.
                      *
-                     * @throws BelieveInvalidDataException if this class instance's value is a not a
-                     *   known member.
+                     * @throws BelieveInvalidDataException if this class instance's value is a not a known member.
                      */
                     fun known(): Known =
                         when (this) {
@@ -1790,26 +1788,25 @@ private constructor(
                     /**
                      * Returns this class instance's primitive wire representation.
                      *
-                     * This differs from the [toString] method because that method is primarily for
-                     * debugging and generally doesn't throw.
+                     * This differs from the [toString] method because that method is primarily for debugging and generally
+                     * doesn't throw.
                      *
-                     * @throws BelieveInvalidDataException if this class instance's value does not
-                     *   have the expected primitive type.
+                     * @throws BelieveInvalidDataException if this class instance's value does not have the expected
+                     *   primitive type.
                      */
-                    fun asString(): String =
-                        _value().asString()
-                            ?: throw BelieveInvalidDataException("Value is not a String")
+                    fun asString(): String = _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
 
                     private var validated: Boolean = false
 
-                    fun validate(): MatchType = apply {
-                        if (validated) {
-                            return@apply
-                        }
+                    fun validate(): MatchType =
+                        apply {
+                            if (validated) {
+                              return@apply
+                            }
 
-                        known()
-                        validated = true
-                    }
+                            known()
+                            validated = true
+                        }
 
                     fun isValid(): Boolean =
                         try {
@@ -1820,19 +1817,18 @@ private constructor(
                         }
 
                     /**
-                     * Returns a score indicating how many valid values are contained in this object
-                     * recursively.
+                     * Returns a score indicating how many valid values are contained in this object recursively.
                      *
                      * Used for best match union deserialization.
                      */
                     internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
 
                     override fun equals(other: Any?): Boolean {
-                        if (this === other) {
-                            return true
-                        }
+                      if (this === other) {
+                          return true
+                      }
 
-                        return other is MatchType && value == other.value
+                      return other is MatchType && value == other.value
                     }
 
                     override fun hashCode() = value.hashCode()
@@ -1841,17 +1837,17 @@ private constructor(
                 }
 
                 /** Match result from home team perspective */
-                class Result
-                @JsonCreator
-                private constructor(private val value: JsonField<String>) : Enum {
+                class Result @JsonCreator private constructor(
+                    private val value: JsonField<String>,
+
+                ) : Enum {
 
                     /**
                      * Returns this class instance's raw value.
                      *
-                     * This is usually only useful if this instance was deserialized from data that
-                     * doesn't match any known member, and you want to know that value. For example,
-                     * if the SDK is on an older version than the API, then the API may respond with
-                     * new members that the SDK is unaware of.
+                     * This is usually only useful if this instance was deserialized from data that doesn't match any known
+                     * member, and you want to know that value. For example, if the SDK is on an older version than the
+                     * API, then the API may respond with new members that the SDK is unaware of.
                      */
                     @com.fasterxml.jackson.annotation.JsonValue
                     fun _value(): JsonField<String> = value
@@ -1878,28 +1874,27 @@ private constructor(
                      * An enum containing [Result]'s known values, as well as an [_UNKNOWN] member.
                      *
                      * An instance of [Result] can contain an unknown value in a couple of cases:
-                     * - It was deserialized from data that doesn't match any known member. For
-                     *   example, if the SDK is on an older version than the API, then the API may
-                     *   respond with new members that the SDK is unaware of.
+                     *
+                     * - It was deserialized from data that doesn't match any known member. For example, if the SDK is on
+                     *   an older version than the API, then the API may respond with new members that the SDK is unaware
+                     *   of.
+                     *
                      * - It was constructed with an arbitrary value using the [of] method.
                      */
                     enum class Value {
                         HOME_WIN,
                         AWAY_WIN,
                         DRAW,
-                        /**
-                         * An enum member indicating that [Result] was instantiated with an unknown
-                         * value.
-                         */
+                        /** An enum member indicating that [Result] was instantiated with an unknown value. */
                         _UNKNOWN,
                     }
 
                     /**
-                     * Returns an enum member corresponding to this class instance's value, or
-                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                     * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN] if the
+                     * class was instantiated with an unknown value.
                      *
-                     * Use the [known] method instead if you're certain the value is always known or
-                     * if you want to throw for the unknown case.
+                     * Use the [known] method instead if you're certain the value is always known or if you want to throw
+                     * for the unknown case.
                      */
                     fun value(): Value =
                         when (this) {
@@ -1912,11 +1907,10 @@ private constructor(
                     /**
                      * Returns an enum member corresponding to this class instance's value.
                      *
-                     * Use the [value] method instead if you're uncertain the value is always known
-                     * and don't want to throw for the unknown case.
+                     * Use the [value] method instead if you're uncertain the value is always known and don't want to throw
+                     * for the unknown case.
                      *
-                     * @throws BelieveInvalidDataException if this class instance's value is a not a
-                     *   known member.
+                     * @throws BelieveInvalidDataException if this class instance's value is a not a known member.
                      */
                     fun known(): Known =
                         when (this) {
@@ -1929,26 +1923,25 @@ private constructor(
                     /**
                      * Returns this class instance's primitive wire representation.
                      *
-                     * This differs from the [toString] method because that method is primarily for
-                     * debugging and generally doesn't throw.
+                     * This differs from the [toString] method because that method is primarily for debugging and generally
+                     * doesn't throw.
                      *
-                     * @throws BelieveInvalidDataException if this class instance's value does not
-                     *   have the expected primitive type.
+                     * @throws BelieveInvalidDataException if this class instance's value does not have the expected
+                     *   primitive type.
                      */
-                    fun asString(): String =
-                        _value().asString()
-                            ?: throw BelieveInvalidDataException("Value is not a String")
+                    fun asString(): String = _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
 
                     private var validated: Boolean = false
 
-                    fun validate(): Result = apply {
-                        if (validated) {
-                            return@apply
-                        }
+                    fun validate(): Result =
+                        apply {
+                            if (validated) {
+                              return@apply
+                            }
 
-                        known()
-                        validated = true
-                    }
+                            known()
+                            validated = true
+                        }
 
                     fun isValid(): Boolean =
                         try {
@@ -1959,19 +1952,18 @@ private constructor(
                         }
 
                     /**
-                     * Returns a score indicating how many valid values are contained in this object
-                     * recursively.
+                     * Returns a score indicating how many valid values are contained in this object recursively.
                      *
                      * Used for best match union deserialization.
                      */
                     internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
 
                     override fun equals(other: Any?): Boolean {
-                        if (this === other) {
-                            return true
-                        }
+                      if (this === other) {
+                          return true
+                      }
 
-                        return other is Result && value == other.value
+                      return other is Result && value == other.value
                     }
 
                     override fun hashCode() = value.hashCode()
@@ -1980,61 +1972,35 @@ private constructor(
                 }
 
                 override fun equals(other: Any?): Boolean {
-                    if (this === other) {
-                        return true
-                    }
+                  if (this === other) {
+                      return true
+                  }
 
-                    return other is Data &&
-                        awayScore == other.awayScore &&
-                        awayTeamId == other.awayTeamId &&
-                        completedAt == other.completedAt &&
-                        homeScore == other.homeScore &&
-                        homeTeamId == other.homeTeamId &&
-                        matchId == other.matchId &&
-                        matchType == other.matchType &&
-                        result == other.result &&
-                        tedPostMatchQuote == other.tedPostMatchQuote &&
-                        lessonLearned == other.lessonLearned &&
-                        manOfTheMatch == other.manOfTheMatch &&
-                        additionalProperties == other.additionalProperties
+                  return other is Data && awayScore == other.awayScore && awayTeamId == other.awayTeamId && completedAt == other.completedAt && homeScore == other.homeScore && homeTeamId == other.homeTeamId && matchId == other.matchId && matchType == other.matchType && result == other.result && tedPostMatchQuote == other.tedPostMatchQuote && lessonLearned == other.lessonLearned && manOfTheMatch == other.manOfTheMatch && additionalProperties == other.additionalProperties
                 }
 
-                private val hashCode: Int by lazy {
-                    Objects.hash(
-                        awayScore,
-                        awayTeamId,
-                        completedAt,
-                        homeScore,
-                        homeTeamId,
-                        matchId,
-                        matchType,
-                        result,
-                        tedPostMatchQuote,
-                        lessonLearned,
-                        manOfTheMatch,
-                        additionalProperties,
-                    )
-                }
+                private val hashCode: Int by lazy { Objects.hash(awayScore, awayTeamId, completedAt, homeScore, homeTeamId, matchId, matchType, result, tedPostMatchQuote, lessonLearned, manOfTheMatch, additionalProperties) }
 
                 override fun hashCode(): Int = hashCode
 
-                override fun toString() =
-                    "Data{awayScore=$awayScore, awayTeamId=$awayTeamId, completedAt=$completedAt, homeScore=$homeScore, homeTeamId=$homeTeamId, matchId=$matchId, matchType=$matchType, result=$result, tedPostMatchQuote=$tedPostMatchQuote, lessonLearned=$lessonLearned, manOfTheMatch=$manOfTheMatch, additionalProperties=$additionalProperties}"
+                override fun toString() = "Data{awayScore=$awayScore, awayTeamId=$awayTeamId, completedAt=$completedAt, homeScore=$homeScore, homeTeamId=$homeTeamId, matchId=$matchId, matchType=$matchType, result=$result, tedPostMatchQuote=$tedPostMatchQuote, lessonLearned=$lessonLearned, manOfTheMatch=$manOfTheMatch, additionalProperties=$additionalProperties}"
             }
 
             /** The type of webhook event */
-            class EventType @JsonCreator private constructor(private val value: JsonField<String>) :
-                Enum {
+            class EventType @JsonCreator private constructor(
+                private val value: JsonField<String>,
+
+            ) : Enum {
 
                 /**
                  * Returns this class instance's raw value.
                  *
-                 * This is usually only useful if this instance was deserialized from data that
-                 * doesn't match any known member, and you want to know that value. For example, if
-                 * the SDK is on an older version than the API, then the API may respond with new
-                 * members that the SDK is unaware of.
+                 * This is usually only useful if this instance was deserialized from data that doesn't match any known
+                 * member, and you want to know that value. For example, if the SDK is on an older version than the
+                 * API, then the API may respond with new members that the SDK is unaware of.
                  */
-                @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+                @com.fasterxml.jackson.annotation.JsonValue
+                fun _value(): JsonField<String> = value
 
                 companion object {
 
@@ -2045,33 +2011,32 @@ private constructor(
 
                 /** An enum containing [EventType]'s known values. */
                 enum class Known {
-                    MATCH_COMPLETED
+                    MATCH_COMPLETED,
                 }
 
                 /**
                  * An enum containing [EventType]'s known values, as well as an [_UNKNOWN] member.
                  *
                  * An instance of [EventType] can contain an unknown value in a couple of cases:
-                 * - It was deserialized from data that doesn't match any known member. For example,
-                 *   if the SDK is on an older version than the API, then the API may respond with
-                 *   new members that the SDK is unaware of.
+                 *
+                 * - It was deserialized from data that doesn't match any known member. For example, if the SDK is on
+                 *   an older version than the API, then the API may respond with new members that the SDK is unaware
+                 *   of.
+                 *
                  * - It was constructed with an arbitrary value using the [of] method.
                  */
                 enum class Value {
                     MATCH_COMPLETED,
-                    /**
-                     * An enum member indicating that [EventType] was instantiated with an unknown
-                     * value.
-                     */
+                    /** An enum member indicating that [EventType] was instantiated with an unknown value. */
                     _UNKNOWN,
                 }
 
                 /**
-                 * Returns an enum member corresponding to this class instance's value, or
-                 * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                 * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN] if the
+                 * class was instantiated with an unknown value.
                  *
-                 * Use the [known] method instead if you're certain the value is always known or if
-                 * you want to throw for the unknown case.
+                 * Use the [known] method instead if you're certain the value is always known or if you want to throw
+                 * for the unknown case.
                  */
                 fun value(): Value =
                     when (this) {
@@ -2082,11 +2047,10 @@ private constructor(
                 /**
                  * Returns an enum member corresponding to this class instance's value.
                  *
-                 * Use the [value] method instead if you're uncertain the value is always known and
-                 * don't want to throw for the unknown case.
+                 * Use the [value] method instead if you're uncertain the value is always known and don't want to throw
+                 * for the unknown case.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value is a not a
-                 *   known member.
+                 * @throws BelieveInvalidDataException if this class instance's value is a not a known member.
                  */
                 fun known(): Known =
                     when (this) {
@@ -2097,26 +2061,25 @@ private constructor(
                 /**
                  * Returns this class instance's primitive wire representation.
                  *
-                 * This differs from the [toString] method because that method is primarily for
-                 * debugging and generally doesn't throw.
+                 * This differs from the [toString] method because that method is primarily for debugging and generally
+                 * doesn't throw.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value does not have
-                 *   the expected primitive type.
+                 * @throws BelieveInvalidDataException if this class instance's value does not have the expected
+                 *   primitive type.
                  */
-                fun asString(): String =
-                    _value().asString()
-                        ?: throw BelieveInvalidDataException("Value is not a String")
+                fun asString(): String = _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
 
                 private var validated: Boolean = false
 
-                fun validate(): EventType = apply {
-                    if (validated) {
-                        return@apply
-                    }
+                fun validate(): EventType =
+                    apply {
+                        if (validated) {
+                          return@apply
+                        }
 
-                    known()
-                    validated = true
-                }
+                        known()
+                        validated = true
+                    }
 
                 fun isValid(): Boolean =
                     try {
@@ -2127,19 +2090,18 @@ private constructor(
                     }
 
                 /**
-                 * Returns a score indicating how many valid values are contained in this object
-                 * recursively.
+                 * Returns a score indicating how many valid values are contained in this object recursively.
                  *
                  * Used for best match union deserialization.
                  */
                 internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
 
                 override fun equals(other: Any?): Boolean {
-                    if (this === other) {
-                        return true
-                    }
+                  if (this === other) {
+                      return true
+                  }
 
-                    return other is EventType && value == other.value
+                  return other is EventType && value == other.value
                 }
 
                 override fun hashCode() = value.hashCode()
@@ -2148,57 +2110,49 @@ private constructor(
             }
 
             override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
+              if (this === other) {
+                  return true
+              }
 
-                return other is MatchCompleted &&
-                    data == other.data &&
-                    eventType == other.eventType &&
-                    additionalProperties == other.additionalProperties
+              return other is MatchCompleted && data == other.data && eventType == other.eventType && additionalProperties == other.additionalProperties
             }
 
-            private val hashCode: Int by lazy {
-                Objects.hash(data, eventType, additionalProperties)
-            }
+            private val hashCode: Int by lazy { Objects.hash(data, eventType, additionalProperties) }
 
             override fun hashCode(): Int = hashCode
 
-            override fun toString() =
-                "MatchCompleted{data=$data, eventType=$eventType, additionalProperties=$additionalProperties}"
+            override fun toString() = "MatchCompleted{data=$data, eventType=$eventType, additionalProperties=$additionalProperties}"
         }
 
         /** Payload for team_member.transferred event. */
-        class TeamMemberTransferred
-        @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-        private constructor(
+        class TeamMemberTransferred @JsonCreator(mode = JsonCreator.Mode.DISABLED) private constructor(
             private val data: JsonField<Data>,
             private val eventType: JsonField<EventType>,
             private val additionalProperties: MutableMap<String, JsonValue>,
+
         ) {
 
             @JsonCreator
             private constructor(
                 @JsonProperty("data") @ExcludeMissing data: JsonField<Data> = JsonMissing.of(),
-                @JsonProperty("event_type")
-                @ExcludeMissing
-                eventType: JsonField<EventType> = JsonMissing.of(),
-            ) : this(data, eventType, mutableMapOf())
+                @JsonProperty("event_type") @ExcludeMissing eventType: JsonField<EventType> = JsonMissing.of()
+            ) : this(
+              data,
+              eventType,
+              mutableMapOf(),
+            )
 
             /**
              * Event data
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is
-             *   unexpectedly missing or null (e.g. if the server responded with an unexpected
-             *   value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
              */
             fun data(): Data = data.getRequired("data")
 
             /**
              * The type of webhook event
              *
-             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if
-             *   the server responded with an unexpected value).
+             * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
              */
             fun eventType(): EventType? = eventType.getNullable("event_type")
 
@@ -2207,13 +2161,14 @@ private constructor(
              *
              * Unlike [data], this method doesn't throw if the JSON field has an unexpected type.
              */
-            @JsonProperty("data") @ExcludeMissing fun _data(): JsonField<Data> = data
+            @JsonProperty("data")
+            @ExcludeMissing
+            fun _data(): JsonField<Data> = data
 
             /**
              * Returns the raw JSON value of [eventType].
              *
-             * Unlike [eventType], this method doesn't throw if the JSON field has an unexpected
-             * type.
+             * Unlike [eventType], this method doesn't throw if the JSON field has an unexpected type.
              */
             @JsonProperty("event_type")
             @ExcludeMissing
@@ -2221,23 +2176,22 @@ private constructor(
 
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
-                additionalProperties.put(key, value)
+              additionalProperties.put(key, value)
             }
 
             @JsonAnyGetter
             @ExcludeMissing
-            fun _additionalProperties(): Map<String, JsonValue> =
-                Collections.unmodifiableMap(additionalProperties)
+            fun _additionalProperties(): Map<String, JsonValue> = Collections.unmodifiableMap(additionalProperties)
 
             fun toBuilder() = Builder().from(this)
 
             companion object {
 
                 /**
-                 * Returns a mutable builder for constructing an instance of
-                 * [TeamMemberTransferred].
+                 * Returns a mutable builder for constructing an instance of [TeamMemberTransferred].
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .data()
                  * ```
@@ -2252,11 +2206,12 @@ private constructor(
                 private var eventType: JsonField<EventType> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                internal fun from(teamMemberTransferred: TeamMemberTransferred) = apply {
-                    data = teamMemberTransferred.data
-                    eventType = teamMemberTransferred.eventType
-                    additionalProperties = teamMemberTransferred.additionalProperties.toMutableMap()
-                }
+                internal fun from(teamMemberTransferred: TeamMemberTransferred) =
+                    apply {
+                        data = teamMemberTransferred.data
+                        eventType = teamMemberTransferred.eventType
+                        additionalProperties = teamMemberTransferred.additionalProperties.toMutableMap()
+                    }
 
                 /** Event data */
                 fun data(data: Data) = data(JsonField.of(data))
@@ -2264,11 +2219,13 @@ private constructor(
                 /**
                  * Sets [Builder.data] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.data] with a well-typed [Data] value instead.
-                 * This method is primarily for setting the field to an undocumented or not yet
+                 * You should usually call [Builder.data] with a well-typed [Data] value instead. This method is primarily for setting the field to an undocumented or not yet
                  * supported value.
                  */
-                fun data(data: JsonField<Data>) = apply { this.data = data }
+                fun data(data: JsonField<Data>) =
+                    apply {
+                        this.data = data
+                    }
 
                 /** The type of webhook event */
                 fun eventType(eventType: EventType) = eventType(JsonField.of(eventType))
@@ -2276,35 +2233,39 @@ private constructor(
                 /**
                  * Sets [Builder.eventType] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.eventType] with a well-typed [EventType] value
-                 * instead. This method is primarily for setting the field to an undocumented or not
-                 * yet supported value.
+                 * You should usually call [Builder.eventType] with a well-typed [EventType] value instead. This method is primarily for setting the field to an undocumented or not yet
+                 * supported value.
                  */
-                fun eventType(eventType: JsonField<EventType>) = apply {
-                    this.eventType = eventType
-                }
+                fun eventType(eventType: JsonField<EventType>) =
+                    apply {
+                        this.eventType = eventType
+                    }
 
-                fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                    this.additionalProperties.clear()
-                    putAllAdditionalProperties(additionalProperties)
-                }
+                fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                    apply {
+                        this.additionalProperties.clear()
+                        putAllAdditionalProperties(additionalProperties)
+                    }
 
-                fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                    additionalProperties.put(key, value)
-                }
+                fun putAdditionalProperty(key: String, value: JsonValue) =
+                    apply {
+                        additionalProperties.put(key, value)
+                    }
 
                 fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
                     apply {
                         this.additionalProperties.putAll(additionalProperties)
                     }
 
-                fun removeAdditionalProperty(key: String) = apply {
-                    additionalProperties.remove(key)
-                }
+                fun removeAdditionalProperty(key: String) =
+                    apply {
+                        additionalProperties.remove(key)
+                    }
 
-                fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                    keys.forEach(::removeAdditionalProperty)
-                }
+                fun removeAllAdditionalProperties(keys: Set<String>) =
+                    apply {
+                        keys.forEach(::removeAdditionalProperty)
+                    }
 
                 /**
                  * Returns an immutable instance of [TeamMemberTransferred].
@@ -2312,6 +2273,7 @@ private constructor(
                  * Further updates to this [Builder] will not mutate the returned instance.
                  *
                  * The following fields are required:
+                 *
                  * ```kotlin
                  * .data()
                  * ```
@@ -2320,23 +2282,26 @@ private constructor(
                  */
                 fun build(): TeamMemberTransferred =
                     TeamMemberTransferred(
-                        checkRequired("data", data),
-                        eventType,
-                        additionalProperties.toMutableMap(),
+                      checkRequired(
+                        "data", data
+                      ),
+                      eventType,
+                      additionalProperties.toMutableMap(),
                     )
             }
 
             private var validated: Boolean = false
 
-            fun validate(): TeamMemberTransferred = apply {
-                if (validated) {
-                    return@apply
-                }
+            fun validate(): TeamMemberTransferred =
+                apply {
+                    if (validated) {
+                      return@apply
+                    }
 
-                data().validate()
-                eventType()?.validate()
-                validated = true
-            }
+                    data().validate()
+                    eventType()?.validate()
+                    validated = true
+                }
 
             fun isValid(): Boolean =
                 try {
@@ -2347,18 +2312,14 @@ private constructor(
                 }
 
             /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
+             * Returns a score indicating how many valid values are contained in this object recursively.
              *
              * Used for best match union deserialization.
              */
-            internal fun validity(): Int =
-                (data.asKnown()?.validity() ?: 0) + (eventType.asKnown()?.validity() ?: 0)
+            internal fun validity(): Int = (data.asKnown()?.validity() ?: 0) + (eventType.asKnown()?.validity() ?: 0)
 
             /** Event data */
-            class Data
-            @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-            private constructor(
+            class Data @JsonCreator(mode = JsonCreator.Mode.DISABLED) private constructor(
                 private val characterId: JsonField<String>,
                 private val characterName: JsonField<String>,
                 private val memberType: JsonField<MemberType>,
@@ -2372,172 +2333,127 @@ private constructor(
                 private val transferFeeGbp: JsonField<String>,
                 private val yearsWithPreviousTeam: JsonField<Long>,
                 private val additionalProperties: MutableMap<String, JsonValue>,
+
             ) {
 
                 @JsonCreator
                 private constructor(
-                    @JsonProperty("character_id")
-                    @ExcludeMissing
-                    characterId: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("character_name")
-                    @ExcludeMissing
-                    characterName: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("member_type")
-                    @ExcludeMissing
-                    memberType: JsonField<MemberType> = JsonMissing.of(),
-                    @JsonProperty("team_id")
-                    @ExcludeMissing
-                    teamId: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("team_member_id")
-                    @ExcludeMissing
-                    teamMemberId: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("team_name")
-                    @ExcludeMissing
-                    teamName: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("ted_reaction")
-                    @ExcludeMissing
-                    tedReaction: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("transfer_type")
-                    @ExcludeMissing
-                    transferType: JsonField<TransferType> = JsonMissing.of(),
-                    @JsonProperty("previous_team_id")
-                    @ExcludeMissing
-                    previousTeamId: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("previous_team_name")
-                    @ExcludeMissing
-                    previousTeamName: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("transfer_fee_gbp")
-                    @ExcludeMissing
-                    transferFeeGbp: JsonField<String> = JsonMissing.of(),
-                    @JsonProperty("years_with_previous_team")
-                    @ExcludeMissing
-                    yearsWithPreviousTeam: JsonField<Long> = JsonMissing.of(),
+                    @JsonProperty("character_id") @ExcludeMissing characterId: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("character_name") @ExcludeMissing characterName: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("member_type") @ExcludeMissing memberType: JsonField<MemberType> = JsonMissing.of(),
+                    @JsonProperty("team_id") @ExcludeMissing teamId: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("team_member_id") @ExcludeMissing teamMemberId: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("team_name") @ExcludeMissing teamName: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("ted_reaction") @ExcludeMissing tedReaction: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("transfer_type") @ExcludeMissing transferType: JsonField<TransferType> = JsonMissing.of(),
+                    @JsonProperty("previous_team_id") @ExcludeMissing previousTeamId: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("previous_team_name") @ExcludeMissing previousTeamName: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("transfer_fee_gbp") @ExcludeMissing transferFeeGbp: JsonField<String> = JsonMissing.of(),
+                    @JsonProperty("years_with_previous_team") @ExcludeMissing yearsWithPreviousTeam: JsonField<Long> = JsonMissing.of()
                 ) : this(
-                    characterId,
-                    characterName,
-                    memberType,
-                    teamId,
-                    teamMemberId,
-                    teamName,
-                    tedReaction,
-                    transferType,
-                    previousTeamId,
-                    previousTeamName,
-                    transferFeeGbp,
-                    yearsWithPreviousTeam,
-                    mutableMapOf(),
+                  characterId,
+                  characterName,
+                  memberType,
+                  teamId,
+                  teamMemberId,
+                  teamName,
+                  tedReaction,
+                  transferType,
+                  previousTeamId,
+                  previousTeamName,
+                  transferFeeGbp,
+                  yearsWithPreviousTeam,
+                  mutableMapOf(),
                 )
 
                 /**
                  * ID of the character (links to /characters)
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun characterId(): String = characterId.getRequired("character_id")
 
                 /**
                  * Name of the character
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun characterName(): String = characterName.getRequired("character_name")
 
                 /**
                  * Type of team member
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun memberType(): MemberType = memberType.getRequired("member_type")
 
                 /**
                  * ID of the team involved
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun teamId(): String = teamId.getRequired("team_id")
 
                 /**
                  * ID of the team member
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun teamMemberId(): String = teamMemberId.getRequired("team_member_id")
 
                 /**
                  * Name of the team involved
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun teamName(): String = teamName.getRequired("team_name")
 
                 /**
                  * Ted's reaction to the transfer
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun tedReaction(): String = tedReaction.getRequired("ted_reaction")
 
                 /**
                  * Whether the member joined or departed
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or
-                 *   is unexpectedly missing or null (e.g. if the server responded with an
-                 *   unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type or is unexpectedly missing or null (e.g. if the server responded with an unexpected value).
                  */
                 fun transferType(): TransferType = transferType.getRequired("transfer_type")
 
                 /**
                  * Previous team ID (for joins from another team)
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type
-                 *   (e.g. if the server responded with an unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
                  */
                 fun previousTeamId(): String? = previousTeamId.getNullable("previous_team_id")
 
                 /**
                  * Previous team name (for joins from another team)
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type
-                 *   (e.g. if the server responded with an unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
                  */
                 fun previousTeamName(): String? = previousTeamName.getNullable("previous_team_name")
 
                 /**
                  * Transfer fee in GBP (for players)
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type
-                 *   (e.g. if the server responded with an unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
                  */
                 fun transferFeeGbp(): String? = transferFeeGbp.getNullable("transfer_fee_gbp")
 
                 /**
                  * Years spent with previous team
                  *
-                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type
-                 *   (e.g. if the server responded with an unexpected value).
+                 * @throws BelieveInvalidDataException if the JSON field has an unexpected type (e.g. if the server responded with an unexpected value).
                  */
-                fun yearsWithPreviousTeam(): Long? =
-                    yearsWithPreviousTeam.getNullable("years_with_previous_team")
+                fun yearsWithPreviousTeam(): Long? = yearsWithPreviousTeam.getNullable("years_with_previous_team")
 
                 /**
                  * Returns the raw JSON value of [characterId].
                  *
-                 * Unlike [characterId], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [characterId], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("character_id")
                 @ExcludeMissing
@@ -2546,8 +2462,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [characterName].
                  *
-                 * Unlike [characterName], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [characterName], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("character_name")
                 @ExcludeMissing
@@ -2556,8 +2471,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [memberType].
                  *
-                 * Unlike [memberType], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [memberType], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("member_type")
                 @ExcludeMissing
@@ -2566,16 +2480,16 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [teamId].
                  *
-                 * Unlike [teamId], this method doesn't throw if the JSON field has an unexpected
-                 * type.
+                 * Unlike [teamId], this method doesn't throw if the JSON field has an unexpected type.
                  */
-                @JsonProperty("team_id") @ExcludeMissing fun _teamId(): JsonField<String> = teamId
+                @JsonProperty("team_id")
+                @ExcludeMissing
+                fun _teamId(): JsonField<String> = teamId
 
                 /**
                  * Returns the raw JSON value of [teamMemberId].
                  *
-                 * Unlike [teamMemberId], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [teamMemberId], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("team_member_id")
                 @ExcludeMissing
@@ -2584,8 +2498,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [teamName].
                  *
-                 * Unlike [teamName], this method doesn't throw if the JSON field has an unexpected
-                 * type.
+                 * Unlike [teamName], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("team_name")
                 @ExcludeMissing
@@ -2594,8 +2507,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [tedReaction].
                  *
-                 * Unlike [tedReaction], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [tedReaction], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("ted_reaction")
                 @ExcludeMissing
@@ -2604,8 +2516,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [transferType].
                  *
-                 * Unlike [transferType], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [transferType], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("transfer_type")
                 @ExcludeMissing
@@ -2614,8 +2525,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [previousTeamId].
                  *
-                 * Unlike [previousTeamId], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [previousTeamId], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("previous_team_id")
                 @ExcludeMissing
@@ -2624,8 +2534,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [previousTeamName].
                  *
-                 * Unlike [previousTeamName], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [previousTeamName], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("previous_team_name")
                 @ExcludeMissing
@@ -2634,8 +2543,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [transferFeeGbp].
                  *
-                 * Unlike [transferFeeGbp], this method doesn't throw if the JSON field has an
-                 * unexpected type.
+                 * Unlike [transferFeeGbp], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("transfer_fee_gbp")
                 @ExcludeMissing
@@ -2644,8 +2552,7 @@ private constructor(
                 /**
                  * Returns the raw JSON value of [yearsWithPreviousTeam].
                  *
-                 * Unlike [yearsWithPreviousTeam], this method doesn't throw if the JSON field has
-                 * an unexpected type.
+                 * Unlike [yearsWithPreviousTeam], this method doesn't throw if the JSON field has an unexpected type.
                  */
                 @JsonProperty("years_with_previous_team")
                 @ExcludeMissing
@@ -2653,13 +2560,12 @@ private constructor(
 
                 @JsonAnySetter
                 private fun putAdditionalProperty(key: String, value: JsonValue) {
-                    additionalProperties.put(key, value)
+                  additionalProperties.put(key, value)
                 }
 
                 @JsonAnyGetter
                 @ExcludeMissing
-                fun _additionalProperties(): Map<String, JsonValue> =
-                    Collections.unmodifiableMap(additionalProperties)
+                fun _additionalProperties(): Map<String, JsonValue> = Collections.unmodifiableMap(additionalProperties)
 
                 fun toBuilder() = Builder().from(this)
 
@@ -2669,6 +2575,7 @@ private constructor(
                      * Returns a mutable builder for constructing an instance of [Data].
                      *
                      * The following fields are required:
+                     *
                      * ```kotlin
                      * .characterId()
                      * .characterName()
@@ -2700,21 +2607,22 @@ private constructor(
                     private var yearsWithPreviousTeam: JsonField<Long> = JsonMissing.of()
                     private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
-                    internal fun from(data: Data) = apply {
-                        characterId = data.characterId
-                        characterName = data.characterName
-                        memberType = data.memberType
-                        teamId = data.teamId
-                        teamMemberId = data.teamMemberId
-                        teamName = data.teamName
-                        tedReaction = data.tedReaction
-                        transferType = data.transferType
-                        previousTeamId = data.previousTeamId
-                        previousTeamName = data.previousTeamName
-                        transferFeeGbp = data.transferFeeGbp
-                        yearsWithPreviousTeam = data.yearsWithPreviousTeam
-                        additionalProperties = data.additionalProperties.toMutableMap()
-                    }
+                    internal fun from(data: Data) =
+                        apply {
+                            characterId = data.characterId
+                            characterName = data.characterName
+                            memberType = data.memberType
+                            teamId = data.teamId
+                            teamMemberId = data.teamMemberId
+                            teamName = data.teamName
+                            tedReaction = data.tedReaction
+                            transferType = data.transferType
+                            previousTeamId = data.previousTeamId
+                            previousTeamName = data.previousTeamName
+                            transferFeeGbp = data.transferFeeGbp
+                            yearsWithPreviousTeam = data.yearsWithPreviousTeam
+                            additionalProperties = data.additionalProperties.toMutableMap()
+                        }
 
                     /** ID of the character (links to /characters) */
                     fun characterId(characterId: String) = characterId(JsonField.of(characterId))
@@ -2722,28 +2630,27 @@ private constructor(
                     /**
                      * Sets [Builder.characterId] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.characterId] with a well-typed [String]
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.characterId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun characterId(characterId: JsonField<String>) = apply {
-                        this.characterId = characterId
-                    }
+                    fun characterId(characterId: JsonField<String>) =
+                        apply {
+                            this.characterId = characterId
+                        }
 
                     /** Name of the character */
-                    fun characterName(characterName: String) =
-                        characterName(JsonField.of(characterName))
+                    fun characterName(characterName: String) = characterName(JsonField.of(characterName))
 
                     /**
                      * Sets [Builder.characterName] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.characterName] with a well-typed [String]
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.characterName] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun characterName(characterName: JsonField<String>) = apply {
-                        this.characterName = characterName
-                    }
+                    fun characterName(characterName: JsonField<String>) =
+                        apply {
+                            this.characterName = characterName
+                        }
 
                     /** Type of team member */
                     fun memberType(memberType: MemberType) = memberType(JsonField.of(memberType))
@@ -2751,13 +2658,13 @@ private constructor(
                     /**
                      * Sets [Builder.memberType] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.memberType] with a well-typed [MemberType]
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.memberType] with a well-typed [MemberType] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun memberType(memberType: JsonField<MemberType>) = apply {
-                        this.memberType = memberType
-                    }
+                    fun memberType(memberType: JsonField<MemberType>) =
+                        apply {
+                            this.memberType = memberType
+                        }
 
                     /** ID of the team involved */
                     fun teamId(teamId: String) = teamId(JsonField.of(teamId))
@@ -2765,26 +2672,27 @@ private constructor(
                     /**
                      * Sets [Builder.teamId] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.teamId] with a well-typed [String] value
-                     * instead. This method is primarily for setting the field to an undocumented or
-                     * not yet supported value.
+                     * You should usually call [Builder.teamId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun teamId(teamId: JsonField<String>) = apply { this.teamId = teamId }
+                    fun teamId(teamId: JsonField<String>) =
+                        apply {
+                            this.teamId = teamId
+                        }
 
                     /** ID of the team member */
-                    fun teamMemberId(teamMemberId: String) =
-                        teamMemberId(JsonField.of(teamMemberId))
+                    fun teamMemberId(teamMemberId: String) = teamMemberId(JsonField.of(teamMemberId))
 
                     /**
                      * Sets [Builder.teamMemberId] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.teamMemberId] with a well-typed [String]
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.teamMemberId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun teamMemberId(teamMemberId: JsonField<String>) = apply {
-                        this.teamMemberId = teamMemberId
-                    }
+                    fun teamMemberId(teamMemberId: JsonField<String>) =
+                        apply {
+                            this.teamMemberId = teamMemberId
+                        }
 
                     /** Name of the team involved */
                     fun teamName(teamName: String) = teamName(JsonField.of(teamName))
@@ -2792,11 +2700,13 @@ private constructor(
                     /**
                      * Sets [Builder.teamName] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.teamName] with a well-typed [String] value
-                     * instead. This method is primarily for setting the field to an undocumented or
-                     * not yet supported value.
+                     * You should usually call [Builder.teamName] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun teamName(teamName: JsonField<String>) = apply { this.teamName = teamName }
+                    fun teamName(teamName: JsonField<String>) =
+                        apply {
+                            this.teamName = teamName
+                        }
 
                     /** Ted's reaction to the transfer */
                     fun tedReaction(tedReaction: String) = tedReaction(JsonField.of(tedReaction))
@@ -2804,118 +2714,116 @@ private constructor(
                     /**
                      * Sets [Builder.tedReaction] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.tedReaction] with a well-typed [String]
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.tedReaction] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun tedReaction(tedReaction: JsonField<String>) = apply {
-                        this.tedReaction = tedReaction
-                    }
+                    fun tedReaction(tedReaction: JsonField<String>) =
+                        apply {
+                            this.tedReaction = tedReaction
+                        }
 
                     /** Whether the member joined or departed */
-                    fun transferType(transferType: TransferType) =
-                        transferType(JsonField.of(transferType))
+                    fun transferType(transferType: TransferType) = transferType(JsonField.of(transferType))
 
                     /**
                      * Sets [Builder.transferType] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.transferType] with a well-typed
-                     * [TransferType] value instead. This method is primarily for setting the field
-                     * to an undocumented or not yet supported value.
+                     * You should usually call [Builder.transferType] with a well-typed [TransferType] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun transferType(transferType: JsonField<TransferType>) = apply {
-                        this.transferType = transferType
-                    }
+                    fun transferType(transferType: JsonField<TransferType>) =
+                        apply {
+                            this.transferType = transferType
+                        }
 
                     /** Previous team ID (for joins from another team) */
-                    fun previousTeamId(previousTeamId: String?) =
-                        previousTeamId(JsonField.ofNullable(previousTeamId))
+                    fun previousTeamId(previousTeamId: String?) = previousTeamId(JsonField.ofNullable(previousTeamId))
 
                     /**
                      * Sets [Builder.previousTeamId] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.previousTeamId] with a well-typed [String]
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.previousTeamId] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun previousTeamId(previousTeamId: JsonField<String>) = apply {
-                        this.previousTeamId = previousTeamId
-                    }
+                    fun previousTeamId(previousTeamId: JsonField<String>) =
+                        apply {
+                            this.previousTeamId = previousTeamId
+                        }
 
                     /** Previous team name (for joins from another team) */
-                    fun previousTeamName(previousTeamName: String?) =
-                        previousTeamName(JsonField.ofNullable(previousTeamName))
+                    fun previousTeamName(previousTeamName: String?) = previousTeamName(JsonField.ofNullable(previousTeamName))
 
                     /**
                      * Sets [Builder.previousTeamName] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.previousTeamName] with a well-typed [String]
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.previousTeamName] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun previousTeamName(previousTeamName: JsonField<String>) = apply {
-                        this.previousTeamName = previousTeamName
-                    }
+                    fun previousTeamName(previousTeamName: JsonField<String>) =
+                        apply {
+                            this.previousTeamName = previousTeamName
+                        }
 
                     /** Transfer fee in GBP (for players) */
-                    fun transferFeeGbp(transferFeeGbp: String?) =
-                        transferFeeGbp(JsonField.ofNullable(transferFeeGbp))
+                    fun transferFeeGbp(transferFeeGbp: String?) = transferFeeGbp(JsonField.ofNullable(transferFeeGbp))
 
                     /**
                      * Sets [Builder.transferFeeGbp] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.transferFeeGbp] with a well-typed [String]
-                     * value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.transferFeeGbp] with a well-typed [String] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun transferFeeGbp(transferFeeGbp: JsonField<String>) = apply {
-                        this.transferFeeGbp = transferFeeGbp
-                    }
+                    fun transferFeeGbp(transferFeeGbp: JsonField<String>) =
+                        apply {
+                            this.transferFeeGbp = transferFeeGbp
+                        }
 
                     /** Years spent with previous team */
-                    fun yearsWithPreviousTeam(yearsWithPreviousTeam: Long?) =
-                        yearsWithPreviousTeam(JsonField.ofNullable(yearsWithPreviousTeam))
+                    fun yearsWithPreviousTeam(yearsWithPreviousTeam: Long?) = yearsWithPreviousTeam(JsonField.ofNullable(yearsWithPreviousTeam))
 
                     /**
                      * Alias for [Builder.yearsWithPreviousTeam].
                      *
                      * This unboxed primitive overload exists for backwards compatibility.
                      */
-                    fun yearsWithPreviousTeam(yearsWithPreviousTeam: Long) =
-                        yearsWithPreviousTeam(yearsWithPreviousTeam as Long?)
+                    fun yearsWithPreviousTeam(yearsWithPreviousTeam: Long) = yearsWithPreviousTeam(yearsWithPreviousTeam as Long?)
 
                     /**
                      * Sets [Builder.yearsWithPreviousTeam] to an arbitrary JSON value.
                      *
-                     * You should usually call [Builder.yearsWithPreviousTeam] with a well-typed
-                     * [Long] value instead. This method is primarily for setting the field to an
-                     * undocumented or not yet supported value.
+                     * You should usually call [Builder.yearsWithPreviousTeam] with a well-typed [Long] value instead. This method is primarily for setting the field to an undocumented or not yet
+                     * supported value.
                      */
-                    fun yearsWithPreviousTeam(yearsWithPreviousTeam: JsonField<Long>) = apply {
-                        this.yearsWithPreviousTeam = yearsWithPreviousTeam
-                    }
+                    fun yearsWithPreviousTeam(yearsWithPreviousTeam: JsonField<Long>) =
+                        apply {
+                            this.yearsWithPreviousTeam = yearsWithPreviousTeam
+                        }
 
-                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                        this.additionalProperties.clear()
-                        putAllAdditionalProperties(additionalProperties)
-                    }
+                    fun additionalProperties(additionalProperties: Map<String, JsonValue>) =
+                        apply {
+                            this.additionalProperties.clear()
+                            putAllAdditionalProperties(additionalProperties)
+                        }
 
-                    fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                        additionalProperties.put(key, value)
-                    }
+                    fun putAdditionalProperty(key: String, value: JsonValue) =
+                        apply {
+                            additionalProperties.put(key, value)
+                        }
 
                     fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) =
                         apply {
                             this.additionalProperties.putAll(additionalProperties)
                         }
 
-                    fun removeAdditionalProperty(key: String) = apply {
-                        additionalProperties.remove(key)
-                    }
+                    fun removeAdditionalProperty(key: String) =
+                        apply {
+                            additionalProperties.remove(key)
+                        }
 
-                    fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                        keys.forEach(::removeAdditionalProperty)
-                    }
+                    fun removeAllAdditionalProperties(keys: Set<String>) =
+                        apply {
+                            keys.forEach(::removeAdditionalProperty)
+                        }
 
                     /**
                      * Returns an immutable instance of [Data].
@@ -2923,6 +2831,7 @@ private constructor(
                      * Further updates to this [Builder] will not mutate the returned instance.
                      *
                      * The following fields are required:
+                     *
                      * ```kotlin
                      * .characterId()
                      * .characterName()
@@ -2938,43 +2847,60 @@ private constructor(
                      */
                     fun build(): Data =
                         Data(
-                            checkRequired("characterId", characterId),
-                            checkRequired("characterName", characterName),
-                            checkRequired("memberType", memberType),
-                            checkRequired("teamId", teamId),
-                            checkRequired("teamMemberId", teamMemberId),
-                            checkRequired("teamName", teamName),
-                            checkRequired("tedReaction", tedReaction),
-                            checkRequired("transferType", transferType),
-                            previousTeamId,
-                            previousTeamName,
-                            transferFeeGbp,
-                            yearsWithPreviousTeam,
-                            additionalProperties.toMutableMap(),
+                          checkRequired(
+                            "characterId", characterId
+                          ),
+                          checkRequired(
+                            "characterName", characterName
+                          ),
+                          checkRequired(
+                            "memberType", memberType
+                          ),
+                          checkRequired(
+                            "teamId", teamId
+                          ),
+                          checkRequired(
+                            "teamMemberId", teamMemberId
+                          ),
+                          checkRequired(
+                            "teamName", teamName
+                          ),
+                          checkRequired(
+                            "tedReaction", tedReaction
+                          ),
+                          checkRequired(
+                            "transferType", transferType
+                          ),
+                          previousTeamId,
+                          previousTeamName,
+                          transferFeeGbp,
+                          yearsWithPreviousTeam,
+                          additionalProperties.toMutableMap(),
                         )
                 }
 
                 private var validated: Boolean = false
 
-                fun validate(): Data = apply {
-                    if (validated) {
-                        return@apply
-                    }
+                fun validate(): Data =
+                    apply {
+                        if (validated) {
+                          return@apply
+                        }
 
-                    characterId()
-                    characterName()
-                    memberType().validate()
-                    teamId()
-                    teamMemberId()
-                    teamName()
-                    tedReaction()
-                    transferType().validate()
-                    previousTeamId()
-                    previousTeamName()
-                    transferFeeGbp()
-                    yearsWithPreviousTeam()
-                    validated = true
-                }
+                        characterId()
+                        characterName()
+                        memberType().validate()
+                        teamId()
+                        teamMemberId()
+                        teamName()
+                        tedReaction()
+                        transferType().validate()
+                        previousTeamId()
+                        previousTeamName()
+                        transferFeeGbp()
+                        yearsWithPreviousTeam()
+                        validated = true
+                    }
 
                 fun isValid(): Boolean =
                     try {
@@ -2985,37 +2911,24 @@ private constructor(
                     }
 
                 /**
-                 * Returns a score indicating how many valid values are contained in this object
-                 * recursively.
+                 * Returns a score indicating how many valid values are contained in this object recursively.
                  *
                  * Used for best match union deserialization.
                  */
-                internal fun validity(): Int =
-                    (if (characterId.asKnown() == null) 0 else 1) +
-                        (if (characterName.asKnown() == null) 0 else 1) +
-                        (memberType.asKnown()?.validity() ?: 0) +
-                        (if (teamId.asKnown() == null) 0 else 1) +
-                        (if (teamMemberId.asKnown() == null) 0 else 1) +
-                        (if (teamName.asKnown() == null) 0 else 1) +
-                        (if (tedReaction.asKnown() == null) 0 else 1) +
-                        (transferType.asKnown()?.validity() ?: 0) +
-                        (if (previousTeamId.asKnown() == null) 0 else 1) +
-                        (if (previousTeamName.asKnown() == null) 0 else 1) +
-                        (if (transferFeeGbp.asKnown() == null) 0 else 1) +
-                        (if (yearsWithPreviousTeam.asKnown() == null) 0 else 1)
+                internal fun validity(): Int = (if (characterId.asKnown() == null) 0 else 1) + (if (characterName.asKnown() == null) 0 else 1) + (memberType.asKnown()?.validity() ?: 0) + (if (teamId.asKnown() == null) 0 else 1) + (if (teamMemberId.asKnown() == null) 0 else 1) + (if (teamName.asKnown() == null) 0 else 1) + (if (tedReaction.asKnown() == null) 0 else 1) + (transferType.asKnown()?.validity() ?: 0) + (if (previousTeamId.asKnown() == null) 0 else 1) + (if (previousTeamName.asKnown() == null) 0 else 1) + (if (transferFeeGbp.asKnown() == null) 0 else 1) + (if (yearsWithPreviousTeam.asKnown() == null) 0 else 1)
 
                 /** Type of team member */
-                class MemberType
-                @JsonCreator
-                private constructor(private val value: JsonField<String>) : Enum {
+                class MemberType @JsonCreator private constructor(
+                    private val value: JsonField<String>,
+
+                ) : Enum {
 
                     /**
                      * Returns this class instance's raw value.
                      *
-                     * This is usually only useful if this instance was deserialized from data that
-                     * doesn't match any known member, and you want to know that value. For example,
-                     * if the SDK is on an older version than the API, then the API may respond with
-                     * new members that the SDK is unaware of.
+                     * This is usually only useful if this instance was deserialized from data that doesn't match any known
+                     * member, and you want to know that value. For example, if the SDK is on an older version than the
+                     * API, then the API may respond with new members that the SDK is unaware of.
                      */
                     @com.fasterxml.jackson.annotation.JsonValue
                     fun _value(): JsonField<String> = value
@@ -3042,14 +2955,14 @@ private constructor(
                     }
 
                     /**
-                     * An enum containing [MemberType]'s known values, as well as an [_UNKNOWN]
-                     * member.
+                     * An enum containing [MemberType]'s known values, as well as an [_UNKNOWN] member.
                      *
-                     * An instance of [MemberType] can contain an unknown value in a couple of
-                     * cases:
-                     * - It was deserialized from data that doesn't match any known member. For
-                     *   example, if the SDK is on an older version than the API, then the API may
-                     *   respond with new members that the SDK is unaware of.
+                     * An instance of [MemberType] can contain an unknown value in a couple of cases:
+                     *
+                     * - It was deserialized from data that doesn't match any known member. For example, if the SDK is on
+                     *   an older version than the API, then the API may respond with new members that the SDK is unaware
+                     *   of.
+                     *
                      * - It was constructed with an arbitrary value using the [of] method.
                      */
                     enum class Value {
@@ -3057,19 +2970,16 @@ private constructor(
                         COACH,
                         MEDICAL_STAFF,
                         EQUIPMENT_MANAGER,
-                        /**
-                         * An enum member indicating that [MemberType] was instantiated with an
-                         * unknown value.
-                         */
+                        /** An enum member indicating that [MemberType] was instantiated with an unknown value. */
                         _UNKNOWN,
                     }
 
                     /**
-                     * Returns an enum member corresponding to this class instance's value, or
-                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                     * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN] if the
+                     * class was instantiated with an unknown value.
                      *
-                     * Use the [known] method instead if you're certain the value is always known or
-                     * if you want to throw for the unknown case.
+                     * Use the [known] method instead if you're certain the value is always known or if you want to throw
+                     * for the unknown case.
                      */
                     fun value(): Value =
                         when (this) {
@@ -3083,11 +2993,10 @@ private constructor(
                     /**
                      * Returns an enum member corresponding to this class instance's value.
                      *
-                     * Use the [value] method instead if you're uncertain the value is always known
-                     * and don't want to throw for the unknown case.
+                     * Use the [value] method instead if you're uncertain the value is always known and don't want to throw
+                     * for the unknown case.
                      *
-                     * @throws BelieveInvalidDataException if this class instance's value is a not a
-                     *   known member.
+                     * @throws BelieveInvalidDataException if this class instance's value is a not a known member.
                      */
                     fun known(): Known =
                         when (this) {
@@ -3101,26 +3010,25 @@ private constructor(
                     /**
                      * Returns this class instance's primitive wire representation.
                      *
-                     * This differs from the [toString] method because that method is primarily for
-                     * debugging and generally doesn't throw.
+                     * This differs from the [toString] method because that method is primarily for debugging and generally
+                     * doesn't throw.
                      *
-                     * @throws BelieveInvalidDataException if this class instance's value does not
-                     *   have the expected primitive type.
+                     * @throws BelieveInvalidDataException if this class instance's value does not have the expected
+                     *   primitive type.
                      */
-                    fun asString(): String =
-                        _value().asString()
-                            ?: throw BelieveInvalidDataException("Value is not a String")
+                    fun asString(): String = _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
 
                     private var validated: Boolean = false
 
-                    fun validate(): MemberType = apply {
-                        if (validated) {
-                            return@apply
-                        }
+                    fun validate(): MemberType =
+                        apply {
+                            if (validated) {
+                              return@apply
+                            }
 
-                        known()
-                        validated = true
-                    }
+                            known()
+                            validated = true
+                        }
 
                     fun isValid(): Boolean =
                         try {
@@ -3131,19 +3039,18 @@ private constructor(
                         }
 
                     /**
-                     * Returns a score indicating how many valid values are contained in this object
-                     * recursively.
+                     * Returns a score indicating how many valid values are contained in this object recursively.
                      *
                      * Used for best match union deserialization.
                      */
                     internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
 
                     override fun equals(other: Any?): Boolean {
-                        if (this === other) {
-                            return true
-                        }
+                      if (this === other) {
+                          return true
+                      }
 
-                        return other is MemberType && value == other.value
+                      return other is MemberType && value == other.value
                     }
 
                     override fun hashCode() = value.hashCode()
@@ -3152,17 +3059,17 @@ private constructor(
                 }
 
                 /** Whether the member joined or departed */
-                class TransferType
-                @JsonCreator
-                private constructor(private val value: JsonField<String>) : Enum {
+                class TransferType @JsonCreator private constructor(
+                    private val value: JsonField<String>,
+
+                ) : Enum {
 
                     /**
                      * Returns this class instance's raw value.
                      *
-                     * This is usually only useful if this instance was deserialized from data that
-                     * doesn't match any known member, and you want to know that value. For example,
-                     * if the SDK is on an older version than the API, then the API may respond with
-                     * new members that the SDK is unaware of.
+                     * This is usually only useful if this instance was deserialized from data that doesn't match any known
+                     * member, and you want to know that value. For example, if the SDK is on an older version than the
+                     * API, then the API may respond with new members that the SDK is unaware of.
                      */
                     @com.fasterxml.jackson.annotation.JsonValue
                     fun _value(): JsonField<String> = value
@@ -3183,32 +3090,29 @@ private constructor(
                     }
 
                     /**
-                     * An enum containing [TransferType]'s known values, as well as an [_UNKNOWN]
-                     * member.
+                     * An enum containing [TransferType]'s known values, as well as an [_UNKNOWN] member.
                      *
-                     * An instance of [TransferType] can contain an unknown value in a couple of
-                     * cases:
-                     * - It was deserialized from data that doesn't match any known member. For
-                     *   example, if the SDK is on an older version than the API, then the API may
-                     *   respond with new members that the SDK is unaware of.
+                     * An instance of [TransferType] can contain an unknown value in a couple of cases:
+                     *
+                     * - It was deserialized from data that doesn't match any known member. For example, if the SDK is on
+                     *   an older version than the API, then the API may respond with new members that the SDK is unaware
+                     *   of.
+                     *
                      * - It was constructed with an arbitrary value using the [of] method.
                      */
                     enum class Value {
                         JOINED,
                         DEPARTED,
-                        /**
-                         * An enum member indicating that [TransferType] was instantiated with an
-                         * unknown value.
-                         */
+                        /** An enum member indicating that [TransferType] was instantiated with an unknown value. */
                         _UNKNOWN,
                     }
 
                     /**
-                     * Returns an enum member corresponding to this class instance's value, or
-                     * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                     * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN] if the
+                     * class was instantiated with an unknown value.
                      *
-                     * Use the [known] method instead if you're certain the value is always known or
-                     * if you want to throw for the unknown case.
+                     * Use the [known] method instead if you're certain the value is always known or if you want to throw
+                     * for the unknown case.
                      */
                     fun value(): Value =
                         when (this) {
@@ -3220,43 +3124,40 @@ private constructor(
                     /**
                      * Returns an enum member corresponding to this class instance's value.
                      *
-                     * Use the [value] method instead if you're uncertain the value is always known
-                     * and don't want to throw for the unknown case.
+                     * Use the [value] method instead if you're uncertain the value is always known and don't want to throw
+                     * for the unknown case.
                      *
-                     * @throws BelieveInvalidDataException if this class instance's value is a not a
-                     *   known member.
+                     * @throws BelieveInvalidDataException if this class instance's value is a not a known member.
                      */
                     fun known(): Known =
                         when (this) {
                             JOINED -> Known.JOINED
                             DEPARTED -> Known.DEPARTED
-                            else ->
-                                throw BelieveInvalidDataException("Unknown TransferType: $value")
+                            else -> throw BelieveInvalidDataException("Unknown TransferType: $value")
                         }
 
                     /**
                      * Returns this class instance's primitive wire representation.
                      *
-                     * This differs from the [toString] method because that method is primarily for
-                     * debugging and generally doesn't throw.
+                     * This differs from the [toString] method because that method is primarily for debugging and generally
+                     * doesn't throw.
                      *
-                     * @throws BelieveInvalidDataException if this class instance's value does not
-                     *   have the expected primitive type.
+                     * @throws BelieveInvalidDataException if this class instance's value does not have the expected
+                     *   primitive type.
                      */
-                    fun asString(): String =
-                        _value().asString()
-                            ?: throw BelieveInvalidDataException("Value is not a String")
+                    fun asString(): String = _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
 
                     private var validated: Boolean = false
 
-                    fun validate(): TransferType = apply {
-                        if (validated) {
-                            return@apply
-                        }
+                    fun validate(): TransferType =
+                        apply {
+                            if (validated) {
+                              return@apply
+                            }
 
-                        known()
-                        validated = true
-                    }
+                            known()
+                            validated = true
+                        }
 
                     fun isValid(): Boolean =
                         try {
@@ -3267,19 +3168,18 @@ private constructor(
                         }
 
                     /**
-                     * Returns a score indicating how many valid values are contained in this object
-                     * recursively.
+                     * Returns a score indicating how many valid values are contained in this object recursively.
                      *
                      * Used for best match union deserialization.
                      */
                     internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
 
                     override fun equals(other: Any?): Boolean {
-                        if (this === other) {
-                            return true
-                        }
+                      if (this === other) {
+                          return true
+                      }
 
-                        return other is TransferType && value == other.value
+                      return other is TransferType && value == other.value
                     }
 
                     override fun hashCode() = value.hashCode()
@@ -3288,63 +3188,35 @@ private constructor(
                 }
 
                 override fun equals(other: Any?): Boolean {
-                    if (this === other) {
-                        return true
-                    }
+                  if (this === other) {
+                      return true
+                  }
 
-                    return other is Data &&
-                        characterId == other.characterId &&
-                        characterName == other.characterName &&
-                        memberType == other.memberType &&
-                        teamId == other.teamId &&
-                        teamMemberId == other.teamMemberId &&
-                        teamName == other.teamName &&
-                        tedReaction == other.tedReaction &&
-                        transferType == other.transferType &&
-                        previousTeamId == other.previousTeamId &&
-                        previousTeamName == other.previousTeamName &&
-                        transferFeeGbp == other.transferFeeGbp &&
-                        yearsWithPreviousTeam == other.yearsWithPreviousTeam &&
-                        additionalProperties == other.additionalProperties
+                  return other is Data && characterId == other.characterId && characterName == other.characterName && memberType == other.memberType && teamId == other.teamId && teamMemberId == other.teamMemberId && teamName == other.teamName && tedReaction == other.tedReaction && transferType == other.transferType && previousTeamId == other.previousTeamId && previousTeamName == other.previousTeamName && transferFeeGbp == other.transferFeeGbp && yearsWithPreviousTeam == other.yearsWithPreviousTeam && additionalProperties == other.additionalProperties
                 }
 
-                private val hashCode: Int by lazy {
-                    Objects.hash(
-                        characterId,
-                        characterName,
-                        memberType,
-                        teamId,
-                        teamMemberId,
-                        teamName,
-                        tedReaction,
-                        transferType,
-                        previousTeamId,
-                        previousTeamName,
-                        transferFeeGbp,
-                        yearsWithPreviousTeam,
-                        additionalProperties,
-                    )
-                }
+                private val hashCode: Int by lazy { Objects.hash(characterId, characterName, memberType, teamId, teamMemberId, teamName, tedReaction, transferType, previousTeamId, previousTeamName, transferFeeGbp, yearsWithPreviousTeam, additionalProperties) }
 
                 override fun hashCode(): Int = hashCode
 
-                override fun toString() =
-                    "Data{characterId=$characterId, characterName=$characterName, memberType=$memberType, teamId=$teamId, teamMemberId=$teamMemberId, teamName=$teamName, tedReaction=$tedReaction, transferType=$transferType, previousTeamId=$previousTeamId, previousTeamName=$previousTeamName, transferFeeGbp=$transferFeeGbp, yearsWithPreviousTeam=$yearsWithPreviousTeam, additionalProperties=$additionalProperties}"
+                override fun toString() = "Data{characterId=$characterId, characterName=$characterName, memberType=$memberType, teamId=$teamId, teamMemberId=$teamMemberId, teamName=$teamName, tedReaction=$tedReaction, transferType=$transferType, previousTeamId=$previousTeamId, previousTeamName=$previousTeamName, transferFeeGbp=$transferFeeGbp, yearsWithPreviousTeam=$yearsWithPreviousTeam, additionalProperties=$additionalProperties}"
             }
 
             /** The type of webhook event */
-            class EventType @JsonCreator private constructor(private val value: JsonField<String>) :
-                Enum {
+            class EventType @JsonCreator private constructor(
+                private val value: JsonField<String>,
+
+            ) : Enum {
 
                 /**
                  * Returns this class instance's raw value.
                  *
-                 * This is usually only useful if this instance was deserialized from data that
-                 * doesn't match any known member, and you want to know that value. For example, if
-                 * the SDK is on an older version than the API, then the API may respond with new
-                 * members that the SDK is unaware of.
+                 * This is usually only useful if this instance was deserialized from data that doesn't match any known
+                 * member, and you want to know that value. For example, if the SDK is on an older version than the
+                 * API, then the API may respond with new members that the SDK is unaware of.
                  */
-                @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+                @com.fasterxml.jackson.annotation.JsonValue
+                fun _value(): JsonField<String> = value
 
                 companion object {
 
@@ -3355,33 +3227,32 @@ private constructor(
 
                 /** An enum containing [EventType]'s known values. */
                 enum class Known {
-                    TEAM_MEMBER_TRANSFERRED
+                    TEAM_MEMBER_TRANSFERRED,
                 }
 
                 /**
                  * An enum containing [EventType]'s known values, as well as an [_UNKNOWN] member.
                  *
                  * An instance of [EventType] can contain an unknown value in a couple of cases:
-                 * - It was deserialized from data that doesn't match any known member. For example,
-                 *   if the SDK is on an older version than the API, then the API may respond with
-                 *   new members that the SDK is unaware of.
+                 *
+                 * - It was deserialized from data that doesn't match any known member. For example, if the SDK is on
+                 *   an older version than the API, then the API may respond with new members that the SDK is unaware
+                 *   of.
+                 *
                  * - It was constructed with an arbitrary value using the [of] method.
                  */
                 enum class Value {
                     TEAM_MEMBER_TRANSFERRED,
-                    /**
-                     * An enum member indicating that [EventType] was instantiated with an unknown
-                     * value.
-                     */
+                    /** An enum member indicating that [EventType] was instantiated with an unknown value. */
                     _UNKNOWN,
                 }
 
                 /**
-                 * Returns an enum member corresponding to this class instance's value, or
-                 * [Value._UNKNOWN] if the class was instantiated with an unknown value.
+                 * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN] if the
+                 * class was instantiated with an unknown value.
                  *
-                 * Use the [known] method instead if you're certain the value is always known or if
-                 * you want to throw for the unknown case.
+                 * Use the [known] method instead if you're certain the value is always known or if you want to throw
+                 * for the unknown case.
                  */
                 fun value(): Value =
                     when (this) {
@@ -3392,11 +3263,10 @@ private constructor(
                 /**
                  * Returns an enum member corresponding to this class instance's value.
                  *
-                 * Use the [value] method instead if you're uncertain the value is always known and
-                 * don't want to throw for the unknown case.
+                 * Use the [value] method instead if you're uncertain the value is always known and don't want to throw
+                 * for the unknown case.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value is a not a
-                 *   known member.
+                 * @throws BelieveInvalidDataException if this class instance's value is a not a known member.
                  */
                 fun known(): Known =
                     when (this) {
@@ -3407,26 +3277,25 @@ private constructor(
                 /**
                  * Returns this class instance's primitive wire representation.
                  *
-                 * This differs from the [toString] method because that method is primarily for
-                 * debugging and generally doesn't throw.
+                 * This differs from the [toString] method because that method is primarily for debugging and generally
+                 * doesn't throw.
                  *
-                 * @throws BelieveInvalidDataException if this class instance's value does not have
-                 *   the expected primitive type.
+                 * @throws BelieveInvalidDataException if this class instance's value does not have the expected
+                 *   primitive type.
                  */
-                fun asString(): String =
-                    _value().asString()
-                        ?: throw BelieveInvalidDataException("Value is not a String")
+                fun asString(): String = _value().asString() ?: throw BelieveInvalidDataException("Value is not a String")
 
                 private var validated: Boolean = false
 
-                fun validate(): EventType = apply {
-                    if (validated) {
-                        return@apply
-                    }
+                fun validate(): EventType =
+                    apply {
+                        if (validated) {
+                          return@apply
+                        }
 
-                    known()
-                    validated = true
-                }
+                        known()
+                        validated = true
+                    }
 
                 fun isValid(): Boolean =
                     try {
@@ -3437,19 +3306,18 @@ private constructor(
                     }
 
                 /**
-                 * Returns a score indicating how many valid values are contained in this object
-                 * recursively.
+                 * Returns a score indicating how many valid values are contained in this object recursively.
                  *
                  * Used for best match union deserialization.
                  */
                 internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
 
                 override fun equals(other: Any?): Boolean {
-                    if (this === other) {
-                        return true
-                    }
+                  if (this === other) {
+                      return true
+                  }
 
-                    return other is EventType && value == other.value
+                  return other is EventType && value == other.value
                 }
 
                 override fun hashCode() = value.hashCode()
@@ -3458,40 +3326,30 @@ private constructor(
             }
 
             override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
+              if (this === other) {
+                  return true
+              }
 
-                return other is TeamMemberTransferred &&
-                    data == other.data &&
-                    eventType == other.eventType &&
-                    additionalProperties == other.additionalProperties
+              return other is TeamMemberTransferred && data == other.data && eventType == other.eventType && additionalProperties == other.additionalProperties
             }
 
-            private val hashCode: Int by lazy {
-                Objects.hash(data, eventType, additionalProperties)
-            }
+            private val hashCode: Int by lazy { Objects.hash(data, eventType, additionalProperties) }
 
             override fun hashCode(): Int = hashCode
 
-            override fun toString() =
-                "TeamMemberTransferred{data=$data, eventType=$eventType, additionalProperties=$additionalProperties}"
+            override fun toString() = "TeamMemberTransferred{data=$data, eventType=$eventType, additionalProperties=$additionalProperties}"
         }
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is WebhookTriggerEventParams &&
-            body == other.body &&
-            additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams
+      return other is WebhookTriggerEventParams && body == other.body && additionalHeaders == other.additionalHeaders && additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int = Objects.hash(body, additionalHeaders, additionalQueryParams)
 
-    override fun toString() =
-        "WebhookTriggerEventParams{body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+    override fun toString() = "WebhookTriggerEventParams{body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

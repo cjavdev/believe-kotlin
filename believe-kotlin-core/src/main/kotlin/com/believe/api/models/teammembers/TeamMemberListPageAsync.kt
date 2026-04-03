@@ -5,15 +5,18 @@ package com.believe.api.models.teammembers
 import com.believe.api.core.AutoPagerAsync
 import com.believe.api.core.PageAsync
 import com.believe.api.core.checkRequired
+import com.believe.api.models.teammembers.TeamMemberListPageResponse
+import com.believe.api.models.teammembers.TeamMemberListParams
+import com.believe.api.models.teammembers.TeamMemberListResponse
 import com.believe.api.services.async.TeamMemberServiceAsync
 import java.util.Objects
 
 /** @see TeamMemberServiceAsync.list */
-class TeamMemberListPageAsync
-private constructor(
+class TeamMemberListPageAsync private constructor(
     private val service: TeamMemberServiceAsync,
     private val params: TeamMemberListParams,
     private val response: TeamMemberListPageResponse,
+
 ) : PageAsync<TeamMemberListResponse> {
 
     /**
@@ -40,18 +43,20 @@ private constructor(
     override fun items(): List<TeamMemberListResponse> = data()
 
     override fun hasNextPage(): Boolean {
-        if (items().isEmpty()) {
-            return false
-        }
+      if (items().isEmpty()) {
+          return false
+      }
 
-        val offset = skip() ?: 0
-        val totalCount = total()
-        return totalCount == null || offset + items().size < totalCount
+      val offset = skip() ?: 0
+      val totalCount = total()
+      return totalCount == null || offset + items().size < totalCount;
     }
 
     fun nextPageParams(): TeamMemberListParams {
-        val offset = skip() ?: 0
-        return params.toBuilder().skip(offset + items().size).build()
+      val offset = skip() ?: 0
+      return params.toBuilder()
+          .skip(offset + items().size)
+          .build()
     }
 
     override suspend fun nextPage(): TeamMemberListPageAsync = service.list(nextPageParams())
@@ -72,6 +77,7 @@ private constructor(
          * Returns a mutable builder for constructing an instance of [TeamMemberListPageAsync].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -88,19 +94,29 @@ private constructor(
         private var params: TeamMemberListParams? = null
         private var response: TeamMemberListPageResponse? = null
 
-        internal fun from(teamMemberListPageAsync: TeamMemberListPageAsync) = apply {
-            service = teamMemberListPageAsync.service
-            params = teamMemberListPageAsync.params
-            response = teamMemberListPageAsync.response
-        }
+        internal fun from(teamMemberListPageAsync: TeamMemberListPageAsync) =
+            apply {
+                service = teamMemberListPageAsync.service
+                params = teamMemberListPageAsync.params
+                response = teamMemberListPageAsync.response
+            }
 
-        fun service(service: TeamMemberServiceAsync) = apply { this.service = service }
+        fun service(service: TeamMemberServiceAsync) =
+            apply {
+                this.service = service
+            }
 
         /** The parameters that were used to request this page. */
-        fun params(params: TeamMemberListParams) = apply { this.params = params }
+        fun params(params: TeamMemberListParams) =
+            apply {
+                this.params = params
+            }
 
         /** The response that this page was parsed from. */
-        fun response(response: TeamMemberListPageResponse) = apply { this.response = response }
+        fun response(response: TeamMemberListPageResponse) =
+            apply {
+                this.response = response
+            }
 
         /**
          * Returns an immutable instance of [TeamMemberListPageAsync].
@@ -108,6 +124,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -118,25 +135,27 @@ private constructor(
          */
         fun build(): TeamMemberListPageAsync =
             TeamMemberListPageAsync(
-                checkRequired("service", service),
-                checkRequired("params", params),
-                checkRequired("response", response),
+              checkRequired(
+                "service", service
+              ),
+              checkRequired(
+                "params", params
+              ),
+              checkRequired(
+                "response", response
+              ),
             )
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is TeamMemberListPageAsync &&
-            service == other.service &&
-            params == other.params &&
-            response == other.response
+      return other is TeamMemberListPageAsync && service == other.service && params == other.params && response == other.response
     }
 
     override fun hashCode(): Int = Objects.hash(service, params, response)
 
-    override fun toString() =
-        "TeamMemberListPageAsync{service=$service, params=$params, response=$response}"
+    override fun toString() = "TeamMemberListPageAsync{service=$service, params=$params, response=$response}"
 }

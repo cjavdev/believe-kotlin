@@ -5,15 +5,18 @@ package com.believe.api.models.coaching.principles
 import com.believe.api.core.AutoPagerAsync
 import com.believe.api.core.PageAsync
 import com.believe.api.core.checkRequired
+import com.believe.api.models.coaching.principles.CoachingPrinciple
+import com.believe.api.models.coaching.principles.PrincipleListPageResponse
+import com.believe.api.models.coaching.principles.PrincipleListParams
 import com.believe.api.services.async.coaching.PrincipleServiceAsync
 import java.util.Objects
 
 /** @see PrincipleServiceAsync.list */
-class PrincipleListPageAsync
-private constructor(
+class PrincipleListPageAsync private constructor(
     private val service: PrincipleServiceAsync,
     private val params: PrincipleListParams,
     private val response: PrincipleListPageResponse,
+
 ) : PageAsync<CoachingPrinciple> {
 
     /**
@@ -40,18 +43,20 @@ private constructor(
     override fun items(): List<CoachingPrinciple> = data()
 
     override fun hasNextPage(): Boolean {
-        if (items().isEmpty()) {
-            return false
-        }
+      if (items().isEmpty()) {
+          return false
+      }
 
-        val offset = skip() ?: 0
-        val totalCount = total()
-        return totalCount == null || offset + items().size < totalCount
+      val offset = skip() ?: 0
+      val totalCount = total()
+      return totalCount == null || offset + items().size < totalCount;
     }
 
     fun nextPageParams(): PrincipleListParams {
-        val offset = skip() ?: 0
-        return params.toBuilder().skip(offset + items().size).build()
+      val offset = skip() ?: 0
+      return params.toBuilder()
+          .skip(offset + items().size)
+          .build()
     }
 
     override suspend fun nextPage(): PrincipleListPageAsync = service.list(nextPageParams())
@@ -72,6 +77,7 @@ private constructor(
          * Returns a mutable builder for constructing an instance of [PrincipleListPageAsync].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -88,19 +94,29 @@ private constructor(
         private var params: PrincipleListParams? = null
         private var response: PrincipleListPageResponse? = null
 
-        internal fun from(principleListPageAsync: PrincipleListPageAsync) = apply {
-            service = principleListPageAsync.service
-            params = principleListPageAsync.params
-            response = principleListPageAsync.response
-        }
+        internal fun from(principleListPageAsync: PrincipleListPageAsync) =
+            apply {
+                service = principleListPageAsync.service
+                params = principleListPageAsync.params
+                response = principleListPageAsync.response
+            }
 
-        fun service(service: PrincipleServiceAsync) = apply { this.service = service }
+        fun service(service: PrincipleServiceAsync) =
+            apply {
+                this.service = service
+            }
 
         /** The parameters that were used to request this page. */
-        fun params(params: PrincipleListParams) = apply { this.params = params }
+        fun params(params: PrincipleListParams) =
+            apply {
+                this.params = params
+            }
 
         /** The response that this page was parsed from. */
-        fun response(response: PrincipleListPageResponse) = apply { this.response = response }
+        fun response(response: PrincipleListPageResponse) =
+            apply {
+                this.response = response
+            }
 
         /**
          * Returns an immutable instance of [PrincipleListPageAsync].
@@ -108,6 +124,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -118,25 +135,27 @@ private constructor(
          */
         fun build(): PrincipleListPageAsync =
             PrincipleListPageAsync(
-                checkRequired("service", service),
-                checkRequired("params", params),
-                checkRequired("response", response),
+              checkRequired(
+                "service", service
+              ),
+              checkRequired(
+                "params", params
+              ),
+              checkRequired(
+                "response", response
+              ),
             )
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is PrincipleListPageAsync &&
-            service == other.service &&
-            params == other.params &&
-            response == other.response
+      return other is PrincipleListPageAsync && service == other.service && params == other.params && response == other.response
     }
 
     override fun hashCode(): Int = Objects.hash(service, params, response)
 
-    override fun toString() =
-        "PrincipleListPageAsync{service=$service, params=$params, response=$response}"
+    override fun toString() = "PrincipleListPageAsync{service=$service, params=$params, response=$response}"
 }

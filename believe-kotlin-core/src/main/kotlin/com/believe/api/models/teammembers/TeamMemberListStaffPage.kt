@@ -5,15 +5,18 @@ package com.believe.api.models.teammembers
 import com.believe.api.core.AutoPager
 import com.believe.api.core.Page
 import com.believe.api.core.checkRequired
+import com.believe.api.models.teammembers.TeamMemberListStaffPageResponse
+import com.believe.api.models.teammembers.TeamMemberListStaffParams
+import com.believe.api.models.teammembers.TeamMemberListStaffResponse
 import com.believe.api.services.blocking.TeamMemberService
 import java.util.Objects
 
 /** @see TeamMemberService.listStaff */
-class TeamMemberListStaffPage
-private constructor(
+class TeamMemberListStaffPage private constructor(
     private val service: TeamMemberService,
     private val params: TeamMemberListStaffParams,
     private val response: TeamMemberListStaffPageResponse,
+
 ) : Page<TeamMemberListStaffResponse> {
 
     /**
@@ -21,8 +24,7 @@ private constructor(
      *
      * @see TeamMemberListStaffPageResponse.data
      */
-    fun data(): List<TeamMemberListStaffResponse> =
-        response._data().getNullable("data") ?: emptyList()
+    fun data(): List<TeamMemberListStaffResponse> = response._data().getNullable("data") ?: emptyList()
 
     /**
      * Delegates to [TeamMemberListStaffPageResponse], but gracefully handles missing data.
@@ -41,18 +43,20 @@ private constructor(
     override fun items(): List<TeamMemberListStaffResponse> = data()
 
     override fun hasNextPage(): Boolean {
-        if (items().isEmpty()) {
-            return false
-        }
+      if (items().isEmpty()) {
+          return false
+      }
 
-        val offset = skip() ?: 0
-        val totalCount = total()
-        return totalCount == null || offset + items().size < totalCount
+      val offset = skip() ?: 0
+      val totalCount = total()
+      return totalCount == null || offset + items().size < totalCount;
     }
 
     fun nextPageParams(): TeamMemberListStaffParams {
-        val offset = skip() ?: 0
-        return params.toBuilder().skip(offset + items().size).build()
+      val offset = skip() ?: 0
+      return params.toBuilder()
+          .skip(offset + items().size)
+          .build()
     }
 
     override fun nextPage(): TeamMemberListStaffPage = service.listStaff(nextPageParams())
@@ -73,6 +77,7 @@ private constructor(
          * Returns a mutable builder for constructing an instance of [TeamMemberListStaffPage].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -89,19 +94,29 @@ private constructor(
         private var params: TeamMemberListStaffParams? = null
         private var response: TeamMemberListStaffPageResponse? = null
 
-        internal fun from(teamMemberListStaffPage: TeamMemberListStaffPage) = apply {
-            service = teamMemberListStaffPage.service
-            params = teamMemberListStaffPage.params
-            response = teamMemberListStaffPage.response
-        }
+        internal fun from(teamMemberListStaffPage: TeamMemberListStaffPage) =
+            apply {
+                service = teamMemberListStaffPage.service
+                params = teamMemberListStaffPage.params
+                response = teamMemberListStaffPage.response
+            }
 
-        fun service(service: TeamMemberService) = apply { this.service = service }
+        fun service(service: TeamMemberService) =
+            apply {
+                this.service = service
+            }
 
         /** The parameters that were used to request this page. */
-        fun params(params: TeamMemberListStaffParams) = apply { this.params = params }
+        fun params(params: TeamMemberListStaffParams) =
+            apply {
+                this.params = params
+            }
 
         /** The response that this page was parsed from. */
-        fun response(response: TeamMemberListStaffPageResponse) = apply { this.response = response }
+        fun response(response: TeamMemberListStaffPageResponse) =
+            apply {
+                this.response = response
+            }
 
         /**
          * Returns an immutable instance of [TeamMemberListStaffPage].
@@ -109,6 +124,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -119,25 +135,27 @@ private constructor(
          */
         fun build(): TeamMemberListStaffPage =
             TeamMemberListStaffPage(
-                checkRequired("service", service),
-                checkRequired("params", params),
-                checkRequired("response", response),
+              checkRequired(
+                "service", service
+              ),
+              checkRequired(
+                "params", params
+              ),
+              checkRequired(
+                "response", response
+              ),
             )
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is TeamMemberListStaffPage &&
-            service == other.service &&
-            params == other.params &&
-            response == other.response
+      return other is TeamMemberListStaffPage && service == other.service && params == other.params && response == other.response
     }
 
     override fun hashCode(): Int = Objects.hash(service, params, response)
 
-    override fun toString() =
-        "TeamMemberListStaffPage{service=$service, params=$params, response=$response}"
+    override fun toString() = "TeamMemberListStaffPage{service=$service, params=$params, response=$response}"
 }

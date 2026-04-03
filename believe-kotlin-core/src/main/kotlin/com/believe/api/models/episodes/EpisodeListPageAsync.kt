@@ -5,15 +5,18 @@ package com.believe.api.models.episodes
 import com.believe.api.core.AutoPagerAsync
 import com.believe.api.core.PageAsync
 import com.believe.api.core.checkRequired
+import com.believe.api.models.episodes.Episode
+import com.believe.api.models.episodes.EpisodeListParams
+import com.believe.api.models.episodes.PaginatedResponse
 import com.believe.api.services.async.EpisodeServiceAsync
 import java.util.Objects
 
 /** @see EpisodeServiceAsync.list */
-class EpisodeListPageAsync
-private constructor(
+class EpisodeListPageAsync private constructor(
     private val service: EpisodeServiceAsync,
     private val params: EpisodeListParams,
     private val response: PaginatedResponse,
+
 ) : PageAsync<Episode> {
 
     /**
@@ -40,18 +43,20 @@ private constructor(
     override fun items(): List<Episode> = data()
 
     override fun hasNextPage(): Boolean {
-        if (items().isEmpty()) {
-            return false
-        }
+      if (items().isEmpty()) {
+          return false
+      }
 
-        val offset = skip() ?: 0
-        val totalCount = total()
-        return totalCount == null || offset + items().size < totalCount
+      val offset = skip() ?: 0
+      val totalCount = total()
+      return totalCount == null || offset + items().size < totalCount;
     }
 
     fun nextPageParams(): EpisodeListParams {
-        val offset = skip() ?: 0
-        return params.toBuilder().skip(offset + items().size).build()
+      val offset = skip() ?: 0
+      return params.toBuilder()
+          .skip(offset + items().size)
+          .build()
     }
 
     override suspend fun nextPage(): EpisodeListPageAsync = service.list(nextPageParams())
@@ -72,6 +77,7 @@ private constructor(
          * Returns a mutable builder for constructing an instance of [EpisodeListPageAsync].
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -88,19 +94,29 @@ private constructor(
         private var params: EpisodeListParams? = null
         private var response: PaginatedResponse? = null
 
-        internal fun from(episodeListPageAsync: EpisodeListPageAsync) = apply {
-            service = episodeListPageAsync.service
-            params = episodeListPageAsync.params
-            response = episodeListPageAsync.response
-        }
+        internal fun from(episodeListPageAsync: EpisodeListPageAsync) =
+            apply {
+                service = episodeListPageAsync.service
+                params = episodeListPageAsync.params
+                response = episodeListPageAsync.response
+            }
 
-        fun service(service: EpisodeServiceAsync) = apply { this.service = service }
+        fun service(service: EpisodeServiceAsync) =
+            apply {
+                this.service = service
+            }
 
         /** The parameters that were used to request this page. */
-        fun params(params: EpisodeListParams) = apply { this.params = params }
+        fun params(params: EpisodeListParams) =
+            apply {
+                this.params = params
+            }
 
         /** The response that this page was parsed from. */
-        fun response(response: PaginatedResponse) = apply { this.response = response }
+        fun response(response: PaginatedResponse) =
+            apply {
+                this.response = response
+            }
 
         /**
          * Returns an immutable instance of [EpisodeListPageAsync].
@@ -108,6 +124,7 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
+         *
          * ```kotlin
          * .service()
          * .params()
@@ -118,25 +135,27 @@ private constructor(
          */
         fun build(): EpisodeListPageAsync =
             EpisodeListPageAsync(
-                checkRequired("service", service),
-                checkRequired("params", params),
-                checkRequired("response", response),
+              checkRequired(
+                "service", service
+              ),
+              checkRequired(
+                "params", params
+              ),
+              checkRequired(
+                "response", response
+              ),
             )
     }
 
     override fun equals(other: Any?): Boolean {
-        if (this === other) {
-            return true
-        }
+      if (this === other) {
+          return true
+      }
 
-        return other is EpisodeListPageAsync &&
-            service == other.service &&
-            params == other.params &&
-            response == other.response
+      return other is EpisodeListPageAsync && service == other.service && params == other.params && response == other.response
     }
 
     override fun hashCode(): Int = Objects.hash(service, params, response)
 
-    override fun toString() =
-        "EpisodeListPageAsync{service=$service, params=$params, response=$response}"
+    override fun toString() = "EpisodeListPageAsync{service=$service, params=$params, response=$response}"
 }

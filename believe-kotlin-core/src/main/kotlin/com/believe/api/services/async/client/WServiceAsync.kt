@@ -6,14 +6,13 @@ import com.believe.api.core.ClientOptions
 import com.believe.api.core.RequestOptions
 import com.believe.api.core.http.HttpResponse
 import com.believe.api.models.client.ws.WTestParams
+import com.believe.api.services.async.client.WServiceAsync
 import com.google.errorprone.annotations.MustBeClosed
 
 /** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
 interface WServiceAsync {
 
-    /**
-     * Returns a view of this service that provides access to raw HTTP responses for each method.
-     */
+    /** Returns a view of this service that provides access to raw HTTP responses for each method. */
     fun withRawResponse(): WithRawResponse
 
     /**
@@ -37,14 +36,15 @@ interface WServiceAsync {
      * ws.onmessage = (event) => console.log(event.data);
      * ws.send('Hello!');  // Server responds with echo
      * ```
+     *
      */
-    suspend fun test(
-        params: WTestParams = WTestParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    )
+    suspend fun test(params: WTestParams = WTestParams.none(), requestOptions: RequestOptions = RequestOptions.none())
 
     /** @see test */
-    suspend fun test(requestOptions: RequestOptions) = test(WTestParams.none(), requestOptions)
+    suspend fun test(requestOptions: RequestOptions) =
+        test(
+          WTestParams.none(), requestOptions
+        )
 
     /** A view of [WServiceAsync] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -56,19 +56,15 @@ interface WServiceAsync {
          */
         fun withOptions(modifier: (ClientOptions.Builder) -> Unit): WServiceAsync.WithRawResponse
 
-        /**
-         * Returns a raw HTTP response for `get /ws/test`, but is otherwise the same as
-         * [WServiceAsync.test].
-         */
+        /** Returns a raw HTTP response for `get /ws/test`, but is otherwise the             same as [WServiceAsync.test]. */
         @MustBeClosed
-        suspend fun test(
-            params: WTestParams = WTestParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponse
+        suspend fun test(params: WTestParams = WTestParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponse
 
         /** @see test */
         @MustBeClosed
         suspend fun test(requestOptions: RequestOptions): HttpResponse =
-            test(WTestParams.none(), requestOptions)
+            test(
+              WTestParams.none(), requestOptions
+            )
     }
 }

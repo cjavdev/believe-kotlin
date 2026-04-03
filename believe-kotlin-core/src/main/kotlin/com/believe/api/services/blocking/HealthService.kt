@@ -7,13 +7,12 @@ import com.believe.api.core.RequestOptions
 import com.believe.api.core.http.HttpResponseFor
 import com.believe.api.models.health.HealthCheckParams
 import com.believe.api.models.health.HealthCheckResponse
+import com.believe.api.services.blocking.HealthService
 import com.google.errorprone.annotations.MustBeClosed
 
 interface HealthService {
 
-    /**
-     * Returns a view of this service that provides access to raw HTTP responses for each method.
-     */
+    /** Returns a view of this service that provides access to raw HTTP responses for each method. */
     fun withRawResponse(): WithRawResponse
 
     /**
@@ -24,14 +23,13 @@ interface HealthService {
     fun withOptions(modifier: (ClientOptions.Builder) -> Unit): HealthService
 
     /** Check if the API is running and healthy. */
-    fun check(
-        params: HealthCheckParams = HealthCheckParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): HealthCheckResponse
+    fun check(params: HealthCheckParams = HealthCheckParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HealthCheckResponse
 
     /** @see check */
     fun check(requestOptions: RequestOptions): HealthCheckResponse =
-        check(HealthCheckParams.none(), requestOptions)
+        check(
+          HealthCheckParams.none(), requestOptions
+        )
 
     /** A view of [HealthService] that provides access to raw HTTP responses for each method. */
     interface WithRawResponse {
@@ -43,19 +41,15 @@ interface HealthService {
          */
         fun withOptions(modifier: (ClientOptions.Builder) -> Unit): HealthService.WithRawResponse
 
-        /**
-         * Returns a raw HTTP response for `get /health`, but is otherwise the same as
-         * [HealthService.check].
-         */
+        /** Returns a raw HTTP response for `get /health`, but is otherwise the             same as [HealthService.check]. */
         @MustBeClosed
-        fun check(
-            params: HealthCheckParams = HealthCheckParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<HealthCheckResponse>
+        fun check(params: HealthCheckParams = HealthCheckParams.none(), requestOptions: RequestOptions = RequestOptions.none()): HttpResponseFor<HealthCheckResponse>
 
         /** @see check */
         @MustBeClosed
         fun check(requestOptions: RequestOptions): HttpResponseFor<HealthCheckResponse> =
-            check(HealthCheckParams.none(), requestOptions)
+            check(
+              HealthCheckParams.none(), requestOptions
+            )
     }
 }

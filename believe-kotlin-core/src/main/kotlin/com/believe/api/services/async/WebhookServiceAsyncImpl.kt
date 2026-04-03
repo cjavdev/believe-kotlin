@@ -26,214 +26,198 @@ import com.believe.api.models.webhooks.WebhookListParams
 import com.believe.api.models.webhooks.WebhookRetrieveParams
 import com.believe.api.models.webhooks.WebhookTriggerEventParams
 import com.believe.api.models.webhooks.WebhookTriggerEventResponse
+import com.believe.api.services.async.WebhookServiceAsync
+import com.believe.api.services.async.WebhookServiceAsyncImpl
 import com.believe.api.services.blocking.WebhookServiceImpl
 
 /** Register webhook endpoints and trigger events for testing */
-class WebhookServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
-    WebhookServiceAsync {
+class WebhookServiceAsyncImpl internal constructor(
+    private val clientOptions: ClientOptions,
 
-    private val withRawResponse: WebhookServiceAsync.WithRawResponse by lazy {
-        WithRawResponseImpl(clientOptions)
-    }
+) : WebhookServiceAsync {
+
+    private val withRawResponse: WebhookServiceAsync.WithRawResponse by lazy { WithRawResponseImpl(clientOptions) }
 
     override fun withRawResponse(): WebhookServiceAsync.WithRawResponse = withRawResponse
 
-    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): WebhookServiceAsync =
-        WebhookServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
+    override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): WebhookServiceAsync = WebhookServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
-    override suspend fun create(
-        params: WebhookCreateParams,
-        requestOptions: RequestOptions,
-    ): WebhookCreateResponse =
+    override suspend fun create(params: WebhookCreateParams, requestOptions: RequestOptions): WebhookCreateResponse =
         // post /webhooks
         withRawResponse().create(params, requestOptions).parse()
 
-    override suspend fun retrieve(
-        params: WebhookRetrieveParams,
-        requestOptions: RequestOptions,
-    ): RegisteredWebhook =
+    override suspend fun retrieve(params: WebhookRetrieveParams, requestOptions: RequestOptions): RegisteredWebhook =
         // get /webhooks/{webhook_id}
         withRawResponse().retrieve(params, requestOptions).parse()
 
-    override suspend fun list(
-        params: WebhookListParams,
-        requestOptions: RequestOptions,
-    ): List<RegisteredWebhook> =
+    override suspend fun list(params: WebhookListParams, requestOptions: RequestOptions): List<RegisteredWebhook> =
         // get /webhooks
         withRawResponse().list(params, requestOptions).parse()
 
-    override suspend fun delete(
-        params: WebhookDeleteParams,
-        requestOptions: RequestOptions,
-    ): WebhookDeleteResponse =
+    override suspend fun delete(params: WebhookDeleteParams, requestOptions: RequestOptions): WebhookDeleteResponse =
         // delete /webhooks/{webhook_id}
         withRawResponse().delete(params, requestOptions).parse()
 
-    override suspend fun triggerEvent(
-        params: WebhookTriggerEventParams,
-        requestOptions: RequestOptions,
-    ): WebhookTriggerEventResponse =
+    override suspend fun triggerEvent(params: WebhookTriggerEventParams, requestOptions: RequestOptions): WebhookTriggerEventResponse =
         // post /webhooks/trigger
         withRawResponse().triggerEvent(params, requestOptions).parse()
 
-    override fun unwrap(body: String): UnwrapWebhookEvent =
-        WebhookServiceImpl(clientOptions).unwrap(body)
+    override fun unwrap(body: String): UnwrapWebhookEvent = WebhookServiceImpl(clientOptions).unwrap(body)
 
-    class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
-        WebhookServiceAsync.WithRawResponse {
+    class WithRawResponseImpl internal constructor(
+        private val clientOptions: ClientOptions,
 
-        private val errorHandler: Handler<HttpResponse> =
-            errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+    ) : WebhookServiceAsync.WithRawResponse {
 
-        override fun withOptions(
-            modifier: (ClientOptions.Builder) -> Unit
-        ): WebhookServiceAsync.WithRawResponse =
-            WebhookServiceAsyncImpl.WithRawResponseImpl(
-                clientOptions.toBuilder().apply(modifier).build()
+        private val errorHandler: Handler<HttpResponse> = errorHandler(errorBodyHandler(clientOptions.jsonMapper))
+
+        override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): WebhookServiceAsync.WithRawResponse = WebhookServiceAsyncImpl.WithRawResponseImpl(clientOptions.toBuilder().apply(modifier).build())
+
+        private val createHandler: Handler<WebhookCreateResponse> = jsonHandler<WebhookCreateResponse>(clientOptions.jsonMapper)
+
+        override suspend fun create(params: WebhookCreateParams, requestOptions: RequestOptions): HttpResponseFor<WebhookCreateResponse> {
+          val request = HttpRequest.builder()
+            .method(HttpMethod.POST)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("webhooks")
+            .body(json(clientOptions.jsonMapper, params._body()))
+            .build()
+            .prepareAsync(
+              clientOptions, params
             )
-
-        private val createHandler: Handler<WebhookCreateResponse> =
-            jsonHandler<WebhookCreateResponse>(clientOptions.jsonMapper)
-
-        override suspend fun create(
-            params: WebhookCreateParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookCreateResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("webhooks")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { createHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  createHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
 
-        private val retrieveHandler: Handler<RegisteredWebhook> =
-            jsonHandler<RegisteredWebhook>(clientOptions.jsonMapper)
+        private val retrieveHandler: Handler<RegisteredWebhook> = jsonHandler<RegisteredWebhook>(clientOptions.jsonMapper)
 
-        override suspend fun retrieve(
-            params: WebhookRetrieveParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<RegisteredWebhook> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("webhookId", params.webhookId())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("webhooks", params._pathParam(0))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { retrieveHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+        override suspend fun retrieve(params: WebhookRetrieveParams, requestOptions: RequestOptions): HttpResponseFor<RegisteredWebhook> {
+          // We check here instead of in the params builder because this can be specified positionally or in the params class.
+          checkRequired("webhookId", params.webhookId())
+          val request = HttpRequest.builder()
+            .method(HttpMethod.GET)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("webhooks", params._pathParam(0))
+            .build()
+            .prepareAsync(
+              clientOptions, params
+            )
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  retrieveHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
 
-        private val listHandler: Handler<List<RegisteredWebhook>> =
-            jsonHandler<List<RegisteredWebhook>>(clientOptions.jsonMapper)
+        private val listHandler: Handler<List<RegisteredWebhook>> = jsonHandler<List<RegisteredWebhook>>(clientOptions.jsonMapper)
 
-        override suspend fun list(
-            params: WebhookListParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<List<RegisteredWebhook>> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("webhooks")
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { listHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.forEach { it.validate() }
-                        }
-                    }
-            }
+        override suspend fun list(params: WebhookListParams, requestOptions: RequestOptions): HttpResponseFor<List<RegisteredWebhook>> {
+          val request = HttpRequest.builder()
+            .method(HttpMethod.GET)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("webhooks")
+            .build()
+            .prepareAsync(
+              clientOptions, params
+            )
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  listHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.forEach { it.validate() }
+                  }
+              }
+          }
         }
 
-        private val deleteHandler: Handler<WebhookDeleteResponse> =
-            jsonHandler<WebhookDeleteResponse>(clientOptions.jsonMapper)
+        private val deleteHandler: Handler<WebhookDeleteResponse> = jsonHandler<WebhookDeleteResponse>(clientOptions.jsonMapper)
 
-        override suspend fun delete(
-            params: WebhookDeleteParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookDeleteResponse> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("webhookId", params.webhookId())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.DELETE)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("webhooks", params._pathParam(0))
-                    .apply { params._body()?.let { body(json(clientOptions.jsonMapper, it)) } }
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { deleteHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+        override suspend fun delete(params: WebhookDeleteParams, requestOptions: RequestOptions): HttpResponseFor<WebhookDeleteResponse> {
+          // We check here instead of in the params builder because this can be specified positionally or in the params class.
+          checkRequired("webhookId", params.webhookId())
+          val request = HttpRequest.builder()
+            .method(HttpMethod.DELETE)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("webhooks", params._pathParam(0))
+            .apply { params._body()?.let{ body(json(clientOptions.jsonMapper, it)) } }
+            .build()
+            .prepareAsync(
+              clientOptions, params
+            )
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  deleteHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
 
-        private val triggerEventHandler: Handler<WebhookTriggerEventResponse> =
-            jsonHandler<WebhookTriggerEventResponse>(clientOptions.jsonMapper)
+        private val triggerEventHandler: Handler<WebhookTriggerEventResponse> = jsonHandler<WebhookTriggerEventResponse>(clientOptions.jsonMapper)
 
-        override suspend fun triggerEvent(
-            params: WebhookTriggerEventParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookTriggerEventResponse> {
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.POST)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("webhooks", "trigger")
-                    .body(json(clientOptions.jsonMapper, params._body()))
-                    .build()
-                    .prepareAsync(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.executeAsync(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { triggerEventHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
+        override suspend fun triggerEvent(params: WebhookTriggerEventParams, requestOptions: RequestOptions): HttpResponseFor<WebhookTriggerEventResponse> {
+          val request = HttpRequest.builder()
+            .method(HttpMethod.POST)
+            .baseUrl(clientOptions.baseUrl())
+            .addPathSegments("webhooks", "trigger")
+            .body(json(clientOptions.jsonMapper, params._body()))
+            .build()
+            .prepareAsync(
+              clientOptions, params
+            )
+          val requestOptions = requestOptions
+              .applyDefaults(RequestOptions.from(clientOptions))
+          val response = clientOptions.httpClient.executeAsync(
+            request, requestOptions
+          )
+          return errorHandler.handle(response).parseable {
+              response.use {
+                  triggerEventHandler.handle(it)
+              }
+              .also {
+                  if (requestOptions.responseValidation!!) {
+                    it.validate()
+                  }
+              }
+          }
         }
     }
 }
