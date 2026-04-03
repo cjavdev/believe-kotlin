@@ -1,5 +1,45 @@
 # Changelog
 
+## 0.3.0 (2026-04-03)
+
+Full Changelog: [v0.2.0...v0.3.0](https://github.com/cjavdev/believe-kotlin/compare/v0.2.0...v0.3.0)
+
+### Features
+
+* Add ticket sales data model and more examples ([1484539](https://github.com/cjavdev/believe-kotlin/commit/1484539ca0f27e7912500855df1281469ca830ef))
+* **api:** manual updates ([d3a18bc](https://github.com/cjavdev/believe-kotlin/commit/d3a18bcf7411cbefa00073522f0be64456625599))
+* **api:** manual updates ([a625ca6](https://github.com/cjavdev/believe-kotlin/commit/a625ca6ea40e68e5c9491f11da0da56d24c0631d))
+* **api:** manual updates ([7f75e26](https://github.com/cjavdev/believe-kotlin/commit/7f75e2679f2cb54c135e2db3c28dbde7150f5432))
+* **api:** manual updates ([28eb66a](https://github.com/cjavdev/believe-kotlin/commit/28eb66a71cbcaef89d5adcb6e8e6e8b0260b0fba))
+* **api:** manual updates ([8673177](https://github.com/cjavdev/believe-kotlin/commit/8673177d39857191bd03f2e04db5a4bc94f0b6b3))
+* **api:** manual updates ([ef3d880](https://github.com/cjavdev/believe-kotlin/commit/ef3d8809f0eb60d87d3a70937914c520a8586f9e))
+* **api:** manual updates ([534013c](https://github.com/cjavdev/believe-kotlin/commit/534013c43d31992a7bf11d8eb33bd811865d1b82))
+* **api:** manual updates ([b39b168](https://github.com/cjavdev/believe-kotlin/commit/b39b168c33c490a2ad9173b492e211ef38c5535d))
+* **api:** manual updates ([9ad31ba](https://github.com/cjavdev/believe-kotlin/commit/9ad31ba542743fc6aa5b4211b8e74ebd333cf6cd))
+* **api:** manual updates ([d7e0bdf](https://github.com/cjavdev/believe-kotlin/commit/d7e0bdffaa323dbb7fc9a5b6377078f46af7540b))
+
+
+### Bug Fixes
+
+* **client:** allow updating header/query affecting fields in `toBuilder()` ([ab52eb4](https://github.com/cjavdev/believe-kotlin/commit/ab52eb449ce455442279afe31326caa3f3a14764))
+* **client:** incorrect `Retry-After` parsing ([dc36110](https://github.com/cjavdev/believe-kotlin/commit/dc36110bb2e1d661dd80cfe6d05d529162873672))
+
+
+### Chores
+
+* **ci:** skip lint on metadata-only changes ([78e678d](https://github.com/cjavdev/believe-kotlin/commit/78e678dd808088aa58edd6bd5245f5b10bbe5736))
+* drop apache dependency ([cd8d386](https://github.com/cjavdev/believe-kotlin/commit/cd8d386c74c4528324cddb02df019e38e792c6df))
+* **internal:** bump ktfmt ([a37c484](https://github.com/cjavdev/believe-kotlin/commit/a37c4842c19fdd8194a8730108c74808d985e396))
+* **internal:** bump palantir-java-format ([6f6667d](https://github.com/cjavdev/believe-kotlin/commit/6f6667d3c141c7bae5fc746a0d9bff08dda081ec))
+* **internal:** codegen related update ([63586b0](https://github.com/cjavdev/believe-kotlin/commit/63586b00425009093b5a10c35665a0378f00e495))
+* **internal:** codegen related update ([a7929dc](https://github.com/cjavdev/believe-kotlin/commit/a7929dc2e01ba9a6b705c53db8b0d0ac25d8c989))
+* **internal:** expand imports ([dbcd8e7](https://github.com/cjavdev/believe-kotlin/commit/dbcd8e74f9046c67ab0369ee4e0c50571404447e))
+* **internal:** tweak CI branches ([844acb9](https://github.com/cjavdev/believe-kotlin/commit/844acb9299116e7e8f43bab249e7b5328a2ee37d))
+* **internal:** update gitignore ([4b9324f](https://github.com/cjavdev/believe-kotlin/commit/4b9324f1731b3c63a3b38e0e55cd44178e07ca66))
+* **internal:** update retry delay tests ([19ae36a](https://github.com/cjavdev/believe-kotlin/commit/19ae36a9876bad78573e3afd23bfa6ee4626c394))
+* make `Properties` more resilient to `null` ([d585700](https://github.com/cjavdev/believe-kotlin/commit/d585700e913dbfaace0637c232abb61958d0935b))
+* update placeholder string ([9ff4667](https://github.com/cjavdev/believe-kotlin/commit/9ff466735b849a3d8b4c720746139d61b5ce6b8d))
+
 ## 0.2.0 (2026-02-21)
 
 Full Changelog: [v0.1.0...v0.2.0](https://github.com/cjavdev/believe-kotlin/compare/v0.1.0...v0.2.0)
