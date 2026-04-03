@@ -21,6 +21,7 @@ import com.believe.api.models.teams.logo.FileUpload
 import com.believe.api.services.async.teams.LogoServiceAsync
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Operations related to football teams */
 interface TeamServiceAsync {
 
     /**
@@ -35,6 +36,7 @@ interface TeamServiceAsync {
      */
     fun withOptions(modifier: (ClientOptions.Builder) -> Unit): TeamServiceAsync
 
+    /** Operations related to football teams */
     fun logo(): LogoServiceAsync
 
     /** Add a new team to the league. */
@@ -166,6 +168,7 @@ interface TeamServiceAsync {
          */
         fun withOptions(modifier: (ClientOptions.Builder) -> Unit): TeamServiceAsync.WithRawResponse
 
+        /** Operations related to football teams */
         fun logo(): LogoServiceAsync.WithRawResponse
 
         /**

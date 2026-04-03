@@ -18,6 +18,7 @@ import com.believe.api.core.prepareAsync
 import com.believe.api.models.believe.BelieveSubmitParams
 import com.believe.api.models.believe.BelieveSubmitResponse
 
+/** Interactive endpoints for motivation and guidance */
 class BelieveServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     BelieveServiceAsync {
 

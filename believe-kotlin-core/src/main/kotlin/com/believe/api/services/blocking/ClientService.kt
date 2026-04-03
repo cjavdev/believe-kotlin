@@ -19,6 +19,7 @@ interface ClientService {
      */
     fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ClientService
 
+    /** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
     fun ws(): WService
 
     /** A view of [ClientService] that provides access to raw HTTP responses for each method. */
@@ -31,6 +32,7 @@ interface ClientService {
          */
         fun withOptions(modifier: (ClientOptions.Builder) -> Unit): ClientService.WithRawResponse
 
+        /** WebSocket endpoints for real-time bidirectional communication - Live match simulation */
         fun ws(): WService.WithRawResponse
     }
 }

@@ -31,6 +31,7 @@ import com.believe.api.models.quotes.QuoteListParams
 import com.believe.api.models.quotes.QuoteRetrieveParams
 import com.believe.api.models.quotes.QuoteUpdateParams
 
+/** Memorable quotes from the show */
 class QuoteServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     QuoteService {
 

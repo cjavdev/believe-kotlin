@@ -49,6 +49,7 @@ class MatchServiceAsyncImpl internal constructor(private val clientOptions: Clie
     override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): MatchServiceAsync =
         MatchServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
+    /** Server-Sent Events (SSE) streaming endpoints */
     override fun commentary(): CommentaryServiceAsync = commentary
 
     override suspend fun create(params: MatchCreateParams, requestOptions: RequestOptions): Match =
@@ -114,6 +115,7 @@ class MatchServiceAsyncImpl internal constructor(private val clientOptions: Clie
                 clientOptions.toBuilder().apply(modifier).build()
             )
 
+        /** Server-Sent Events (SSE) streaming endpoints */
         override fun commentary(): CommentaryServiceAsync.WithRawResponse = commentary
 
         private val createHandler: Handler<Match> = jsonHandler<Match>(clientOptions.jsonMapper)

@@ -23,6 +23,7 @@ import com.believe.api.models.teammembers.TeamMemberUpdateParams
 import com.believe.api.models.teammembers.TeamMemberUpdateResponse
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Team members with union types (oneOf) - Players, Coaches, Medical Staff, Equipment Managers */
 interface TeamMemberServiceAsync {
 
     /**

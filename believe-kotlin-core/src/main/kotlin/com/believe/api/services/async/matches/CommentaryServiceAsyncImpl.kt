@@ -19,6 +19,7 @@ import com.believe.api.core.prepareAsync
 import com.believe.api.models.matches.commentary.CommentaryStreamParams
 import com.believe.api.models.matches.commentary.CommentaryStreamResponse
 
+/** Server-Sent Events (SSE) streaming endpoints */
 class CommentaryServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     CommentaryServiceAsync {
 

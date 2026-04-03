@@ -9,6 +9,7 @@ import com.believe.api.models.press.PressSimulateParams
 import com.believe.api.models.press.PressSimulateResponse
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Interactive endpoints for motivation and guidance */
 interface PressServiceAsync {
 
     /**

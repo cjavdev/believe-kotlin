@@ -22,6 +22,7 @@ import com.believe.api.models.biscuits.BiscuitListPageResponse
 import com.believe.api.models.biscuits.BiscuitListParams
 import com.believe.api.models.biscuits.BiscuitRetrieveParams
 
+/** Interactive endpoints for motivation and guidance */
 class BiscuitServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     BiscuitServiceAsync {
 

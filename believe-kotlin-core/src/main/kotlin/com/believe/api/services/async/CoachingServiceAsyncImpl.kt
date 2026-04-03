@@ -22,6 +22,7 @@ class CoachingServiceAsyncImpl internal constructor(private val clientOptions: C
     override fun withOptions(modifier: (ClientOptions.Builder) -> Unit): CoachingServiceAsync =
         CoachingServiceAsyncImpl(clientOptions.toBuilder().apply(modifier).build())
 
+    /** Interactive endpoints for motivation and guidance */
     override fun principles(): PrincipleServiceAsync = principles
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -38,6 +39,7 @@ class CoachingServiceAsyncImpl internal constructor(private val clientOptions: C
                 clientOptions.toBuilder().apply(modifier).build()
             )
 
+        /** Interactive endpoints for motivation and guidance */
         override fun principles(): PrincipleServiceAsync.WithRawResponse = principles
     }
 }

@@ -18,6 +18,7 @@ import com.believe.api.core.prepare
 import com.believe.api.models.reframe.ReframeTransformNegativeThoughtsParams
 import com.believe.api.models.reframe.ReframeTransformNegativeThoughtsResponse
 
+/** Interactive endpoints for motivation and guidance */
 class ReframeServiceImpl internal constructor(private val clientOptions: ClientOptions) :
     ReframeService {
 

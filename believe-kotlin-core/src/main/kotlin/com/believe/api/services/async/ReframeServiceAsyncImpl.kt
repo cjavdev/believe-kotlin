@@ -18,6 +18,7 @@ import com.believe.api.core.prepareAsync
 import com.believe.api.models.reframe.ReframeTransformNegativeThoughtsParams
 import com.believe.api.models.reframe.ReframeTransformNegativeThoughtsResponse
 
+/** Interactive endpoints for motivation and guidance */
 class ReframeServiceAsyncImpl internal constructor(private val clientOptions: ClientOptions) :
     ReframeServiceAsync {
 

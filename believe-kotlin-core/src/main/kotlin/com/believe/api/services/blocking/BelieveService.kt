@@ -9,6 +9,7 @@ import com.believe.api.models.believe.BelieveSubmitParams
 import com.believe.api.models.believe.BelieveSubmitResponse
 import com.google.errorprone.annotations.MustBeClosed
 
+/** Interactive endpoints for motivation and guidance */
 interface BelieveService {
 
     /**
