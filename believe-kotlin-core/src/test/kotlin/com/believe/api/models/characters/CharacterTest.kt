@@ -8,12 +8,12 @@ import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class CharacterzTest {
+internal class CharacterTest {
 
     @Test
     fun create() {
-        val characterz =
-            Characterz.builder()
+        val character =
+            Character.builder()
                 .id("ted-lasso")
                 .background(
                     "Former American football coach from Kansas who moved to London to coach AFC Richmond"
@@ -49,12 +49,12 @@ internal class CharacterzTest {
                 .teamId("afc-richmond")
                 .build()
 
-        assertThat(characterz.id()).isEqualTo("ted-lasso")
-        assertThat(characterz.background())
+        assertThat(character.id()).isEqualTo("ted-lasso")
+        assertThat(character.background())
             .isEqualTo(
                 "Former American football coach from Kansas who moved to London to coach AFC Richmond"
             )
-        assertThat(characterz.emotionalStats())
+        assertThat(character.emotionalStats())
             .isEqualTo(
                 EmotionalStats.builder()
                     .curiosity(99L)
@@ -64,13 +64,13 @@ internal class CharacterzTest {
                     .vulnerability(80L)
                     .build()
             )
-        assertThat(characterz.name()).isEqualTo("Ted Lasso")
-        assertThat(characterz.personalityTraits())
+        assertThat(character.name()).isEqualTo("Ted Lasso")
+        assertThat(character.personalityTraits())
             .containsExactly("optimistic", "kind", "folksy", "persistent")
-        assertThat(characterz.role()).isEqualTo(CharacterRole.COACH)
-        assertThat(characterz.dateOfBirth()).isEqualTo(LocalDate.parse("1970-09-22"))
-        assertThat(characterz.email()).isEqualTo("ted.lasso@afcrichmond.com")
-        assertThat(characterz.growthArcs())
+        assertThat(character.role()).isEqualTo(CharacterRole.COACH)
+        assertThat(character.dateOfBirth()).isEqualTo(LocalDate.parse("1970-09-22"))
+        assertThat(character.email()).isEqualTo("ted.lasso@afcrichmond.com")
+        assertThat(character.growthArcs())
             .containsExactly(
                 GrowthArc.builder()
                     .breakthrough("Showing vulnerability about his marriage")
@@ -80,20 +80,20 @@ internal class CharacterzTest {
                     .startingPoint("Fish out of water, hiding pain with humor")
                     .build()
             )
-        assertThat(characterz.heightMeters()).isEqualTo(1.83)
-        assertThat(characterz.profileImageUrl())
+        assertThat(character.heightMeters()).isEqualTo(1.83)
+        assertThat(character.profileImageUrl())
             .isEqualTo("https://afcrichmond.com/images/ted-lasso.jpg")
-        assertThat(characterz.salaryGbp()).isEqualTo("150000.00")
-        assertThat(characterz.signatureQuotes())
+        assertThat(character.salaryGbp()).isEqualTo("150000.00")
+        assertThat(character.signatureQuotes())
             .containsExactly("I believe in believe.", "Be curious, not judgmental.")
-        assertThat(characterz.teamId()).isEqualTo("afc-richmond")
+        assertThat(character.teamId()).isEqualTo("afc-richmond")
     }
 
     @Test
     fun roundtrip() {
         val jsonMapper = jsonMapper()
-        val characterz =
-            Characterz.builder()
+        val character =
+            Character.builder()
                 .id("ted-lasso")
                 .background(
                     "Former American football coach from Kansas who moved to London to coach AFC Richmond"
@@ -129,12 +129,12 @@ internal class CharacterzTest {
                 .teamId("afc-richmond")
                 .build()
 
-        val roundtrippedCharacterz =
+        val roundtrippedCharacter =
             jsonMapper.readValue(
-                jsonMapper.writeValueAsString(characterz),
-                jacksonTypeRef<Characterz>(),
+                jsonMapper.writeValueAsString(character),
+                jacksonTypeRef<Character>(),
             )
 
-        assertThat(roundtrippedCharacterz).isEqualTo(characterz)
+        assertThat(roundtrippedCharacter).isEqualTo(character)
     }
 }

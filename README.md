@@ -332,8 +332,8 @@ To access individual page items and manually request the next page, use the `ite
 `hasNextPage()`, and `nextPage()` methods:
 
 ```kotlin
+import com.believe.api.models.characters.Character
 import com.believe.api.models.characters.CharacterListPage
-import com.believe.api.models.characters.Characterz
 
 val page: CharacterListPage = client.characters().list()
 while (true) {
@@ -696,9 +696,9 @@ By default, the SDK will not throw an exception in this case. It will throw [`Be
 If you would prefer to check that the response is completely well-typed upfront, then either call `validate()`:
 
 ```kotlin
-import com.believe.api.models.characters.Characterz
+import com.believe.api.models.characters.Character
 
-val characterz: Characterz = client.characters().create(params).validate()
+val character: Character = client.characters().create(params).validate()
 ```
 
 Or configure the method call to validate the response using the `responseValidation` method:
