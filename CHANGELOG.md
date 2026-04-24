@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.6.0 (2026-04-24)
+
+Full Changelog: [v0.5.0...v0.6.0](https://github.com/cjavdev/believe-kotlin/compare/v0.5.0...v0.6.0)
+
+### Features
+
+* **api:** manual updates ([e3a2bc8](https://github.com/cjavdev/believe-kotlin/commit/e3a2bc80e536e359100ce78cfa7b8b6ff8d0dfa6))
+* **api:** manual updates ([4a28d68](https://github.com/cjavdev/believe-kotlin/commit/4a28d683189c01f8009c5a3a317b342118cc8b3e))
+
 ## 0.5.0 (2026-04-22)
 
 Full Changelog: [v0.4.0...v0.5.0](https://github.com/cjavdev/believe-kotlin/compare/v0.4.0...v0.5.0)
