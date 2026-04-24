@@ -14,14 +14,14 @@ private constructor(
     private val service: CharacterService,
     private val params: CharacterListParams,
     private val response: CharacterListPageResponse,
-) : Page<Character> {
+) : Page<Characterz> {
 
     /**
      * Delegates to [CharacterListPageResponse], but gracefully handles missing data.
      *
      * @see CharacterListPageResponse.data
      */
-    fun data(): List<Character> = response._data().getNullable("data") ?: emptyList()
+    fun data(): List<Characterz> = response._data().getNullable("data") ?: emptyList()
 
     /**
      * Delegates to [CharacterListPageResponse], but gracefully handles missing data.
@@ -37,7 +37,7 @@ private constructor(
      */
     fun skip(): Long? = response._skip().getNullable("skip")
 
-    override fun items(): List<Character> = data()
+    override fun items(): List<Characterz> = data()
 
     override fun hasNextPage(): Boolean {
         if (items().isEmpty()) {
@@ -56,7 +56,7 @@ private constructor(
 
     override fun nextPage(): CharacterListPage = service.list(nextPageParams())
 
-    fun autoPager(): AutoPager<Character> = AutoPager.from(this)
+    fun autoPager(): AutoPager<Characterz> = AutoPager.from(this)
 
     /** The parameters that were used to request this page. */
     fun params(): CharacterListParams = params
