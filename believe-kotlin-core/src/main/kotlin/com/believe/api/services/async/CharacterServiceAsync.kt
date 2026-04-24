@@ -6,7 +6,6 @@ import com.believe.api.core.ClientOptions
 import com.believe.api.core.RequestOptions
 import com.believe.api.core.http.HttpResponse
 import com.believe.api.core.http.HttpResponseFor
-import com.believe.api.models.characters.Character
 import com.believe.api.models.characters.CharacterCreateParams
 import com.believe.api.models.characters.CharacterDeleteParams
 import com.believe.api.models.characters.CharacterGetQuotesParams
@@ -14,6 +13,7 @@ import com.believe.api.models.characters.CharacterListPageAsync
 import com.believe.api.models.characters.CharacterListParams
 import com.believe.api.models.characters.CharacterRetrieveParams
 import com.believe.api.models.characters.CharacterUpdateParams
+import com.believe.api.models.characters.Characterz
 import com.google.errorprone.annotations.MustBeClosed
 
 /** Operations related to Ted Lasso characters */
@@ -35,23 +35,23 @@ interface CharacterServiceAsync {
     suspend fun create(
         params: CharacterCreateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Character
+    ): Characterz
 
     /** Retrieve detailed information about a specific character. */
     suspend fun retrieve(
         characterId: String,
         params: CharacterRetrieveParams = CharacterRetrieveParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Character = retrieve(params.toBuilder().characterId(characterId).build(), requestOptions)
+    ): Characterz = retrieve(params.toBuilder().characterId(characterId).build(), requestOptions)
 
     /** @see retrieve */
     suspend fun retrieve(
         params: CharacterRetrieveParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Character
+    ): Characterz
 
     /** @see retrieve */
-    suspend fun retrieve(characterId: String, requestOptions: RequestOptions): Character =
+    suspend fun retrieve(characterId: String, requestOptions: RequestOptions): Characterz =
         retrieve(characterId, CharacterRetrieveParams.none(), requestOptions)
 
     /** Update specific fields of an existing character. */
@@ -59,16 +59,16 @@ interface CharacterServiceAsync {
         characterId: String,
         params: CharacterUpdateParams = CharacterUpdateParams.none(),
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Character = update(params.toBuilder().characterId(characterId).build(), requestOptions)
+    ): Characterz = update(params.toBuilder().characterId(characterId).build(), requestOptions)
 
     /** @see update */
     suspend fun update(
         params: CharacterUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Character
+    ): Characterz
 
     /** @see update */
-    suspend fun update(characterId: String, requestOptions: RequestOptions): Character =
+    suspend fun update(characterId: String, requestOptions: RequestOptions): Characterz =
         update(characterId, CharacterUpdateParams.none(), requestOptions)
 
     /** Get a paginated list of Ted Lasso characters. */
@@ -137,7 +137,7 @@ interface CharacterServiceAsync {
         suspend fun create(
             params: CharacterCreateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Character>
+        ): HttpResponseFor<Characterz>
 
         /**
          * Returns a raw HTTP response for `get /characters/{character_id}`, but is otherwise the
@@ -148,7 +148,7 @@ interface CharacterServiceAsync {
             characterId: String,
             params: CharacterRetrieveParams = CharacterRetrieveParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Character> =
+        ): HttpResponseFor<Characterz> =
             retrieve(params.toBuilder().characterId(characterId).build(), requestOptions)
 
         /** @see retrieve */
@@ -156,14 +156,14 @@ interface CharacterServiceAsync {
         suspend fun retrieve(
             params: CharacterRetrieveParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Character>
+        ): HttpResponseFor<Characterz>
 
         /** @see retrieve */
         @MustBeClosed
         suspend fun retrieve(
             characterId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<Character> =
+        ): HttpResponseFor<Characterz> =
             retrieve(characterId, CharacterRetrieveParams.none(), requestOptions)
 
         /**
@@ -175,7 +175,7 @@ interface CharacterServiceAsync {
             characterId: String,
             params: CharacterUpdateParams = CharacterUpdateParams.none(),
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Character> =
+        ): HttpResponseFor<Characterz> =
             update(params.toBuilder().characterId(characterId).build(), requestOptions)
 
         /** @see update */
@@ -183,14 +183,14 @@ interface CharacterServiceAsync {
         suspend fun update(
             params: CharacterUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<Character>
+        ): HttpResponseFor<Characterz>
 
         /** @see update */
         @MustBeClosed
         suspend fun update(
             characterId: String,
             requestOptions: RequestOptions,
-        ): HttpResponseFor<Character> =
+        ): HttpResponseFor<Characterz> =
             update(characterId, CharacterUpdateParams.none(), requestOptions)
 
         /**
