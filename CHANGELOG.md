@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0 (2026-04-28)
+
+Full Changelog: [v0.7.0...v0.8.0](https://github.com/cjavdev/believe-kotlin/compare/v0.7.0...v0.8.0)
+
+### Features
+
+* support setting headers via env ([f45f7f8](https://github.com/cjavdev/believe-kotlin/commit/f45f7f851fab607341c7baf19eb5682d6b6d91bd))
+
 ## 0.7.0 (2026-04-27)
 
 Full Changelog: [v0.6.0...v0.7.0](https://github.com/cjavdev/believe-kotlin/compare/v0.6.0...v0.7.0)
